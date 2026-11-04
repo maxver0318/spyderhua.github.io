@@ -81,6 +81,7 @@
                 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-6 items-center text-sm font-medium">
+                    <a href="#about" class="hover:text-blue-500 transition-colors" data-i18n="nav.about">關於我</a>
                     <a href="#experience" class="hover:text-blue-500 transition-colors" data-i18n="nav.exp">工作經驗</a>
                     <a href="#education" class="hover:text-blue-500 transition-colors" data-i18n="nav.edu">教育背景</a>
                     <a href="#skills" class="hover:text-blue-500 transition-colors" data-i18n="nav.skills">技能專長</a>
@@ -112,6 +113,7 @@
         <!-- Mobile Menu Overlay -->
         <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xl">
             <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#about" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.about">關於我</a>
                 <a href="#experience" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.exp">工作經驗</a>
                 <a href="#education" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.edu">教育背景</a>
                 <a href="#skills" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.skills">技能專長</a>
@@ -144,7 +146,7 @@
 
             <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight">Po-Han Huang</h1>
             <p class="text-xl text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto" data-i18n="hero.sub">
-                資深工程師，專注於軟體開發與技術創新，現職於華邦電子。
+                華邦電子資深工程師，專注於晶圓製造資料系統開發，讓工程資料更快、更準確地被使用。
             </p>
             
             <!-- Quick Contact Icons -->
@@ -159,10 +161,25 @@
 
             <div class="flex justify-center space-x-4">
                 <a href="#projects" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-lg shadow-blue-500/30" data-i18n="hero.btn1">查看專案</a>
-                <a href="#experience" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all" data-i18n="hero.btn2">關於我</a>
+                <a href="#about" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all" data-i18n="hero.btn2">關於我</a>
             </div>
         </div>
     </header>
+
+    <!-- About -->
+    <section id="about" class="section-padding">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="nav.about">關於我</span>
+            </h2>
+            <div class="space-y-5 text-lg leading-relaxed text-slate-700 dark:text-slate-300">
+                <p data-i18n="about.p1">我在華邦電子負責晶圓廠內部工程資料系統的開發與維護，熟悉 Wafer、Shot、Die、Defect 等不同層級的製造資料，並擅長把這些資料轉化成工程師能快速使用的工具。</p>
+                <p data-i18n="about.p2">設計系統時，我從使用者情境出發，兼顧資料表設計、效能、資料保存與 API 架構，希望系統不只能用，還能長期穩定運作。對我來說，把事情做完是基本，把事情做好才是成就感的來源。</p>
+                <p data-i18n="about.p3">我持續自主學習 AI 技術，並實際導入工作流程，協助團隊建立專屬的 AI Skills，提升開發、除錯與文件撰寫的效率。</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Experience -->
     <section id="experience" class="section-padding bg-white dark:bg-slate-800/50">
@@ -192,6 +209,13 @@
                             <span class="text-sm font-medium text-slate-500" data-i18n="exp.engineer.date">2018年12月 - 2022年3月 (3年4個月)</span>
                         </div>
                     </div>
+                    <ul class="mt-6 list-disc pl-5 space-y-2 text-slate-600 dark:text-slate-400">
+                        <li data-i18n="exp.winbond.b1">開發與維護廠內工程資料系統（YIDA、WMAP、QRA、IIDS），支援工程單位快速查詢與分析生產資料。</li>
+                        <li data-i18n="exp.winbond.b2">WMAP 晶圓缺陷分析系統：開發多圖層 Canvas 晶圓圖，將 Wafer、Shot、Die、Defect 資料疊加呈現，協助找出缺陷分布與良率的關聯。</li>
+                        <li data-i18n="exp.winbond.b3">負責系統設計全流程：需求分析、Table Schema 與索引設計、Partition 規劃，到資料 Archive 與還原機制。</li>
+                        <li data-i18n="exp.winbond.b4">建立 API 分層開發規範（Model / DAO / Data Fetcher），並以 ETL 架構處理排程作業，提升可維護性。</li>
+                        <li data-i18n="exp.winbond.b5">推動 AI 工具導入：建立課內專屬 AI Skills 與文件範本，讓系統說明與測試文件的產出更一致、更有效率。</li>
+                    </ul>
                 </div>
                 <div class="relative pl-8 timeline-dot">
                     <span class="text-sm font-bold text-slate-500" data-i18n="exp.edu.date">2018年1月 - 2018年11月 (11個月)</span>
@@ -293,8 +317,24 @@
                     <div class="w-10 h-10 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                     </div>
-                    <h3 class="font-bold text-lg mb-1">SQL</h3>
-                    <p class="text-sm text-slate-500" data-i18n="skills.db">Database Management</p>
+                    <h3 class="font-bold text-lg mb-1">Oracle SQL / PL/SQL</h3>
+                    <p class="text-sm text-slate-500" data-i18n="skills.db">資料庫設計與效能調校</p>
+                </div>
+                <!-- ETL -->
+                <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 hover:border-indigo-500 transition-colors group">
+                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">ETL</h3>
+                    <p class="text-sm text-slate-500" data-i18n="skills.etl">資料排程與整合</p>
+                </div>
+                <!-- Wafer data -->
+                <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 hover:border-pink-500 transition-colors group">
+                    <div class="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 text-pink-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"></circle><path stroke-linecap="round" stroke-width="2" d="M7 12h10M12 7v10"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1" data-i18n="skills.wafer.name">晶圓製造資料</h3>
+                    <p class="text-sm text-slate-500" data-i18n="skills.wafer.desc">良率／缺陷分析與晶圓圖視覺化</p>
                 </div>
             </div>
         </div>
@@ -568,14 +608,14 @@
 
         const i18n = {
             zh: {
-                'nav.exp': '工作經驗', 'nav.edu': '教育背景', 'nav.skills': '技能專長', 'nav.hobby': '興趣嗜好', 'nav.proj': '專案展示', 'nav.contact': '聯絡方式', 'nav.lang': '語言切換',
-                'hero.sub': '資深工程師，專注於軟體開發與技術創新，現職於華邦電子。', 'hero.btn1': '查看專案', 'hero.btn2': '關於我',
+                'nav.about': '關於我', 'about.p1': '我在華邦電子負責晶圓廠內部工程資料系統的開發與維護，熟悉 Wafer、Shot、Die、Defect 等不同層級的製造資料，並擅長把這些資料轉化成工程師能快速使用的工具。', 'about.p2': '設計系統時，我從使用者情境出發，兼顧資料表設計、效能、資料保存與 API 架構，希望系統不只能用，還能長期穩定運作。對我來說，把事情做完是基本，把事情做好才是成就感的來源。', 'about.p3': '我持續自主學習 AI 技術，並實際導入工作流程，協助團隊建立專屬的 AI Skills，提升開發、除錯與文件撰寫的效率。', 'exp.winbond.b1': '開發與維護廠內工程資料系統（YIDA、WMAP、QRA、IIDS），支援工程單位快速查詢與分析生產資料。', 'exp.winbond.b2': 'WMAP 晶圓缺陷分析系統：開發多圖層 Canvas 晶圓圖，將 Wafer、Shot、Die、Defect 資料疊加呈現，協助找出缺陷分布與良率的關聯。', 'exp.winbond.b3': '負責系統設計全流程：需求分析、Table Schema 與索引設計、Partition 規劃，到資料 Archive 與還原機制。', 'exp.winbond.b4': '建立 API 分層開發規範（Model / DAO / Data Fetcher），並以 ETL 架構處理排程作業，提升可維護性。', 'exp.winbond.b5': '推動 AI 工具導入：建立課內專屬 AI Skills 與文件範本，讓系統說明與測試文件的產出更一致、更有效率。', 'skills.etl': '資料排程與整合', 'skills.wafer.name': '晶圓製造資料', 'skills.wafer.desc': '良率／缺陷分析與晶圓圖視覺化', 'nav.exp': '工作經驗', 'nav.edu': '教育背景', 'nav.skills': '技能專長', 'nav.hobby': '興趣嗜好', 'nav.proj': '專案展示', 'nav.contact': '聯絡方式', 'nav.lang': '語言切換',
+                'hero.sub': '華邦電子資深工程師，專注於晶圓製造資料系統開發，讓工程資料更快、更準確地被使用。', 'hero.btn1': '查看專案', 'hero.btn2': '關於我',
                 'exp.principal.title': '資深工程師', 'exp.senior.title': '高級工程師', 'exp.engineer.title': '工程師',
                 'exp.winbond.name': '華邦電子', 'exp.winbond.location': '台中',
                 'exp.edu.title': '替代役 (教育役)', 'exp.edu.company': '高雄市政府教育局 | 高雄',
                 'exp.ms.title': '研發實習生', 'exp.ms.company': '台灣微軟 | 台北',
                 'edu.nctu.title': '多媒體工程研究所 碩士', 'edu.nctu.school': '國立交通大學 (NCTU)', 'edu.yzu.title': '資訊工程學系 學士', 'edu.yzu.school': '元智大學 (YZU)',
-                'skills.sub': '核心技術能力與開發工具處理。', 'skills.ai.name': 'AI 工具應用', 'skills.ai.desc': '善用 AI 工具 (ChatGPT, Gemini)', 'skills.fe': '前端開發', 'skills.be': '後端開發', 'skills.sys': '系統程式設計', 'skills.os': '系統與環境', 'skills.app': '應用程式開發', 'skills.db': '資料庫管理',
+                'skills.sub': '核心技術能力與開發工具。', 'skills.ai.name': 'AI 工具應用', 'skills.ai.desc': '善用 AI 工具 (ChatGPT, Gemini)', 'skills.fe': '前端開發', 'skills.be': '後端開發', 'skills.sys': '系統程式設計', 'skills.os': '系統與環境', 'skills.app': '應用程式開發', 'skills.db': '資料庫設計與效能調校',
                 'proj.stock.title': '股票庫存損益管理儀表板', 'proj.stock.desc': '提供完整的股票庫存追蹤與即時損益分析，幫助投資者更精確地管理資產組合。',
                 'proj.file.title': '雲端檔案管理系統 - 需求分析與設計', 'proj.file.desc': '針對大規模雲端存儲系統進行深入的需求分析與架構設計。',
                 'proj.playlist.title': 'YouTube 播放清單', 'proj.playlist.desc': '整合個人推薦與技術相關的 YouTube 影片清單，打造個性化的影音學習庫。',
@@ -584,14 +624,14 @@
                 'proj.more': '更多專案開發中...', 'contact.sub': '歡迎透過以下方式與我聯繫，期待與您的交流！'
             },
             en: {
-                'nav.exp': 'Experience', 'nav.edu': 'Education', 'nav.skills': 'Skills', 'nav.hobby': 'Interests', 'nav.proj': 'Projects', 'nav.contact': 'Contact', 'nav.lang': 'Language',
-                'hero.sub': 'Senior Engineer specialized in software development and innovation, currently at Winbond.', 'hero.btn1': 'View Projects', 'hero.btn2': 'About Me',
+                'nav.about': 'About', 'about.p1': 'At Winbond, I develop and maintain in-house engineering data systems for the fab. I work closely with wafer, shot, die and defect-level manufacturing data, and turn it into tools engineers can use quickly.', 'about.p2': 'I design systems starting from the user scenario, balancing table design, performance, data retention and API architecture, so they not only work but stay stable over the long run. Getting things done is the baseline; getting them done well is what motivates me.', 'about.p3': 'I keep learning about AI on my own and bring it into real workflows, including building team-specific AI Skills that speed up development, debugging and documentation.', 'exp.winbond.b1': 'Develop and maintain fab engineering data systems (YIDA, WMAP, QRA, IIDS) that let engineering teams query and analyze production data quickly.', 'exp.winbond.b2': 'WMAP wafer defect analysis: built a multi-layer Canvas wafer map overlaying wafer, shot, die and defect data to help correlate defect patterns with yield.', 'exp.winbond.b3': 'Own end-to-end system design: requirements, table schema and index design, partitioning, and data archive and restore procedures.', 'exp.winbond.b4': 'Established layered API conventions (Model / DAO / Data Fetcher) and ETL-based scheduling to improve maintainability.', 'exp.winbond.b5': 'Drove AI adoption by building team AI Skills and document templates, making system and test documentation more consistent and efficient.', 'skills.etl': 'Data Scheduling & Integration', 'skills.wafer.name': 'Wafer Manufacturing Data', 'skills.wafer.desc': 'Yield/defect analysis & wafer map visualization', 'nav.exp': 'Experience', 'nav.edu': 'Education', 'nav.skills': 'Skills', 'nav.hobby': 'Interests', 'nav.proj': 'Projects', 'nav.contact': 'Contact', 'nav.lang': 'Language',
+                'hero.sub': 'Principal Engineer at Winbond, building wafer-manufacturing data systems that help engineers get the right data, fast.', 'hero.btn1': 'View Projects', 'hero.btn2': 'About Me',
                 'exp.principal.title': 'Principal Engineer', 'exp.senior.title': 'Senior Engineer', 'exp.engineer.title': 'Engineer',
                 'exp.winbond.name': 'Winbond Electronics Corporation', 'exp.winbond.location': 'Taichung, Taiwan',
                 'exp.edu.title': 'Substitute Services (Educational Services)', 'exp.edu.company': 'Education Bureau, Kaohsiung City Government, Kaohsiung, Taiwan',
                 'exp.ms.title': 'RD Intern', 'exp.ms.company': 'Microsoft Taiwan, Taipei, Taiwan',
                 'edu.nctu.title': 'Master of Multimedia Engineering', 'edu.nctu.school': 'National Chiao Tung University (NCTU)', 'edu.yzu.title': 'Bachelor of Computer Science and Engineering', 'edu.yzu.school': 'Yuan Ze University (YZU)',
-                'skills.sub': 'Core technical competencies and tools.', 'skills.ai.name': 'AI Tools', 'skills.ai.desc': 'Proficient in AI Tools (ChatGPT, Gemini)', 'skills.fe': 'Front-End Development', 'skills.be': 'Back-End Development', 'skills.sys': 'System Programming', 'skills.os': 'System & Environment', 'skills.app': 'Application Development', 'skills.db': 'Database Management',
+                'skills.sub': 'Core technical competencies and tools.', 'skills.ai.name': 'AI Tools', 'skills.ai.desc': 'Proficient in AI Tools (ChatGPT, Gemini)', 'skills.fe': 'Front-End Development', 'skills.be': 'Back-End Development', 'skills.sys': 'System Programming', 'skills.os': 'System & Environment', 'skills.app': 'Application Development', 'skills.db': 'Database Design & Tuning',
                 'proj.stock.title': 'Stock Portfolio Dashboard', 'proj.stock.desc': 'A comprehensive dashboard for tracking stock inventory and real-time P&L analysis.',
                 'proj.file.title': 'Cloud File System - Analysis & Design', 'proj.file.desc': 'In-depth requirement analysis and architectural design for large-scale cloud storage systems.',
                 'proj.playlist.title': 'YouTube Playlist', 'proj.playlist.desc': 'Curated list of technical and personal favorite YouTube videos for personalized learning.',
