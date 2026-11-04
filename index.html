@@ -39,6 +39,27 @@
         .dark .timeline-dot::before {
             border-color: #1f2937;
         }
+        /* 同公司內的職位節點 */
+        .role-dot::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            border: 2px solid white;
+        }
+        .role-dot-current::before {
+            background-color: #3b82f6;
+        }
+        .dark .role-dot::before {
+            border-color: #1f2937;
+        }
+        .dark .role-dot:not(.role-dot-current)::before {
+            background-color: #475569;
+        }
         /* 頭像懸浮效果 */
         .profile-image:hover {
             transform: scale(1.05);
@@ -153,19 +174,24 @@
             
             <div class="space-y-12 border-l-2 border-slate-200 dark:border-slate-700 ml-4">
                 <div class="relative pl-8 timeline-dot">
-                    <span class="text-sm font-bold text-blue-500" data-i18n="exp.principal.date">正在計算服務時間...</span>
-                    <h3 class="text-xl font-bold mt-1" data-i18n="exp.principal.title">資深工程師</h3>
-                    <p class="text-slate-600 dark:text-slate-400" data-i18n="exp.winbond.company">華邦電子 | 台中</p>
-                </div>
-                <div class="relative pl-8 timeline-dot">
-                    <span class="text-sm font-bold text-slate-500" data-i18n="exp.senior.date">2022年4月 - 2025年3月 (3年)</span>
-                    <h3 class="text-xl font-bold mt-1" data-i18n="exp.senior.title">高級工程師</h3>
-                    <p class="text-slate-600 dark:text-slate-400" data-i18n="exp.winbond.company">華邦電子 | 台中</p>
-                </div>
-                <div class="relative pl-8 timeline-dot">
-                    <span class="text-sm font-bold text-slate-500" data-i18n="exp.engineer.date">2018年12月 - 2022年3月 (3年4個月)</span>
-                    <h3 class="text-xl font-bold mt-1" data-i18n="exp.engineer.title">工程師</h3>
-                    <p class="text-slate-600 dark:text-slate-400" data-i18n="exp.winbond.company">華邦電子 | 台中</p>
+                    <span class="text-sm font-bold text-blue-500" data-i18n="exp.winbond.date">正在計算服務時間...</span>
+                    <h3 class="text-xl font-bold mt-1" data-i18n="exp.winbond.name">華邦電子</h3>
+                    <p class="text-slate-600 dark:text-slate-400" data-i18n="exp.winbond.location">台中</p>
+                    <!-- Roles within Winbond -->
+                    <div class="mt-5 space-y-5 border-l-2 border-slate-200 dark:border-slate-700">
+                        <div class="relative pl-6 role-dot role-dot-current">
+                            <h4 class="text-lg font-bold" data-i18n="exp.principal.title">資深工程師</h4>
+                            <span class="text-sm font-medium text-blue-500" data-i18n="exp.principal.date">正在計算服務時間...</span>
+                        </div>
+                        <div class="relative pl-6 role-dot">
+                            <h4 class="text-lg font-bold" data-i18n="exp.senior.title">高級工程師</h4>
+                            <span class="text-sm font-medium text-slate-500" data-i18n="exp.senior.date">2022年4月 - 2025年3月 (3年)</span>
+                        </div>
+                        <div class="relative pl-6 role-dot">
+                            <h4 class="text-lg font-bold" data-i18n="exp.engineer.title">工程師</h4>
+                            <span class="text-sm font-medium text-slate-500" data-i18n="exp.engineer.date">2018年12月 - 2022年3月 (3年4個月)</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="relative pl-8 timeline-dot">
                     <span class="text-sm font-bold text-slate-500" data-i18n="exp.edu.date">2018年1月 - 2018年11月 (11個月)</span>
@@ -510,6 +536,7 @@
         // Date Calculation Logic
         // Months are 1-based; both start and end months count (e.g. Jan-Nov = 11 months). No end = present.
         const EXPERIENCE_DATES = {
+            'exp.winbond.date': { start: [2018, 12] },
             'exp.principal.date': { start: [2025, 4] },
             'exp.senior.date': { start: [2022, 4], end: [2025, 3] },
             'exp.engineer.date': { start: [2018, 12], end: [2022, 3] },
@@ -544,7 +571,7 @@
                 'nav.exp': '工作經驗', 'nav.edu': '教育背景', 'nav.skills': '技能專長', 'nav.hobby': '興趣嗜好', 'nav.proj': '專案展示', 'nav.contact': '聯絡方式', 'nav.lang': '語言切換',
                 'hero.sub': '資深工程師，專注於軟體開發與技術創新，現職於華邦電子。', 'hero.btn1': '查看專案', 'hero.btn2': '關於我',
                 'exp.principal.title': '資深工程師', 'exp.senior.title': '高級工程師', 'exp.engineer.title': '工程師',
-                'exp.winbond.company': '華邦電子 | 台中',
+                'exp.winbond.name': '華邦電子', 'exp.winbond.location': '台中',
                 'exp.edu.title': '替代役 (教育役)', 'exp.edu.company': '高雄市政府教育局 | 高雄',
                 'exp.ms.title': '研發實習生', 'exp.ms.company': '台灣微軟 | 台北',
                 'edu.nctu.title': '多媒體工程研究所 碩士', 'edu.nctu.school': '國立交通大學 (NCTU)', 'edu.yzu.title': '資訊工程學系 學士', 'edu.yzu.school': '元智大學 (YZU)',
@@ -560,7 +587,7 @@
                 'nav.exp': 'Experience', 'nav.edu': 'Education', 'nav.skills': 'Skills', 'nav.hobby': 'Interests', 'nav.proj': 'Projects', 'nav.contact': 'Contact', 'nav.lang': 'Language',
                 'hero.sub': 'Senior Engineer specialized in software development and innovation, currently at Winbond.', 'hero.btn1': 'View Projects', 'hero.btn2': 'About Me',
                 'exp.principal.title': 'Principal Engineer', 'exp.senior.title': 'Senior Engineer', 'exp.engineer.title': 'Engineer',
-                'exp.winbond.company': 'Winbond Electronics Corporation, Taichung, Taiwan',
+                'exp.winbond.name': 'Winbond Electronics Corporation', 'exp.winbond.location': 'Taichung, Taiwan',
                 'exp.edu.title': 'Substitute Services (Educational Services)', 'exp.edu.company': 'Education Bureau, Kaohsiung City Government, Kaohsiung, Taiwan',
                 'exp.ms.title': 'RD Intern', 'exp.ms.company': 'Microsoft Taiwan, Taipei, Taiwan',
                 'edu.nctu.title': 'Master of Multimedia Engineering', 'edu.nctu.school': 'National Chiao Tung University (NCTU)', 'edu.yzu.title': 'Bachelor of Computer Science and Engineering', 'edu.yzu.school': 'Yuan Ze University (YZU)',
