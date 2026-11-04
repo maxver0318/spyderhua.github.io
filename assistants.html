@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 小助理們 | Po-Han Huang</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .agent-card { border-top: 4px solid var(--agent-color); }
+        .agent-avatar { background-color: var(--agent-color); }
+        .agent-accent { color: var(--agent-color); }
+        .agent-quote { border-left: 3px solid var(--agent-color); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
+
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center text-sm font-medium hover:text-blue-500 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <span data-i18n="nav.back">回到首頁</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                <button id="langToggle" class="px-3 py-1 rounded-full border border-slate-300 dark:border-slate-600 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EN</button>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
+                    <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="max-w-5xl mx-auto px-4 pt-16 pb-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight" data-i18n="hero.title">我的 AI 小助理們</h1>
+        <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto" data-i18n="hero.sub">每個小助理都有自己的名字、個性和專長，各自負責生活與工作中的不同事情。</p>
+        <div id="summary" class="mt-6 flex justify-center gap-3 text-sm"></div>
+    </header>
+
+    <!-- Assistants -->
+    <main class="max-w-5xl mx-auto px-4 pb-16">
+        <div id="assistantGrid" class="grid md:grid-cols-2 gap-6"></div>
+    </main>
+
+    <!-- How to add -->
+    <section class="bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-3xl mx-auto px-4 py-14">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="howto.title">如何培養新的小助理</span>
+            </h2>
+            <ol class="space-y-3 text-slate-600 dark:text-slate-400 list-decimal pl-5">
+                <li data-i18n="howto.s1">在上方卡片按下「複製人設提示詞」，取得這位助理完整的個性設定。</li>
+                <li data-i18n="howto.s2">在 Grok 建立新的 bot，把提示詞貼到系統指令（System Prompt）裡。</li>
+                <li data-i18n="howto.s3">要新增助理時，在 assistants-data.js 複製一個助理的資料並修改，頁面會自動產生新的卡片。</li>
+                <li data-i18n="howto.s4">助理上線後，把 status 從 planned 改成 active，卡片就會顯示「已上線」。</li>
+            </ol>
+        </div>
+    </section>
+
+    <footer class="py-10 border-t border-slate-200 dark:border-slate-800 text-center text-slate-500 text-sm">
+        <p>© <span id="year"></span> Po-Han Huang. Built for GitHub Pages.</p>
+    </footer>
+
+    <script src="assistants-data.js"></script>
+    <script>
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        const UI = {
+            zh: {
+                'nav.back': '回到首頁',
+                'hero.title': '我的 AI 小助理們',
+                'hero.sub': '每個小助理都有自己的名字、個性和專長，各自負責生活與工作中的不同事情。',
+                'howto.title': '如何培養新的小助理',
+                'howto.s1': '在上方卡片按下「複製人設提示詞」，取得這位助理完整的個性設定。',
+                'howto.s2': '在 Grok 建立新的 bot，把提示詞貼到系統指令（System Prompt）裡。',
+                'howto.s3': '要新增助理時，在 assistants-data.js 複製一個助理的資料並修改，頁面會自動產生新的卡片。',
+                'howto.s4': '助理上線後，把 status 從 planned 改成 active，卡片就會顯示「已上線」。',
+                active: '已上線', planned: '規劃中',
+                total: (n) => `共 ${n} 位助理`, activeCount: (n) => `${n} 位已上線`,
+                personality: '個性', likes: '喜歡的事', boundaries: '界線',
+                copy: '複製人設提示詞', copied: '已複製！', showPrompt: '查看提示詞'
+            },
+            en: {
+                'nav.back': 'Back to home',
+                'hero.title': 'My AI Assistants',
+                'hero.sub': 'Each assistant has its own name, personality and strengths, and looks after a different part of work and life.',
+                'howto.title': 'How to raise a new assistant',
+                'howto.s1': 'Press "Copy persona prompt" on a card to get that assistant\'s full persona.',
+                'howto.s2': 'Create a new bot in Grok and paste the prompt into its system prompt.',
+                'howto.s3': 'To add an assistant, copy an entry in assistants-data.js and edit it. The page builds the new card automatically.',
+                'howto.s4': 'Once an assistant is live, change its status from planned to active and the card will show "Active".',
+                active: 'Active', planned: 'Planned',
+                total: (n) => `${n} assistants`, activeCount: (n) => `${n} active`,
+                personality: 'Personality', likes: 'Likes', boundaries: 'Boundaries',
+                copy: 'Copy persona prompt', copied: 'Copied!', showPrompt: 'View prompt'
+            }
+        };
+
+        // The persona prompt is always in Traditional Chinese, since the assistants talk to their owner in Chinese.
+        function buildPrompt(agent) {
+            const teammates = ASSISTANTS.filter(a => a.id !== agent.id)
+                .map(a => `- ${a.name}（${a.nameZh}）：${a.role.zh}`).join('\n');
+            const list = (items) => items.map(i => `- ${i}`).join('\n');
+            return [
+                `你是「${agent.name}」（中文名：${agent.nameZh}），${OWNER_NAME} 的個人小助理之一。`,
+                `你的角色：${agent.role.zh}`,
+                `自我介紹：${agent.intro.zh}`,
+                `\n你的個性：\n${list(agent.personality.zh)}`,
+                `\n你喜歡的事：\n${list(agent.likes.zh)}`,
+                `\n你的口頭禪：「${agent.catchphrase.zh}」`,
+                `\n你的界線（不做的事，或一定要先問 ${OWNER_NAME} 的事）：\n${list(agent.boundaries.zh)}`,
+                `\n你的夥伴（同樣是 ${OWNER_NAME} 的小助理）：\n${teammates}`,
+                `\n請用繁體中文和 ${OWNER_NAME} 對話，保持上面的個性，但不要每次都把設定唸出來。`
+            ].join('\n');
+        }
+
+        function el(tag, className, text) {
+            const node = document.createElement(tag);
+            if (className) node.className = className;
+            if (text !== undefined) node.textContent = text;
+            return node;
+        }
+
+        function listBlock(title, items) {
+            const wrap = el('div');
+            wrap.appendChild(el('h4', 'text-xs font-bold uppercase tracking-wider text-slate-500 mb-2', title));
+            const ul = el('ul', 'space-y-1 text-sm text-slate-600 dark:text-slate-300');
+            items.forEach(item => {
+                const li = el('li', 'flex');
+                li.appendChild(el('span', 'agent-accent mr-2', '•'));
+                li.appendChild(el('span', '', item));
+                ul.appendChild(li);
+            });
+            wrap.appendChild(ul);
+            return wrap;
+        }
+
+        function renderCard(agent, lang) {
+            const t = UI[lang];
+            const card = el('article', 'agent-card bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 flex flex-col');
+            card.style.setProperty('--agent-color', agent.color);
+
+            const head = el('div', 'flex items-center mb-4');
+            head.appendChild(el('div', 'agent-avatar w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0', agent.name[0]));
+            const titles = el('div', 'ml-4 min-w-0');
+            const nameRow = el('div', 'flex items-baseline flex-wrap gap-x-2');
+            nameRow.appendChild(el('h3', 'text-2xl font-bold', agent.name));
+            if (lang === 'zh') nameRow.appendChild(el('span', 'text-slate-500', agent.nameZh));
+            titles.appendChild(nameRow);
+            titles.appendChild(el('p', 'agent-accent text-sm font-semibold', agent.role[lang]));
+            head.appendChild(titles);
+            card.appendChild(head);
+
+            const badges = el('div', 'flex flex-wrap gap-2 mb-4 text-xs font-semibold');
+            badges.appendChild(el('span', 'px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300', agent.platform));
+            const statusClass = agent.status === 'active'
+                ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
+                : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
+            badges.appendChild(el('span', `px-2.5 py-1 rounded-full ${statusClass}`, t[agent.status]));
+            card.appendChild(badges);
+
+            card.appendChild(el('p', 'text-slate-600 dark:text-slate-400 mb-4', agent.intro[lang]));
+            card.appendChild(el('blockquote', 'agent-quote pl-3 italic text-slate-700 dark:text-slate-200 mb-5', lang === 'zh' ? `「${agent.catchphrase.zh}」` : `"${agent.catchphrase.en}"`));
+
+            const blocks = el('div', 'space-y-4 mb-6');
+            blocks.appendChild(listBlock(t.personality, agent.personality[lang]));
+            blocks.appendChild(listBlock(t.likes, agent.likes[lang]));
+            blocks.appendChild(listBlock(t.boundaries, agent.boundaries[lang]));
+            card.appendChild(blocks);
+
+            const prompt = buildPrompt(agent);
+            const actions = el('div', 'mt-auto');
+            const copyBtn = el('button', 'agent-avatar w-full text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition-opacity', t.copy);
+            copyBtn.addEventListener('click', () => copyText(prompt, copyBtn, t));
+            actions.appendChild(copyBtn);
+            const details = el('details', 'mt-3 text-sm');
+            details.appendChild(el('summary', 'cursor-pointer text-slate-500 hover:text-slate-700 dark:hover:text-slate-300', t.showPrompt));
+            details.appendChild(el('pre', 'mt-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg whitespace-pre-wrap text-xs text-slate-600 dark:text-slate-400', prompt));
+            actions.appendChild(details);
+            card.appendChild(actions);
+            return card;
+        }
+
+        function copyText(text, button, t) {
+            const done = () => {
+                button.textContent = t.copied;
+                setTimeout(() => { button.textContent = t.copy; }, 1500);
+            };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(done);
+                return;
+            }
+            const area = document.createElement('textarea');
+            area.value = text;
+            document.body.appendChild(area);
+            area.select();
+            document.execCommand('copy');
+            area.remove();
+            done();
+        }
+
+        let currentLang = 'zh';
+        try { if (localStorage.getItem('lang') === 'en') currentLang = 'en'; } catch (e) {}
+
+        function render(lang) {
+            const t = UI[lang];
+            document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+            document.querySelectorAll('[data-i18n]').forEach(node => {
+                node.textContent = t[node.getAttribute('data-i18n')];
+            });
+            document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+
+            const activeCount = ASSISTANTS.filter(a => a.status === 'active').length;
+            const summary = document.getElementById('summary');
+            summary.replaceChildren(
+                el('span', 'px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800', t.total(ASSISTANTS.length)),
+                el('span', 'px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300', t.activeCount(activeCount))
+            );
+
+            const grid = document.getElementById('assistantGrid');
+            grid.replaceChildren(...ASSISTANTS.map(agent => renderCard(agent, lang)));
+        }
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            try { localStorage.setItem('lang', currentLang); } catch (e) {}
+            render(currentLang);
+        });
+
+        // Theme: shares the same 'theme' setting as the home page.
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+        let savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+        });
+
+        render(currentLang);
+    </script>
+</body>
+</html>
