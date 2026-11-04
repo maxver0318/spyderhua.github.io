@@ -26,6 +26,7 @@
         .agent-avatar { background-color: var(--agent-color); }
         .agent-accent { color: var(--agent-color); }
         .agent-quote { border-left: 3px solid var(--agent-color); }
+        .pixel-avatar { image-rendering: pixelated; box-shadow: 0 0 0 3px var(--agent-color); }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
@@ -159,7 +160,16 @@
             card.style.setProperty('--agent-color', agent.color);
 
             const head = el('div', 'flex items-center mb-4');
-            head.appendChild(el('div', 'agent-avatar w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0', agent.name[0]));
+            if (agent.avatar) {
+                const img = el('img', 'pixel-avatar w-16 h-16 rounded-xl shrink-0');
+                img.src = agent.avatar;
+                img.alt = lang === 'zh' ? `${agent.nameZh}的頭像` : `${agent.name}'s avatar`;
+                img.width = 64;
+                img.height = 64;
+                head.appendChild(img);
+            } else {
+                head.appendChild(el('div', 'agent-avatar w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0', agent.name[0]));
+            }
             const titles = el('div', 'ml-4 min-w-0');
             const nameRow = el('div', 'flex items-baseline flex-wrap gap-x-2');
             nameRow.appendChild(el('h3', 'text-2xl font-bold', agent.name));
