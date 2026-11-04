@@ -153,12 +153,22 @@
             
             <div class="space-y-12 border-l-2 border-slate-200 dark:border-slate-700 ml-4">
                 <div class="relative pl-8 timeline-dot">
-                    <span class="text-sm font-bold text-blue-500" id="winbond-date" data-i18n="exp.winbond.date">正在計算服務時間...</span>
-                    <h3 class="text-xl font-bold mt-1" data-i18n="exp.winbond.title">Senior Engineer 資深工程師</h3>
+                    <span class="text-sm font-bold text-blue-500" data-i18n="exp.principal.date">正在計算服務時間...</span>
+                    <h3 class="text-xl font-bold mt-1" data-i18n="exp.principal.title">Principal Engineer 主任工程師</h3>
                     <p class="text-slate-600 dark:text-slate-400" data-i18n="exp.winbond.company">Winbond Electronics Corporation (華邦電子) | 台中</p>
                 </div>
                 <div class="relative pl-8 timeline-dot">
-                    <span class="text-sm font-bold text-slate-500" data-i18n="exp.edu.date">2018年1月 - 2018年11月 (1年)</span>
+                    <span class="text-sm font-bold text-slate-500" data-i18n="exp.senior.date">2022年4月 - 2025年3月 (3年)</span>
+                    <h3 class="text-xl font-bold mt-1" data-i18n="exp.senior.title">Senior Engineer 資深工程師</h3>
+                    <p class="text-slate-600 dark:text-slate-400" data-i18n="exp.winbond.company">Winbond Electronics Corporation (華邦電子) | 台中</p>
+                </div>
+                <div class="relative pl-8 timeline-dot">
+                    <span class="text-sm font-bold text-slate-500" data-i18n="exp.engineer.date">2018年12月 - 2022年3月 (3年4個月)</span>
+                    <h3 class="text-xl font-bold mt-1" data-i18n="exp.engineer.title">Engineer 工程師</h3>
+                    <p class="text-slate-600 dark:text-slate-400" data-i18n="exp.winbond.company">Winbond Electronics Corporation (華邦電子) | 台中</p>
+                </div>
+                <div class="relative pl-8 timeline-dot">
+                    <span class="text-sm font-bold text-slate-500" data-i18n="exp.edu.date">2018年1月 - 2018年11月 (11個月)</span>
                     <h3 class="text-xl font-bold mt-1" data-i18n="exp.edu.title">Substitute Services 替代役 (教育役)</h3>
                     <p class="text-slate-600 dark:text-slate-400" data-i18n="exp.edu.company">Education Bureau, Kaohsiung City Government (高雄市政府教育局) | 高雄</p>
                 </div>
@@ -498,22 +508,45 @@
         });
 
         // Date Calculation Logic
-        function getWinbondExperience(lang) {
-            const startDate = new Date(2018, 11, 1); // 2018-12-01
+        // Months are 1-based; both start and end months count (e.g. Jan-Nov = 11 months). No end = present.
+        const EXPERIENCE_DATES = {
+            'exp.principal.date': { start: [2025, 4] },
+            'exp.senior.date': { start: [2022, 4], end: [2025, 3] },
+            'exp.engineer.date': { start: [2018, 12], end: [2022, 3] },
+            'exp.edu.date': { start: [2018, 1], end: [2018, 11] },
+            'exp.ms.date': { start: [2014, 7], end: [2015, 6] }
+        };
+        const EN_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        function formatDuration(totalMonths, lang) {
+            const years = Math.floor(totalMonths / 12);
+            const months = totalMonths % 12;
+            if (lang === 'zh') {
+                return (years ? `${years}年` : '') + (months ? `${months}個月` : '');
+            }
+            const parts = [];
+            if (years) parts.push(`${years} ${years === 1 ? 'year' : 'years'}`);
+            if (months) parts.push(`${months} ${months === 1 ? 'month' : 'months'}`);
+            return parts.join(' ');
+        }
+
+        function getExperienceDate({ start, end }, lang) {
             const today = new Date();
-            let years = today.getFullYear() - startDate.getFullYear();
-            let months = today.getMonth() - startDate.getMonth();
-            if (months < 0) { years--; months += 12; }
-            return lang === 'zh' ? `2018年12月 - 至今 (${years}年${months}個月)` : `Dec 2018 - Present (${years} years ${months} months)`;
+            const [endYear, endMonth] = end || [today.getFullYear(), today.getMonth() + 1];
+            const totalMonths = (endYear - start[0]) * 12 + (endMonth - start[1]) + 1;
+            const fmt = ([y, m]) => lang === 'zh' ? `${y}年${m}月` : `${EN_MONTHS[m - 1]} ${y}`;
+            const endLabel = end ? fmt(end) : (lang === 'zh' ? '至今' : 'Present');
+            return `${fmt(start)} - ${endLabel} (${formatDuration(totalMonths, lang)})`;
         }
 
         const i18n = {
             zh: {
                 'nav.exp': '工作經驗', 'nav.edu': '教育背景', 'nav.skills': '技能專長', 'nav.hobby': '興趣嗜好', 'nav.proj': '專案展示', 'nav.contact': '聯絡方式', 'nav.lang': '語言切換',
                 'hero.sub': '資深工程師，專注於軟體開發與技術創新，現職於華邦電子。', 'hero.btn1': '查看專案', 'hero.btn2': '關於我',
-                'exp.winbond.title': 'Senior Engineer 資深工程師', 'exp.winbond.company': 'Winbond Electronics Corporation (華邦電子) | 台中',
+                'exp.principal.title': 'Principal Engineer 主任工程師', 'exp.senior.title': 'Senior Engineer 資深工程師', 'exp.engineer.title': 'Engineer 工程師',
+                'exp.winbond.company': 'Winbond Electronics Corporation (華邦電子) | 台中',
                 'exp.edu.title': 'Substitute Services 替代役 (教育役)', 'exp.edu.company': 'Education Bureau, Kaohsiung City Government (高雄市政府教育局) | 高雄',
-                'exp.ms.date': '2014年7月 - 2015年6月 (1年)', 'exp.ms.title': 'RD Intern 研發實習生', 'exp.ms.company': 'Microsoft Taiwan (台灣微軟) | 台北',
+                'exp.ms.title': 'RD Intern 研發實習生', 'exp.ms.company': 'Microsoft Taiwan (台灣微軟) | 台北',
                 'edu.nctu.title': '多媒體工程研究所 碩士', 'edu.nctu.school': '國立交通大學 (NCTU)', 'edu.yzu.title': '資訊工程學系 學士', 'edu.yzu.school': '元智大學 (YZU)',
                 'skills.sub': '核心技術能力與開發工具處理。', 'skills.ai.name': 'AI 工具應用', 'skills.ai.desc': '善用 AI 工具 (ChatGPT, Gemini)', 'skills.fe': '前端開發', 'skills.be': '後端開發', 'skills.sys': '系統程式設計', 'skills.os': '系統與環境', 'skills.app': '應用程式開發', 'skills.db': '資料庫管理',
                 'proj.stock.title': '股票庫存損益管理儀表板', 'proj.stock.desc': '提供完整的股票庫存追蹤與即時損益分析，幫助投資者更精確地管理資產組合。',
@@ -526,9 +559,10 @@
             en: {
                 'nav.exp': 'Experience', 'nav.edu': 'Education', 'nav.skills': 'Skills', 'nav.hobby': 'Interests', 'nav.proj': 'Projects', 'nav.contact': 'Contact', 'nav.lang': 'Language',
                 'hero.sub': 'Senior Engineer specialized in software development and innovation, currently at Winbond.', 'hero.btn1': 'View Projects', 'hero.btn2': 'About Me',
-                'exp.winbond.title': 'Senior Engineer', 'exp.winbond.company': 'Winbond Electronics Corporation, Taichung, Taiwan',
-                'exp.edu.date': 'Jan 2018 - Nov 2018 (1 year)', 'exp.edu.title': 'Substitute Services (Educational Services)', 'exp.edu.company': 'Education Bureau, Kaohsiung City Government, Taiwan',
-                'exp.ms.date': 'July 2014 - June 2015 (1 year)', 'exp.ms.title': 'RD Intern', 'exp.ms.company': 'Microsoft Taiwan, Taipei, Taiwan',
+                'exp.principal.title': 'Principal Engineer', 'exp.senior.title': 'Senior Engineer', 'exp.engineer.title': 'Engineer',
+                'exp.winbond.company': 'Winbond Electronics Corporation, Taichung, Taiwan',
+                'exp.edu.title': 'Substitute Services (Educational Services)', 'exp.edu.company': 'Education Bureau, Kaohsiung City Government, Kaohsiung, Taiwan',
+                'exp.ms.title': 'RD Intern', 'exp.ms.company': 'Microsoft Taiwan, Taipei, Taiwan',
                 'edu.nctu.title': 'Master of Multimedia Engineering', 'edu.nctu.school': 'National Chiao Tung University (NCTU)', 'edu.yzu.title': 'Bachelor of Computer Science and Engineering', 'edu.yzu.school': 'Yuan Ze University (YZU)',
                 'skills.sub': 'Core technical competencies and tools.', 'skills.ai.name': 'AI Tools', 'skills.ai.desc': 'Proficient in AI Tools (ChatGPT, Gemini)', 'skills.fe': 'Front-End Development', 'skills.be': 'Back-End Development', 'skills.sys': 'System Programming', 'skills.os': 'System & Environment', 'skills.app': 'Application Development', 'skills.db': 'Database Management',
                 'proj.stock.title': 'Stock Portfolio Dashboard', 'proj.stock.desc': 'A comprehensive dashboard for tracking stock inventory and real-time P&L analysis.',
@@ -545,7 +579,9 @@
         const langToggleMobile = document.getElementById('langToggleMobile');
 
         function updateLanguage(lang) {
-            i18n[lang]['exp.winbond.date'] = getWinbondExperience(lang);
+            Object.entries(EXPERIENCE_DATES).forEach(([key, range]) => {
+                i18n[lang][key] = getExperienceDate(range, lang);
+            });
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (i18n[lang][key]) {
