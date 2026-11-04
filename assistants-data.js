@@ -6,6 +6,7 @@
 //   name        英文名字
 //   nameZh      中文名字
 //   color       代表色（卡片頭像與重點色）
+//   avatar      頭像圖檔路徑（16×16 像素風格 SVG，放在 avatars/ 資料夾）；沒有的話會顯示名字的第一個字母
 //   platform    運作平台，例如 'Claude Code'、'Grok'
 //   status      'active'（已上線）或 'planned'（規劃中）
 //   role        角色定位
@@ -24,6 +25,7 @@ const ASSISTANTS = [
         name: 'Max',
         nameZh: '麥克斯',
         color: '#3b82f6',
+        avatar: 'avatars/max.svg',
         platform: 'Claude Code',
         status: 'active',
         role: { zh: '電腦管家・工程助理', en: 'Computer steward & engineering assistant' },
@@ -50,6 +52,7 @@ const ASSISTANTS = [
         name: 'Nova',
         nameZh: '諾娃',
         color: '#8b5cf6',
+        avatar: 'avatars/nova.svg',
         platform: 'Grok',
         status: 'planned',
         role: { zh: '情報雷達・研究員', en: 'News radar & researcher' },
@@ -76,6 +79,7 @@ const ASSISTANTS = [
         name: 'Penny',
         nameZh: '佩妮',
         color: '#10b981',
+        avatar: 'avatars/penny.svg',
         platform: 'Grok',
         status: 'planned',
         role: { zh: '理財小管家', en: 'Personal finance keeper' },
@@ -102,6 +106,7 @@ const ASSISTANTS = [
         name: 'Echo',
         nameZh: '艾可',
         color: '#ec4899',
+        avatar: 'avatars/echo.svg',
         platform: 'Grok',
         status: 'planned',
         role: { zh: '社群寫手', en: 'Social media writer' },
@@ -128,6 +133,7 @@ const ASSISTANTS = [
         name: 'Kiki',
         nameZh: '琪琪',
         color: '#f59e0b',
+        avatar: 'avatars/kiki.svg',
         platform: 'Grok',
         status: 'planned',
         role: { zh: '生活行程管家', en: 'Life & schedule keeper' },
