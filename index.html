@@ -565,9 +565,9 @@
     <script>
         // AI Team: mini cards built from assistants-data.js (same data as assistants.html)
         const AI_TEAM_UI = {
-            zh: { active: '已上線', planned: '規劃中', activeCount: (n) => `${n} 位已上線`, plannedCount: (n) => `${n} 位規劃中`,
+            zh: { active: '已上線', planned: '規劃中', ready: '提示詞已備妥', activeCount: (n) => `${n} 位已上線`, plannedCount: (n) => `${n} 位規劃中`, readyCount: (n) => `${n} 位待啟用`,
                   cta: '認識所有小助理', ctaDesc: '看看每位助理的個性與專長' },
-            en: { active: 'Active', planned: 'Planned', activeCount: (n) => `${n} active`, plannedCount: (n) => `${n} planned`,
+            en: { active: 'Active', planned: 'Planned', ready: 'Prompt ready', activeCount: (n) => `${n} active`, plannedCount: (n) => `${n} planned`, readyCount: (n) => `${n} on standby`,
                   cta: 'Meet the whole team', ctaDesc: 'Personalities, strengths and persona prompts' }
         };
         function renderAiTeam(lang) {
@@ -576,10 +576,16 @@
             if (!grid || typeof ASSISTANTS === 'undefined') return;
             const t = AI_TEAM_UI[lang];
             const make = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
-            const active = ASSISTANTS.filter(a => a.status === 'active').length;
+            const countOf = (status) => ASSISTANTS.filter(a => a.status === status).length;
+            const badgeClass = {
+                active: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+                planned: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+                ready: 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300'
+            };
             summary.replaceChildren(
-                make('span', 'px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-semibold', t.activeCount(active)),
-                make('span', 'px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 font-semibold', t.plannedCount(ASSISTANTS.length - active))
+                make('span', `px-3 py-1 rounded-full font-semibold ${badgeClass.active}`, t.activeCount(countOf('active'))),
+                make('span', `px-3 py-1 rounded-full font-semibold ${badgeClass.planned}`, t.plannedCount(countOf('planned'))),
+                make('span', `px-3 py-1 rounded-full font-semibold ${badgeClass.ready}`, t.readyCount(countOf('ready')))
             );
             grid.replaceChildren(...ASSISTANTS.map(agent => {
                 const card = make('a', 'group flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:-translate-y-0.5 transition-all');
@@ -604,12 +610,15 @@
                 const role = make('p', 'text-sm font-semibold leading-snug', agent.role[lang]);
                 role.style.color = agent.color;
                 body.appendChild(role);
-                const badge = agent.status === 'active'
-                    ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
-                    : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
                 const meta = make('div', 'flex flex-wrap gap-1.5 mt-1.5 text-xs font-semibold');
-                meta.appendChild(make('span', `px-2 py-0.5 rounded-full ${badge}`, t[agent.status]));
+                meta.appendChild(make('span', `px-2 py-0.5 rounded-full ${badgeClass[agent.status]}`, t[agent.status]));
                 meta.appendChild(make('span', 'px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300', agent.platform));
+                if (agent.badge) {
+                    const extra = make('span', 'px-2 py-0.5 rounded-full border', agent.badge[lang]);
+                    extra.style.borderColor = agent.color;
+                    extra.style.color = agent.color;
+                    meta.appendChild(extra);
+                }
                 body.appendChild(meta);
                 card.appendChild(body);
                 return card;
