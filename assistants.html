@@ -22,7 +22,7 @@
         }
     </script>
     <style>
-        .agent-card { border-top: 4px solid var(--agent-color); }
+        .agent-card { border-top: 4px solid var(--agent-color); scroll-margin-top: 5rem; }
         .agent-avatar { background-color: var(--agent-color); }
         .agent-accent { color: var(--agent-color); }
         .agent-quote { border-left: 3px solid var(--agent-color); }
@@ -34,7 +34,7 @@
     <!-- Header -->
     <nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="index.html" class="flex items-center text-sm font-medium hover:text-blue-500 transition-colors">
+            <a href="index.html#ai-team" class="flex items-center text-sm font-medium hover:text-blue-500 transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 <span data-i18n="nav.back">回到首頁</span>
             </a>
@@ -157,6 +157,7 @@
         function renderCard(agent, lang) {
             const t = UI[lang];
             const card = el('article', 'agent-card bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 flex flex-col');
+            card.id = agent.id;
             card.style.setProperty('--agent-color', agent.color);
 
             const head = el('div', 'flex items-center mb-4');
