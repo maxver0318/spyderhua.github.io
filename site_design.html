@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>網站設計 | Joe Huang</title>
+    <title>網站設計 | Joe</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,7 +65,7 @@
     <header class="max-w-4xl mx-auto px-4 pt-16 pb-12 text-center">
         <p class="text-sm font-bold tracking-widest uppercase text-indigo-500 mb-3" data-i18n="hero.kicker">網站設計</p>
         <h1 class="text-3xl md:text-5xl font-bold mb-5 tracking-tight leading-tight" data-i18n="hero.title">我如何和 AI 一起打造這個網站</h1>
-        <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto" data-i18n="hero.sub">這個網站的每一次改版，都是我和 Claude 透過對話完成的。我決定方向、提供內容、審查成果；Claude 負責實作、驗證，並整理成可以審查的 PR。</p>
+        <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto" data-i18n="hero.sub">這個網站的每一次改版，都是我和 AI 助理 Max 透過對話完成的。我決定方向、提供內容、審查成果；Max 負責實作、驗證，並整理成可以審查的 PR。</p>
         <div class="mt-8 flex flex-wrap justify-center gap-2 text-sm font-semibold">
             <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300" data-i18n="hero.chip1">用對話提出需求</span>
             <span class="px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300" data-i18n="hero.chip2">每次改版都有前後截圖</span>
@@ -90,8 +90,8 @@
                 </div>
                 <div class="p-6 rounded-2xl bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-900/60">
                     <div class="flex items-center mb-4">
-                        <span class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-3" style="background: var(--claude)">C</span>
-                        <h3 class="text-xl font-bold" data-i18n="roles.claude">Claude（AI）</h3>
+                        <img src="avatars/max.svg" alt="" width="40" height="40" class="w-10 h-10 rounded-lg mr-3" style="image-rendering: pixelated; box-shadow: 0 0 0 2px var(--claude);">
+                        <h3 class="text-xl font-bold" data-i18n="roles.claude">Max（AI 助理）</h3>
                     </div>
                     <ul class="space-y-2 text-slate-700 dark:text-slate-300" data-list="roles.claudeItems"></ul>
                 </div>
@@ -109,7 +109,7 @@
         <div class="flow-row mb-3 text-sm font-bold">
             <div class="text-center" style="color: var(--joe)" data-i18n="flow.laneJoe">我（Joe）</div>
             <div></div>
-            <div class="text-center" style="color: var(--claude)" data-i18n="flow.laneClaude">Claude</div>
+            <div class="text-center" style="color: var(--claude)" data-i18n="flow.laneClaude">Max</div>
         </div>
         <div id="flow"></div>
     </section>
@@ -119,7 +119,7 @@
         <div class="max-w-4xl mx-auto px-4 py-14">
             <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
                 <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
-                <span data-i18n="how.title">Claude 怎麼做</span>
+                <span data-i18n="how.title">Max 怎麼做</span>
             </h2>
             <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="how.sub">流程裡比較關鍵的幾個做法。</p>
             <div id="how" class="grid md:grid-cols-2 gap-5"></div>
@@ -149,7 +149,7 @@
     </section>
 
     <footer class="py-10 border-t border-slate-200 dark:border-slate-800 text-center text-slate-500 text-sm">
-        <p>© <span id="year"></span> Joe Huang. Built for GitHub Pages.</p>
+        <p>© <span id="year"></span> Joe. Built for GitHub Pages.</p>
     </footer>
 
     <script>
@@ -160,15 +160,15 @@
                 'nav.back': '回到首頁',
                 'hero.kicker': '網站設計',
                 'hero.title': '我如何和 AI 一起打造這個網站',
-                'hero.sub': '這個網站的每一次改版，都是我和 Claude 透過對話完成的。我決定方向、提供內容、審查成果；Claude 負責實作、驗證，並整理成可以審查的 PR。',
+                'hero.sub': '這個網站的每一次改版，都是我和 AI 助理 Max 透過對話完成的。我決定方向、提供內容、審查成果；Max 負責實作、驗證，並整理成可以審查的 PR。',
                 'hero.chip1': '用對話提出需求', 'hero.chip2': '每次改版都有前後截圖', 'hero.chip3': '桌機／手機 × 淺色／深色',
-                'roles.title': '誰負責什麼', 'roles.joe': '我（Joe）', 'roles.claude': 'Claude（AI）',
-                'roles.joeItems': ['提出想改的地方，說明原因', '提供真實內容：經歷、專案、介紹文字', '回答 Claude 提出的待確認問題', '審查 PR 的截圖與說明，決定是否上線'],
+                'roles.title': '誰負責什麼', 'roles.joe': '我（Joe）', 'roles.claude': 'Max（AI 助理）',
+                'roles.joeItems': ['提出想改的地方，說明原因', '提供真實內容：經歷、專案、介紹文字', '回答 Max 提出的待確認問題', '審查 PR 的截圖與說明，決定是否上線'],
                 'roles.claudeItems': ['讀取現有網站與程式碼，掌握現況', '規劃修改方式，主動提出不清楚的地方', '撰寫 HTML／Tailwind／JavaScript，中英文同步修改', '自動檢查、截圖，整理成固定格式的 PR'],
                 'flow.title': '一次改版的流程', 'flow.sub': '從提出需求到網站上線，每一步由誰負責、做了什麼。',
-                'flow.laneJoe': '我（Joe）', 'flow.laneClaude': 'Claude',
+                'flow.laneJoe': '我（Joe）', 'flow.laneClaude': 'Max',
                 'flow.loop': '需要調整？回到 ④',
-                'how.title': 'Claude 怎麼做', 'how.sub': '流程裡比較關鍵的幾個做法。',
+                'how.title': 'Max 怎麼做', 'how.sub': '流程裡比較關鍵的幾個做法。',
                 'pr.title': '每個 PR 的固定格式', 'pr.sub': '我只要看 PR 說明，就能判斷這次改版能不能上線。',
                 'history.title': '改版紀錄', 'history.sub': '用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。'
             },
@@ -176,15 +176,15 @@
                 'nav.back': 'Back to home',
                 'hero.kicker': 'Site Design',
                 'hero.title': 'How I build this site together with AI',
-                'hero.sub': 'Every change to this site is made through a conversation with Claude. I set the direction, provide the content and review the result; Claude implements, verifies, and packages each change as a reviewable PR.',
+                'hero.sub': 'Every change to this site is made through a conversation with my AI assistant Max. I set the direction, provide the content and review the result; Max implements, verifies, and packages each change as a reviewable PR.',
                 'hero.chip1': 'Requests made in conversation', 'hero.chip2': 'Before/after screenshots for every change', 'hero.chip3': 'Desktop / mobile × light / dark',
-                'roles.title': 'Who does what', 'roles.joe': 'Me (Joe)', 'roles.claude': 'Claude (AI)',
-                'roles.joeItems': ['Say what I want changed, and why', 'Provide the real content: experience, projects, intro text', "Answer Claude's open questions", 'Review the PR screenshots and notes, and decide what ships'],
+                'roles.title': 'Who does what', 'roles.joe': 'Me (Joe)', 'roles.claude': 'Max (AI assistant)',
+                'roles.joeItems': ['Say what I want changed, and why', 'Provide the real content: experience, projects, intro text', "Answer Max's open questions", 'Review the PR screenshots and notes, and decide what ships'],
                 'roles.claudeItems': ['Read the current site and code to understand where things stand', 'Plan the change and raise anything unclear', 'Write the HTML / Tailwind / JavaScript, keeping Chinese and English in sync', 'Run checks, take screenshots, and write the PR in a fixed format'],
                 'flow.title': 'The workflow for one change', 'flow.sub': 'From request to live site: who owns each step and what happens.',
-                'flow.laneJoe': 'Me (Joe)', 'flow.laneClaude': 'Claude',
+                'flow.laneJoe': 'Me (Joe)', 'flow.laneClaude': 'Max',
                 'flow.loop': 'Needs changes? Back to ④',
-                'how.title': 'How Claude does it', 'how.sub': 'The practices that matter most in the workflow.',
+                'how.title': 'How Max does it', 'how.sub': 'The practices that matter most in the workflow.',
                 'pr.title': 'A fixed format for every PR', 'pr.sub': 'The PR description alone tells me whether a change is ready to go live.',
                 'history.title': 'Change history', 'history.sub': 'PRs merged with this workflow. Open one to see its full notes and screenshots on GitHub.'
             }
@@ -205,10 +205,10 @@
         const HOW = [
             { icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', zh: ['永遠從最新版開始', '工作用的 fork 常常落後正式網站，所以每次都從正式網站的最新版開分支，避免把舊內容帶回去，也讓多個 PR 可以各自獨立合併。'], en: ['Always start from the latest', 'The working fork often lags behind the live site, so each branch starts from the latest live version. Old content never sneaks back in, and PRs can be merged independently.'] },
             { icon: 'M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129', zh: ['中英文同步', '每段文字都有對應的翻譯 key，中文與英文一起修改，並自動比對兩邊的 key 是否一致，切換語言不會出現漏翻。'], en: ['Chinese and English in sync', 'Every piece of text has a translation key. Both languages are edited together and the keys are compared automatically, so switching languages never shows a gap.'] },
-            { icon: 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z', zh: ['離線截圖', 'Claude 的工作環境無法連到外部的 CDN，所以先在本機編譯 Tailwind CSS，再用 Playwright 開啟網頁，模擬 1440px 桌機與 390px 手機，各截淺色與深色。'], en: ['Offline screenshots', "Claude's workspace cannot reach external CDNs, so it compiles Tailwind CSS locally, then opens the pages in Playwright at 1440px desktop and 390px mobile, in light and dark mode."] },
+            { icon: 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z', zh: ['真實瀏覽器截圖', 'Max 在專屬的 Mac 上用 Chrome 搭配 Playwright 開啟網頁，模擬 1440px 桌機與 390px 手機，各截淺色與深色，並親自檢查每一張。'], en: ['Real-browser screenshots', "On its own Mac, Max opens the pages in Chrome through Playwright at 1440px desktop and 390px mobile, in light and dark mode, and inspects every shot."] },
             { icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', zh: ['自動檢查', '截圖的同時檢查 JavaScript 錯誤、頁內連結有沒有對應的區塊、手機版會不會左右滑動、圖片能不能載入。修改後不能出現修改前沒有的問題。'], en: ['Automated checks', 'While taking screenshots it checks for JavaScript errors, in-page links without a target, horizontal scrolling on mobile, and images that fail to load. A change may not add problems that were not there before.'] },
             { icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z', zh: ['截圖另外存放', '截圖放在獨立的 pr-assets 分支，PR 說明直接引用，不會混進網站的程式碼。'], en: ['Screenshots kept separate', 'Screenshots live on a separate pr-assets branch and are embedded in the PR notes, so they never mix with the site code.'] },
-            { icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', zh: ['把流程寫成 Skill', '整套步驟與 PR 格式寫成一份 Claude Skill。之後每次改版，Claude 都照同一套流程做，我不用每次重新交代。'], en: ['The workflow as a Skill', 'The steps and PR format are written down as a Claude Skill. Every later change follows the same process without me having to explain it again.'] }
+            { icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', zh: ['把流程寫成 Skill', '整套步驟與 PR 格式寫成一份 Claude Skill。之後每次改版，Max 都照同一套流程做，我不用每次重新交代。'], en: ['The workflow as a Skill', 'The steps and PR format are written down as a Claude Skill. Every later change follows the same process without me having to explain it again.'] }
         ];
 
         const PR_FORMAT = [
