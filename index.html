@@ -86,6 +86,7 @@
                     <a href="#education" class="hover:text-blue-500 transition-colors" data-i18n="nav.edu">教育背景</a>
                     <a href="#skills" class="hover:text-blue-500 transition-colors" data-i18n="nav.skills">技能專長</a>
                     <a href="#projects" class="hover:text-blue-500 transition-colors" data-i18n="nav.proj">專案展示</a>
+                    <a href="#ai-team" class="hover:text-blue-500 transition-colors" data-i18n="nav.aiteam">AI 團隊</a>
                     <a href="#contact" class="hover:text-blue-500 transition-colors" data-i18n="nav.contact">聯絡方式</a>
                     <div class="flex items-center space-x-3 ml-2 border-l border-slate-200 dark:border-slate-700 pl-4">
                         <button id="langToggle" class="px-3 py-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-xs font-bold border border-slate-300 dark:border-slate-700">
@@ -118,6 +119,7 @@
                 <a href="#education" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.edu">教育背景</a>
                 <a href="#skills" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.skills">技能專長</a>
                 <a href="#projects" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.proj">專案展示</a>
+                <a href="#ai-team" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.aiteam">AI 團隊</a>
                 <a href="#contact" class="block px-3 py-3 text-base font-medium rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" data-i18n="nav.contact">聯絡方式</a>
                 <div class="flex items-center justify-between px-3 py-3 mt-4 border-t border-slate-100 dark:border-slate-800">
                     <span class="text-sm font-bold text-slate-500" data-i18n="nav.lang">切換語言</span>
@@ -505,27 +507,20 @@
                     </div>
                 </a>
 
-                <!-- AI Assistants Card -->
-                <a href="assistants.html" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
-                        <div class="flex items-center gap-1.5" style="image-rendering: pixelated;">
-                            <img src="avatars/nova.svg" alt="" width="34" height="34" class="rounded-md">
-                            <img src="avatars/penny.svg" alt="" width="34" height="34" class="rounded-md">
-                            <img src="avatars/max.svg" alt="Max" width="56" height="56" class="rounded-lg ring-2 ring-blue-500">
-                            <img src="avatars/echo.svg" alt="" width="34" height="34" class="rounded-md">
-                            <img src="avatars/kiki.svg" alt="" width="34" height="34" class="rounded-md">
-                        </div>
-                        <div class="absolute inset-0 bg-blue-600/10 group-hover:bg-transparent transition-colors"></div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold" data-i18n="proj.assistants.title">AI 小助理們</h3>
-                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 text-sm" data-i18n="proj.assistants.desc">介紹我培養的 AI 小助理們，每一位都有自己的名字、個性與專長。</p>
-                    </div>
-                </a>
             </div>
+        </div>
+    </section>
+
+    <!-- AI Team -->
+    <section id="ai-team" class="section-padding bg-white dark:bg-slate-800/50">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-4 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="nav.aiteam">AI 團隊</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-6" data-i18n="aiteam.sub">我培養的 AI 小助理們，各自有名字、個性與專長，分工處理工作與生活中的大小事。</p>
+            <div id="aiTeamSummary" class="flex flex-wrap gap-2 mb-10 text-sm"></div>
+            <div id="aiTeamGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
     </section>
 
@@ -566,6 +561,67 @@
         <p>© <span id="year"></span> Joe. Built for GitHub Pages.</p>
     </footer>
 
+    <script src="assistants-data.js"></script>
+    <script>
+        // AI Team: mini cards built from assistants-data.js (same data as assistants.html)
+        const AI_TEAM_UI = {
+            zh: { active: '已上線', planned: '規劃中', activeCount: (n) => `${n} 位已上線`, plannedCount: (n) => `${n} 位規劃中`,
+                  cta: '認識所有小助理', ctaDesc: '看看每位助理的個性與專長' },
+            en: { active: 'Active', planned: 'Planned', activeCount: (n) => `${n} active`, plannedCount: (n) => `${n} planned`,
+                  cta: 'Meet the whole team', ctaDesc: 'Personalities, strengths and persona prompts' }
+        };
+        function renderAiTeam(lang) {
+            const grid = document.getElementById('aiTeamGrid');
+            const summary = document.getElementById('aiTeamSummary');
+            if (!grid || typeof ASSISTANTS === 'undefined') return;
+            const t = AI_TEAM_UI[lang];
+            const make = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+            const active = ASSISTANTS.filter(a => a.status === 'active').length;
+            summary.replaceChildren(
+                make('span', 'px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-semibold', t.activeCount(active)),
+                make('span', 'px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 font-semibold', t.plannedCount(ASSISTANTS.length - active))
+            );
+            grid.replaceChildren(...ASSISTANTS.map(agent => {
+                const card = make('a', 'group flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:-translate-y-0.5 transition-all');
+                card.href = `assistants.html#${agent.id}`;
+                if (agent.avatar) {
+                    const img = make('img', 'w-14 h-14 rounded-xl shrink-0');
+                    img.src = agent.avatar; img.width = 56; img.height = 56;
+                    img.alt = lang === 'zh' ? `${agent.nameZh}的頭像` : `${agent.name}'s avatar`;
+                    img.style.imageRendering = 'pixelated';
+                    img.style.boxShadow = `0 0 0 3px ${agent.color}`;
+                    card.appendChild(img);
+                } else {
+                    const dot = make('div', 'w-14 h-14 rounded-xl shrink-0 flex items-center justify-center text-white text-xl font-bold', agent.name[0]);
+                    dot.style.backgroundColor = agent.color;
+                    card.appendChild(dot);
+                }
+                const body = make('div', 'min-w-0');
+                const nameRow = make('div', 'flex items-baseline flex-wrap gap-x-2');
+                nameRow.appendChild(make('h3', 'text-lg font-bold', agent.name));
+                if (lang === 'zh') nameRow.appendChild(make('span', 'text-sm text-slate-500', agent.nameZh));
+                body.appendChild(nameRow);
+                const role = make('p', 'text-sm font-semibold leading-snug', agent.role[lang]);
+                role.style.color = agent.color;
+                body.appendChild(role);
+                const badge = agent.status === 'active'
+                    ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
+                    : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
+                const meta = make('div', 'flex flex-wrap gap-1.5 mt-1.5 text-xs font-semibold');
+                meta.appendChild(make('span', `px-2 py-0.5 rounded-full ${badge}`, t[agent.status]));
+                meta.appendChild(make('span', 'px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300', agent.platform));
+                body.appendChild(meta);
+                card.appendChild(body);
+                return card;
+            }), (() => {
+                const cta = make('a', 'group flex flex-col justify-center p-4 rounded-2xl border-2 border-dashed border-blue-200 dark:border-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors');
+                cta.href = 'assistants.html';
+                cta.appendChild(make('span', 'font-bold', `${t.cta} →`));
+                cta.appendChild(make('span', 'text-sm text-slate-500 dark:text-slate-400 mt-1', t.ctaDesc));
+                return cta;
+            })());
+        }
+    </script>
     <script>
         document.getElementById('year').innerText = new Date().getFullYear();
 
@@ -667,7 +723,7 @@
                 'proj.playlist.title': 'YouTube 播放清單', 'proj.playlist.desc': '整合個人推薦與技術相關的 YouTube 影片清單，打造個性化的影音學習庫。',
                 'proj.design.title': '設計模式教學：從混亂到優雅', 'proj.design.desc': '深入淺出探討常用軟體設計模式，透過實例展示如何重構代碼以提升系統的靈活性與可維護性。',
                 'proj.filesystem.title': '檔案管理系統', 'proj.filesystem.desc': '互動式檔案系統管理工具，提供直觀的檔案瀏覽與操作介面。',
-                'proj.assistants.title': 'AI 小助理們', 'proj.assistants.desc': '介紹我培養的 AI 小助理們，每一位都有自己的名字、個性與專長。',
+                'nav.aiteam': 'AI 團隊', 'aiteam.sub': '我培養的 AI 小助理們，各自有名字、個性與專長，分工處理工作與生活中的大小事。',
                 'proj.more': '更多專案開發中...', 'contact.sub': '歡迎透過以下方式與我聯繫，期待與您的交流！'
             },
             en: {
@@ -685,7 +741,7 @@
                 'proj.playlist.title': 'YouTube Playlist', 'proj.playlist.desc': 'Curated list of technical and personal favorite YouTube videos for personalized learning.',
                 'proj.design.title': 'Design Patterns: From Chaos to Elegance', 'proj.design.desc': 'Exploration of software design patterns with practical examples on refactoring for maintainability.',
                 'proj.filesystem.title': 'File Management System', 'proj.filesystem.desc': 'Interactive file system management tool with intuitive interface for browsing and operations.',
-                'proj.assistants.title': 'My AI Assistants', 'proj.assistants.desc': 'Meet the AI assistants I am raising, each with its own name, personality and strengths.',
+                'nav.aiteam': 'AI Team', 'aiteam.sub': 'The AI assistants I am raising, each with its own name, personality and strengths, sharing the work and everyday tasks between them.',
                 'proj.more': 'More projects coming soon...', 'contact.sub': 'Feel free to reach out to me. Looking forward to connecting!'
             }
         };
@@ -706,6 +762,7 @@
             });
             langToggle.innerText = lang === 'zh' ? 'EN' : '中文';
             langToggleMobile.innerText = lang === 'zh' ? 'EN' : '中文';
+            renderAiTeam(lang);
             currentLang = lang;
         }
 
