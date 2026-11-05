@@ -55,10 +55,43 @@
         <div id="summary" class="mt-6 flex justify-center gap-3 text-sm"></div>
     </header>
 
+    <!-- Team structure -->
+    <section id="team" class="max-w-5xl mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-2 flex items-center">
+            <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+            <span data-i18n="team.title">團隊架構</span>
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-6" data-i18n="team.stage">目前是架構階段：先只啟用幕僚長，其他助理的提示詞先備妥，需要時再啟用。</p>
+        <div id="teamChart"></div>
+    </section>
+
     <!-- Assistants -->
     <main class="max-w-5xl mx-auto px-4 pb-16">
         <div id="assistantGrid" class="grid md:grid-cols-2 gap-6"></div>
     </main>
+
+    <!-- Working rules -->
+    <section id="rules" class="max-w-3xl mx-auto px-4 pb-14">
+        <h2 class="text-2xl font-bold mb-4 flex items-center">
+            <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+            <span data-i18n="rules.title">運作守則</span>
+        </h2>
+        <ul class="space-y-3 text-slate-600 dark:text-slate-400 list-disc pl-5">
+            <li data-i18n="rules.r1">一件事一個地方：同一份結果的微調回在 thread，換成別的工作就開新 thread 或交給專職助理。</li>
+            <li data-i18n="rules.r2">派工只傳路徑：長資料放進 /workspace，對話裡只傳檔案路徑。bot 之間的訊息也會算用量。</li>
+            <li data-i18n="rules.r3">長期規則存進記憶：說一次並請它記住。共用記憶只有姓名、時區等少數事實，團隊共同規則要放在 /workspace 的檔案裡。</li>
+            <li data-i18n="rules.r4">少叫醒：流程穩定後才開 Routine，頻率寫死。每次執行都花用量，測試也是。</li>
+            <li data-i18n="rules.r5">安全靠規則，不靠分工：所有 bot 共用同一台電腦、登入狀態和憑證，只請 bot 記住界線也不夠，要搭配核准和 Ask first 規則。</li>
+        </ul>
+        <h3 class="text-lg font-bold mt-8 mb-1" data-i18n="pace.title">啟用節奏</h3>
+        <p class="text-sm text-slate-500 mb-3" data-i18n="pace.note">尚未開始，等有核心專案時再照這個節奏進行。</p>
+        <ol class="space-y-2 text-slate-600 dark:text-slate-400 list-none">
+            <li data-i18n="pace.p1">第 1 週：挑一個核心專案，先由 Iris 親手做，產出滿意了再拆給專職助理。</li>
+            <li data-i18n="pace.p2">第 2 週：只觀察，不新增 bot。</li>
+            <li data-i18n="pace.p3">第 3 週：補上真正缺的角色，停用沒用到的。</li>
+            <li data-i18n="pace.p4">第 4 週：流程穩定了，才開始設定排程。</li>
+        </ol>
+    </section>
 
     <!-- How to add -->
     <section class="bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
@@ -68,10 +101,11 @@
                 <span data-i18n="howto.title">如何培養新的小助理</span>
             </h2>
             <ol class="space-y-3 text-slate-600 dark:text-slate-400 list-decimal pl-5">
-                <li data-i18n="howto.s1">在上方卡片按下「複製人設提示詞」，取得這位助理完整的個性設定。</li>
-                <li data-i18n="howto.s2">在 Grok 建立新的 bot，把提示詞貼到系統指令（System Prompt）裡。</li>
-                <li data-i18n="howto.s3">要新增助理時，在 assistants-data.js 複製一個助理的資料並修改，頁面會自動產生新的卡片。</li>
-                <li data-i18n="howto.s4">助理上線後，把 status 從 planned 改成 active，卡片就會顯示「已上線」。</li>
+                    <li data-i18n="howto.s1">在 Grok Bot 建立新的 bot，設定名字、外型和顏色。幕僚長要用 Create primary Bot 或 Choose an existing Bot 指定為主要 bot。</li>
+                    <li data-i18n="howto.s2">在上方卡片按下「複製提示詞」，貼成這隻 bot 的第一則訊息。個人 bot 沒有描述欄位，工作和規則都在對話裡交代。</li>
+                    <li data-i18n="howto.s3">連接需要的 App，並設定「對外寄信前先問我」的 Ask first 規則。已連接的 App 每隻 bot 都能用，要真的用到才連。</li>
+                    <li data-i18n="howto.s4">啟用專職助理後，告訴 Iris 有新成員並請 Iris 記住，之後才會派工過去。</li>
+                    <li data-i18n="howto.s5">把 assistants-data.js 裡的 status 改成 active，卡片就會顯示「已上線」。要新增助理時，複製一筆資料修改即可。</li>
             </ol>
         </div>
     </section>
@@ -90,48 +124,101 @@
                 'hero.title': '我的 AI 小助理們',
                 'hero.sub': '每個小助理都有自己的名字、個性和專長，各自負責生活與工作中的不同事情。',
                 'howto.title': '如何培養新的小助理',
-                'howto.s1': '在上方卡片按下「複製人設提示詞」，取得這位助理完整的個性設定。',
-                'howto.s2': '在 Grok 建立新的 bot，把提示詞貼到系統指令（System Prompt）裡。',
-                'howto.s3': '要新增助理時，在 assistants-data.js 複製一個助理的資料並修改，頁面會自動產生新的卡片。',
-                'howto.s4': '助理上線後，把 status 從 planned 改成 active，卡片就會顯示「已上線」。',
-                active: '已上線', planned: '規劃中',
-                total: (n) => `共 ${n} 位助理`, activeCount: (n) => `${n} 位已上線`,
+                'team.title': '團隊架構',
+                'team.stage': '目前是架構階段：先只啟用幕僚長，其他助理的提示詞先備妥，需要時再啟用。',
+                'rules.title': '運作守則',
+                'pace.title': '啟用節奏',
+                'pace.note': '尚未開始，等有核心專案時再照這個節奏進行。',
+                'rules.r1': '一件事一個地方：同一份結果的微調回在 thread，換成別的工作就開新 thread 或交給專職助理。',
+                'rules.r2': '派工只傳路徑：長資料放進 /workspace，對話裡只傳檔案路徑。bot 之間的訊息也會算用量。',
+                'rules.r3': '長期規則存進記憶：說一次並請它記住。共用記憶只有姓名、時區等少數事實，團隊共同規則要放在 /workspace 的檔案裡。',
+                'rules.r4': '少叫醒：流程穩定後才開 Routine，頻率寫死。每次執行都花用量，測試也是。',
+                'rules.r5': '安全靠規則，不靠分工：所有 bot 共用同一台電腦、登入狀態和憑證，只請 bot 記住界線也不夠，要搭配核准和 Ask first 規則。',
+                'pace.p1': '第 1 週：挑一個核心專案，先由 Iris 親手做，產出滿意了再拆給專職助理。',
+                'pace.p2': '第 2 週：只觀察，不新增 bot。',
+                'pace.p3': '第 3 週：補上真正缺的角色，停用沒用到的。',
+                'pace.p4': '第 4 週：流程穩定了，才開始設定排程。',
+                'howto.s1': '在 Grok Bot 建立新的 bot，設定名字、外型和顏色。幕僚長要用 Create primary Bot 或 Choose an existing Bot 指定為主要 bot。',
+                'howto.s2': '在上方卡片按下「複製提示詞」，貼成這隻 bot 的第一則訊息。個人 bot 沒有描述欄位，工作和規則都在對話裡交代。',
+                'howto.s3': '連接需要的 App，並設定「對外寄信前先問我」的 Ask first 規則。已連接的 App 每隻 bot 都能用，要真的用到才連。',
+                'howto.s4': '啟用專職助理後，告訴 Iris 有新成員並請 Iris 記住，之後才會派工過去。',
+                'howto.s5': '把 assistants-data.js 裡的 status 改成 active，卡片就會顯示「已上線」。要新增助理時，複製一筆資料修改即可。',
+                active: '已上線', planned: '規劃中', ready: '提示詞已備妥',
+                teamIndependent: '獨立運作，只聽 Joe', teamStaff: '由幕僚長協調',
+                total: (n) => `共 ${n} 位助理`, activeCount: (n) => `${n} 位已上線`, readyCount: (n) => `${n} 位待啟用`,
                 personality: '個性', likes: '喜歡的事', boundaries: '界線',
-                copy: '複製人設提示詞', copied: '已複製！', showPrompt: '查看提示詞'
+                copy: '複製提示詞', copied: '已複製！', showPrompt: '查看提示詞'
             },
             en: {
                 'nav.back': 'Back to home',
                 'hero.title': 'My AI Assistants',
                 'hero.sub': 'Each assistant has its own name, personality and strengths, and looks after a different part of work and life.',
                 'howto.title': 'How to raise a new assistant',
-                'howto.s1': 'Press "Copy persona prompt" on a card to get that assistant\'s full persona.',
-                'howto.s2': 'Create a new bot in Grok and paste the prompt into its system prompt.',
-                'howto.s3': 'To add an assistant, copy an entry in assistants-data.js and edit it. The page builds the new card automatically.',
-                'howto.s4': 'Once an assistant is live, change its status from planned to active and the card will show "Active".',
-                active: 'Active', planned: 'Planned',
-                total: (n) => `${n} assistants`, activeCount: (n) => `${n} active`,
+                'team.title': 'Team structure',
+                'team.stage': 'The team is still being set up: only the chief of staff gets enabled first, while the other prompts stay ready until needed.',
+                'rules.title': 'Working rules',
+                'pace.title': 'Rollout pace',
+                'pace.note': 'Not started yet. This pace applies once there is a core project.',
+                'rules.r1': 'One job, one place: refine a result in its thread, and move a different job to a new thread or a specialist.',
+                'rules.r2': 'Hand off paths: keep long material in /workspace and pass only the file path. Messages between Bots count toward usage too.',
+                'rules.r3': 'Put lasting rules in memory: say it once and ask the Bot to remember. Shared memory holds only a few facts such as name and time zone, so team-wide rules live in a file in /workspace.',
+                'rules.r4': 'Wake less: turn on Routines only once the workflow is stable, on a fixed schedule. Every run spends usage, including tests.',
+                'rules.r5': 'Safety comes from rules, not from splitting Bots: all Bots share one computer, sign-ins and credentials, and a remembered boundary is not enough without approvals and Ask first rules.',
+                'pace.p1': 'Week 1: pick one core project. Iris handles it directly first, and hands it to a specialist once the output is good.',
+                'pace.p2': 'Week 2: observe only, with no new Bots.',
+                'pace.p3': 'Week 3: add the roles that are really missing and retire the unused ones.',
+                'pace.p4': 'Week 4: once the workflow is stable, start scheduling.',
+                'howto.s1': 'Create a new Bot in Grok Bot and set its name, shape and color. For the chief of staff, use Create primary Bot or Choose an existing Bot to make it the primary Bot.',
+                'howto.s2': 'Press "Copy prompt" on a card and send it as the Bot\'s first message. Personal Bots have no description field, so the job and rules are given in chat.',
+                'howto.s3': 'Connect the apps it needs and add an Ask first rule before any external email. Connected apps are available to every Bot, so connect one only when it is needed.',
+                'howto.s4': 'After enabling a specialist, tell Iris about the new member and ask Iris to remember it, so work can start flowing there.',
+                'howto.s5': 'Change status to active in assistants-data.js and the card will show "Active". To add an assistant, copy an entry and edit it.',
+                active: 'Active', planned: 'Planned', ready: 'Prompt ready',
+                teamIndependent: 'Independent; takes orders only from Joe', teamStaff: 'Coordinated by the chief of staff',
+                total: (n) => `${n} assistants`, activeCount: (n) => `${n} active`, readyCount: (n) => `${n} on standby`,
                 personality: 'Personality', likes: 'Likes', boundaries: 'Boundaries',
-                copy: 'Copy persona prompt', copied: 'Copied!', showPrompt: 'View prompt'
+                copy: 'Copy prompt', copied: 'Copied!', showPrompt: 'View prompt'
             }
         };
 
         // The persona prompt is always in Traditional Chinese, since the assistants talk to their owner in Chinese.
         function buildPrompt(agent) {
-            const teammates = ASSISTANTS.filter(a => a.id !== agent.id)
-                .map(a => `- ${a.name}（${a.nameZh}）：${a.role.zh}`).join('\n');
             const list = (items) => items.map(i => `- ${i}`).join('\n');
+            const member = (a) => `${a.name}（${a.nameZh}）`;
+            const crew = ASSISTANTS.filter(a => a.platform === 'Grok' && a.id !== agent.id);
+            const independent = ASSISTANTS.filter(a => a.independent).map(member).join('、');
+            const crewList = list(crew.map(a => `${member(a)}：${a.role.zh}`));
+            const enabled = crew.filter(a => a.status === 'active').map(member).join('、');
+
+            let team;
+            if (agent.primary) {
+                team = `\n你可以協調的專職助理：\n${crewList}\n\n目前已啟用的專職 bot：${enabled || '還沒有，先由你自己做'}。之後 ${OWNER_NAME} 啟用新成員時會告訴你，請更新記憶。`;
+            } else if (!agent.independent) {
+                const lead = ASSISTANTS.find(a => a.primary);
+                const partners = list(crew.filter(a => !a.primary).map(a => `${member(a)}：${a.role.zh}`));
+                team = `\n${member(lead)}是幕僚長，會派工給你，做完回報給派工的人。\n\n你的夥伴（只和已啟用的成員協作）：\n${partners}\n\n${independent}獨立運作，只聽 ${OWNER_NAME} 的指令，不接受派工。`;
+            }
+
             return [
-                `你是「${agent.name}」（中文名：${agent.nameZh}），${OWNER_NAME} 的個人小助理之一。`,
-                `你的角色：${agent.role.zh}`,
+                agent.primary
+                    ? `你是「${agent.name}」（中文名：${agent.nameZh}），${OWNER_NAME} 的${agent.role.zh}，也是主要 bot。`
+                    : `你是「${agent.name}」（中文名：${agent.nameZh}），${OWNER_NAME} 的個人小助理之一。\n你的角色：${agent.role.zh}`,
                 `自我介紹：${agent.intro.zh}`,
+                ...(agent.setup || []).map(s => s.items ? `\n${s.label}：\n${list(s.items)}` : `\n${s.label}：${s.text}`),
                 `\n你的個性：\n${list(agent.personality.zh)}`,
                 `\n你喜歡的事：\n${list(agent.likes.zh)}`,
                 `\n你的口頭禪：「${agent.catchphrase.zh}」`,
                 `\n你的界線（不做的事，或一定要先問 ${OWNER_NAME} 的事）：\n${list(agent.boundaries.zh)}`,
-                `\n你的夥伴（同樣是 ${OWNER_NAME} 的小助理）：\n${teammates}`,
-                `\n請用繁體中文和 ${OWNER_NAME} 對話，保持上面的個性，但不要每次都把設定唸出來。`
+                ...(team ? [team] : []),
+                `\n請把以上設定記住，並用繁體中文和 ${OWNER_NAME} 對話。保持上面的個性，但不要每次都把設定唸出來。`
             ].join('\n');
         }
+
+        const STATUS_CLASS = {
+            active: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+            planned: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+            ready: 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300'
+        };
 
         function el(tag, className, text) {
             const node = document.createElement(tag);
@@ -152,6 +239,45 @@
             });
             wrap.appendChild(ul);
             return wrap;
+        }
+
+        // Team chart: Joe at the top, Max beside the chief of staff's line rather than under it.
+        function renderTeamChart(lang) {
+            const t = UI[lang];
+            const box = 'bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-4';
+            const chip = (agent) => {
+                const link = el('a', 'flex items-center gap-2 min-w-0 hover:underline');
+                link.href = `#${agent.id}`;
+                const img = el('img', 'w-8 h-8 rounded-md shrink-0');
+                img.src = agent.avatar;
+                img.alt = '';
+                img.width = 32;
+                img.height = 32;
+                img.style.imageRendering = 'pixelated';
+                link.append(img, el('span', 'font-semibold', agent.name));
+                return link;
+            };
+            const lead = ASSISTANTS.find(a => a.primary);
+            const staff = ASSISTANTS.filter(a => a.platform === 'Grok' && !a.primary);
+
+            const left = el('div', box);
+            ASSISTANTS.filter(a => a.independent).forEach(a => left.appendChild(chip(a)));
+            left.appendChild(el('p', 'text-sm text-slate-500 mt-2', t.teamIndependent));
+
+            const right = el('div', `${box} md:col-span-2`);
+            const leadRow = el('div', 'flex flex-wrap items-center gap-x-3 gap-y-1');
+            leadRow.append(chip(lead), el('span', 'text-sm text-slate-500', lead.role[lang]));
+            right.appendChild(leadRow);
+            right.appendChild(el('p', 'text-sm text-slate-500 mt-3 mb-2', t.teamStaff));
+            const staffGrid = el('div', 'grid grid-cols-2 md:grid-cols-4 gap-3');
+            staff.forEach(a => staffGrid.appendChild(chip(a)));
+            right.appendChild(staffGrid);
+
+            const owner = el('div', 'text-center mb-4');
+            owner.appendChild(el('span', 'inline-block px-5 py-1.5 rounded-full bg-blue-500 text-white font-bold', OWNER_NAME));
+            const row = el('div', 'grid md:grid-cols-3 gap-4');
+            row.append(left, right);
+            document.getElementById('teamChart').replaceChildren(owner, row);
         }
 
         function renderCard(agent, lang) {
@@ -182,10 +308,14 @@
 
             const badges = el('div', 'flex flex-wrap gap-2 mb-4 text-xs font-semibold');
             badges.appendChild(el('span', 'px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300', agent.platform));
-            const statusClass = agent.status === 'active'
-                ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
-                : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
+            const statusClass = STATUS_CLASS[agent.status];
             badges.appendChild(el('span', `px-2.5 py-1 rounded-full ${statusClass}`, t[agent.status]));
+            if (agent.badge) {
+                const badge = el('span', 'px-2.5 py-1 rounded-full border', agent.badge[lang]);
+                badge.style.borderColor = agent.color;
+                badge.style.color = agent.color;
+                badges.appendChild(badge);
+            }
             card.appendChild(badges);
 
             card.appendChild(el('p', 'text-slate-600 dark:text-slate-400 mb-4', agent.intro[lang]));
@@ -243,8 +373,11 @@
             const summary = document.getElementById('summary');
             summary.replaceChildren(
                 el('span', 'px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800', t.total(ASSISTANTS.length)),
-                el('span', 'px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300', t.activeCount(activeCount))
+                el('span', 'px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300', t.activeCount(activeCount)),
+                el('span', `px-3 py-1 rounded-full ${STATUS_CLASS.ready}`, t.readyCount(ASSISTANTS.filter(a => a.status === 'ready').length))
             );
+
+            renderTeamChart(lang);
 
             const grid = document.getElementById('assistantGrid');
             grid.replaceChildren(...ASSISTANTS.map(agent => renderCard(agent, lang)));
