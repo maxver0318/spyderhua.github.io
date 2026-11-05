@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>網站設計 | Joe Huang</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --joe: #f59e0b; --claude: #6366f1; }
+        /* Swimlane flowchart: [Joe lane] [spine] [Claude lane] */
+        .flow-row { display: grid; grid-template-columns: 1fr 44px 1fr; }
+        @media (min-width: 768px) { .flow-row { grid-template-columns: 1fr 72px 1fr; } }
+        .flow-spine { position: relative; display: flex; justify-content: center; }
+        .flow-spine::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; transform: translateX(-50%); background: #cbd5e1; }
+        .dark .flow-spine::before { background: #475569; }
+        .flow-row:first-child .flow-spine::before { top: 50%; }
+        .flow-row:last-child .flow-spine::before { bottom: 50%; }
+        .flow-num { position: relative; z-index: 1; align-self: center; width: 30px; height: 30px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: white; }
+        .flow-node { position: relative; }
+        .flow-node[data-lane="joe"]::after, .flow-node[data-lane="claude"]::after { content: ''; position: absolute; top: 50%; width: 22px; height: 2px; background: currentColor; opacity: 0.5; }
+        .flow-node[data-lane="joe"]::after { right: -22px; }
+        .flow-node[data-lane="claude"]::after { left: -22px; }
+        @media (max-width: 767px) {
+            .flow-node[data-lane="joe"]::after { right: -7px; width: 7px; }
+            .flow-node[data-lane="claude"]::after { left: -7px; width: 7px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
+
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html#projects" class="flex items-center text-sm font-medium hover:text-blue-500 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <span data-i18n="nav.back">回到首頁</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                <button id="langToggle" class="px-3 py-1 rounded-full border border-slate-300 dark:border-slate-600 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EN</button>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
+                    <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="max-w-4xl mx-auto px-4 pt-16 pb-12 text-center">
+        <p class="text-sm font-bold tracking-widest uppercase text-indigo-500 mb-3" data-i18n="hero.kicker">網站設計</p>
+        <h1 class="text-3xl md:text-5xl font-bold mb-5 tracking-tight leading-tight" data-i18n="hero.title">我如何和 AI 一起打造這個網站</h1>
+        <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto" data-i18n="hero.sub">這個網站的每一次改版，都是我和 Claude 透過對話完成的。我決定方向、提供內容、審查成果；Claude 負責實作、驗證，並整理成可以審查的 PR。</p>
+        <div class="mt-8 flex flex-wrap justify-center gap-2 text-sm font-semibold">
+            <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300" data-i18n="hero.chip1">用對話提出需求</span>
+            <span class="px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300" data-i18n="hero.chip2">每次改版都有前後截圖</span>
+            <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300" data-i18n="hero.chip3">桌機／手機 × 淺色／深色</span>
+        </div>
+    </header>
+
+    <!-- Roles -->
+    <section class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-8 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="roles.title">誰負責什麼</span>
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-6 rounded-2xl bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/60">
+                    <div class="flex items-center mb-4">
+                        <span class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-3" style="background: var(--joe)">J</span>
+                        <h3 class="text-xl font-bold" data-i18n="roles.joe">我（Joe）</h3>
+                    </div>
+                    <ul class="space-y-2 text-slate-700 dark:text-slate-300" data-list="roles.joeItems"></ul>
+                </div>
+                <div class="p-6 rounded-2xl bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-900/60">
+                    <div class="flex items-center mb-4">
+                        <span class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-3" style="background: var(--claude)">C</span>
+                        <h3 class="text-xl font-bold" data-i18n="roles.claude">Claude（AI）</h3>
+                    </div>
+                    <ul class="space-y-2 text-slate-700 dark:text-slate-300" data-list="roles.claudeItems"></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flowchart -->
+    <section id="workflow" class="max-w-4xl mx-auto px-4 py-14">
+        <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+            <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+            <span data-i18n="flow.title">一次改版的流程</span>
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="flow.sub">從提出需求到網站上線，每一步由誰負責、做了什麼。</p>
+        <div class="flow-row mb-3 text-sm font-bold">
+            <div class="text-center" style="color: var(--joe)" data-i18n="flow.laneJoe">我（Joe）</div>
+            <div></div>
+            <div class="text-center" style="color: var(--claude)" data-i18n="flow.laneClaude">Claude</div>
+        </div>
+        <div id="flow"></div>
+    </section>
+
+    <!-- How -->
+    <section class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="how.title">Claude 怎麼做</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="how.sub">流程裡比較關鍵的幾個做法。</p>
+            <div id="how" class="grid md:grid-cols-2 gap-5"></div>
+        </div>
+    </section>
+
+    <!-- PR format -->
+    <section class="max-w-4xl mx-auto px-4 py-14">
+        <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+            <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+            <span data-i18n="pr.title">每個 PR 的固定格式</span>
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="pr.sub">我只要看 PR 說明，就能判斷這次改版能不能上線。</p>
+        <ol id="prFormat" class="grid sm:grid-cols-2 gap-4"></ol>
+    </section>
+
+    <!-- History -->
+    <section class="bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="history.title">改版紀錄</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="history.sub">用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。</p>
+            <ol id="history" class="space-y-3 border-l-2 border-slate-200 dark:border-slate-700 ml-2"></ol>
+        </div>
+    </section>
+
+    <footer class="py-10 border-t border-slate-200 dark:border-slate-800 text-center text-slate-500 text-sm">
+        <p>© <span id="year"></span> Joe Huang. Built for GitHub Pages.</p>
+    </footer>
+
+    <script>
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        const UI = {
+            zh: {
+                'nav.back': '回到首頁',
+                'hero.kicker': '網站設計',
+                'hero.title': '我如何和 AI 一起打造這個網站',
+                'hero.sub': '這個網站的每一次改版，都是我和 Claude 透過對話完成的。我決定方向、提供內容、審查成果；Claude 負責實作、驗證，並整理成可以審查的 PR。',
+                'hero.chip1': '用對話提出需求', 'hero.chip2': '每次改版都有前後截圖', 'hero.chip3': '桌機／手機 × 淺色／深色',
+                'roles.title': '誰負責什麼', 'roles.joe': '我（Joe）', 'roles.claude': 'Claude（AI）',
+                'roles.joeItems': ['提出想改的地方，說明原因', '提供真實內容：經歷、專案、介紹文字', '回答 Claude 提出的待確認問題', '審查 PR 的截圖與說明，決定是否上線'],
+                'roles.claudeItems': ['讀取現有網站與程式碼，掌握現況', '規劃修改方式，主動提出不清楚的地方', '撰寫 HTML／Tailwind／JavaScript，中英文同步修改', '自動檢查、截圖，整理成固定格式的 PR'],
+                'flow.title': '一次改版的流程', 'flow.sub': '從提出需求到網站上線，每一步由誰負責、做了什麼。',
+                'flow.laneJoe': '我（Joe）', 'flow.laneClaude': 'Claude',
+                'flow.loop': '需要調整？回到 ④',
+                'how.title': 'Claude 怎麼做', 'how.sub': '流程裡比較關鍵的幾個做法。',
+                'pr.title': '每個 PR 的固定格式', 'pr.sub': '我只要看 PR 說明，就能判斷這次改版能不能上線。',
+                'history.title': '改版紀錄', 'history.sub': '用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。'
+            },
+            en: {
+                'nav.back': 'Back to home',
+                'hero.kicker': 'Site Design',
+                'hero.title': 'How I build this site together with AI',
+                'hero.sub': 'Every change to this site is made through a conversation with Claude. I set the direction, provide the content and review the result; Claude implements, verifies, and packages each change as a reviewable PR.',
+                'hero.chip1': 'Requests made in conversation', 'hero.chip2': 'Before/after screenshots for every change', 'hero.chip3': 'Desktop / mobile × light / dark',
+                'roles.title': 'Who does what', 'roles.joe': 'Me (Joe)', 'roles.claude': 'Claude (AI)',
+                'roles.joeItems': ['Say what I want changed, and why', 'Provide the real content: experience, projects, intro text', "Answer Claude's open questions", 'Review the PR screenshots and notes, and decide what ships'],
+                'roles.claudeItems': ['Read the current site and code to understand where things stand', 'Plan the change and raise anything unclear', 'Write the HTML / Tailwind / JavaScript, keeping Chinese and English in sync', 'Run checks, take screenshots, and write the PR in a fixed format'],
+                'flow.title': 'The workflow for one change', 'flow.sub': 'From request to live site: who owns each step and what happens.',
+                'flow.laneJoe': 'Me (Joe)', 'flow.laneClaude': 'Claude',
+                'flow.loop': 'Needs changes? Back to ④',
+                'how.title': 'How Claude does it', 'how.sub': 'The practices that matter most in the workflow.',
+                'pr.title': 'A fixed format for every PR', 'pr.sub': 'The PR description alone tells me whether a change is ready to go live.',
+                'history.title': 'Change history', 'history.sub': 'PRs merged with this workflow. Open one to see its full notes and screenshots on GitHub.'
+            }
+        };
+
+        const FLOW = [
+            { lane: 'joe', zh: ['提出需求', '用一段話說明想改什麼、為什麼'], en: ['Make a request', 'Describe what to change and why'] },
+            { lane: 'claude', zh: ['理解現況', '讀取網站與程式碼，先問清楚不確定的地方'], en: ['Understand the site', 'Read the site and code; ask about anything unclear'] },
+            { lane: 'claude', zh: ['開獨立分支', '從正式網站的最新版開分支，一個需求一個 PR'], en: ['Branch off', 'Branch from the latest live version: one request, one PR'] },
+            { lane: 'claude', zh: ['修改程式', 'HTML、Tailwind、JavaScript，中英文一起改'], en: ['Edit the code', 'HTML, Tailwind and JavaScript, Chinese and English together'] },
+            { lane: 'claude', zh: ['自動檢查', 'JS 錯誤、連結、翻譯是否齊全、手機版寬度'], en: ['Run checks', 'JS errors, links, translation coverage, mobile width'] },
+            { lane: 'claude', zh: ['前後截圖', '桌機與手機 × 淺色與深色，親自檢查每張畫面'], en: ['Before/after shots', 'Desktop and mobile × light and dark, each one inspected'] },
+            { lane: 'claude', zh: ['開 PR', '依固定格式寫好說明，附上截圖'], en: ['Open a PR', 'Notes in a fixed format, with screenshots'] },
+            { lane: 'joe', zh: ['審查', '看截圖與說明，回覆待確認事項'], en: ['Review', 'Check the screenshots and notes; answer open questions'], loop: true },
+            { lane: 'joe', zh: ['合併上線', '按下 Merge，GitHub Pages 自動部署'], en: ['Merge and ship', 'Press Merge; GitHub Pages deploys automatically'] }
+        ];
+
+        const HOW = [
+            { icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', zh: ['永遠從最新版開始', '工作用的 fork 常常落後正式網站，所以每次都從正式網站的最新版開分支，避免把舊內容帶回去，也讓多個 PR 可以各自獨立合併。'], en: ['Always start from the latest', 'The working fork often lags behind the live site, so each branch starts from the latest live version. Old content never sneaks back in, and PRs can be merged independently.'] },
+            { icon: 'M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129', zh: ['中英文同步', '每段文字都有對應的翻譯 key，中文與英文一起修改，並自動比對兩邊的 key 是否一致，切換語言不會出現漏翻。'], en: ['Chinese and English in sync', 'Every piece of text has a translation key. Both languages are edited together and the keys are compared automatically, so switching languages never shows a gap.'] },
+            { icon: 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z', zh: ['離線截圖', 'Claude 的工作環境無法連到外部的 CDN，所以先在本機編譯 Tailwind CSS，再用 Playwright 開啟網頁，模擬 1440px 桌機與 390px 手機，各截淺色與深色。'], en: ['Offline screenshots', "Claude's workspace cannot reach external CDNs, so it compiles Tailwind CSS locally, then opens the pages in Playwright at 1440px desktop and 390px mobile, in light and dark mode."] },
+            { icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', zh: ['自動檢查', '截圖的同時檢查 JavaScript 錯誤、頁內連結有沒有對應的區塊、手機版會不會左右滑動、圖片能不能載入。修改後不能出現修改前沒有的問題。'], en: ['Automated checks', 'While taking screenshots it checks for JavaScript errors, in-page links without a target, horizontal scrolling on mobile, and images that fail to load. A change may not add problems that were not there before.'] },
+            { icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z', zh: ['截圖另外存放', '截圖放在獨立的 pr-assets 分支，PR 說明直接引用，不會混進網站的程式碼。'], en: ['Screenshots kept separate', 'Screenshots live on a separate pr-assets branch and are embedded in the PR notes, so they never mix with the site code.'] },
+            { icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', zh: ['把流程寫成 Skill', '整套步驟與 PR 格式寫成一份 Claude Skill。之後每次改版，Claude 都照同一套流程做，我不用每次重新交代。'], en: ['The workflow as a Skill', 'The steps and PR format are written down as a Claude Skill. Every later change follows the same process without me having to explain it again.'] }
+        ];
+
+        const PR_FORMAT = [
+            { zh: ['變更內容', '為什麼改、訪客會看到什麼不同'], en: ['What changed', 'Why, and what visitors will see differently'] },
+            { zh: ['影響範圍', '改到哪些頁面與語系，也寫出沒有動到的地方'], en: ['Scope', 'Pages and languages touched, and what was left alone'] },
+            { zh: ['程式的調整', '每個檔案改了什麼，附上變更統計'], en: ['Code changes', 'What changed in each file, with a diff summary'] },
+            { zh: ['畫面', '修改前後對照：桌機／手機 × 淺色／深色，需要時附操作錄影'], en: ['Screens', 'Before vs. after: desktop / mobile × light / dark, plus recordings when needed'] },
+            { zh: ['驗證', '自動檢查與人工檢查的結果，沒做到的也會寫出來'], en: ['Verification', 'Automated and manual check results, including anything not checked'] },
+            { zh: ['待確認事項', '需要我決定或補充的內容'], en: ['Open questions', 'Anything that needs my decision or input'] }
+        ];
+
+        const HISTORY = [
+            { n: 8, zh: '為 AI 小助理們加上像素風格頭像', en: 'Pixel-art avatars for the AI assistants' },
+            { n: 7, zh: '新增「AI 小助理們」頁面', en: 'New "AI Assistants" page' },
+            { n: 6, zh: '暫時移除華邦工作重點段落，待內容完善後再補上', en: 'Temporarily remove the Winbond highlights until the content is ready' },
+            { n: 5, zh: '新增「關於我」，更新首頁標語與技能', en: 'Add an About section; refresh the tagline and skills' },
+            { n: 3, zh: '華邦的三個職稱整合在同一間公司底下，顯示總年資', en: 'Group the three Winbond roles under one company with total tenure' },
+            { n: 2, zh: '中文版的職稱與公司只顯示中文', en: 'Show job titles and companies in Chinese only on the Chinese version' },
+            { n: 1, zh: '更新工作經歷時間軸', en: 'Update the work experience timeline' }
+        ];
+
+        function el(tag, className, text) {
+            const node = document.createElement(tag);
+            if (className) node.className = className;
+            if (text !== undefined) node.textContent = text;
+            return node;
+        }
+
+        function renderFlow(lang, t) {
+            const wrap = document.getElementById('flow');
+            wrap.replaceChildren(...FLOW.map((step, i) => {
+                const row = el('div', 'flow-row');
+                const color = step.lane === 'joe' ? 'var(--joe)' : 'var(--claude)';
+                const node = el('div', 'flow-node my-2 p-3 md:p-4 rounded-xl border bg-white dark:bg-slate-800 shadow-sm');
+                node.dataset.lane = step.lane;
+                node.style.borderColor = color;
+                node.style.color = color;
+                node.appendChild(el('p', 'font-bold text-sm md:text-base', step[lang][0]));
+                node.appendChild(el('p', 'text-xs md:text-sm text-slate-600 dark:text-slate-400 mt-1 leading-snug', step[lang][1]));
+                if (step.loop) {
+                    node.appendChild(el('p', 'mt-2 inline-block text-xs font-semibold px-2 py-0.5 rounded-full border border-dashed', t['flow.loop']));
+                }
+                const spine = el('div', 'flow-spine');
+                const num = el('span', 'flow-num', String(i + 1));
+                num.style.background = color;
+                spine.appendChild(num);
+                const left = el('div'), right = el('div');
+                (step.lane === 'joe' ? left : right).appendChild(node);
+                row.append(left, spine, right);
+                return row;
+            }));
+        }
+
+        function renderHow(lang) {
+            document.getElementById('how').replaceChildren(...HOW.map(item => {
+                const card = el('div', 'p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700');
+                const head = el('div', 'flex items-center mb-2');
+                const icon = el('span', 'w-9 h-9 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-3 shrink-0');
+                icon.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"></path></svg>`;
+                head.append(icon, el('h3', 'font-bold text-lg', item[lang][0]));
+                card.append(head, el('p', 'text-sm text-slate-600 dark:text-slate-400 leading-relaxed', item[lang][1]));
+                return card;
+            }));
+        }
+
+        function renderPrFormat(lang) {
+            document.getElementById('prFormat').replaceChildren(...PR_FORMAT.map((item, i) => {
+                const li = el('li', 'flex p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700');
+                li.appendChild(el('span', 'w-7 h-7 rounded-full bg-blue-500 text-white text-sm font-bold flex items-center justify-center mr-3 shrink-0', String(i + 1)));
+                const body = el('div');
+                body.append(el('p', 'font-bold', item[lang][0]), el('p', 'text-sm text-slate-600 dark:text-slate-400', item[lang][1]));
+                li.appendChild(body);
+                return li;
+            }));
+        }
+
+        function renderHistory(lang) {
+            document.getElementById('history').replaceChildren(...HISTORY.map(item => {
+                const li = el('li', 'relative pl-6');
+                li.appendChild(el('span', 'absolute -left-[7px] top-2 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-white dark:ring-slate-800'));
+                const a = el('a', 'group flex flex-wrap items-baseline gap-x-3 hover:text-blue-500 transition-colors');
+                a.href = `https://github.com/spyderhua/spyderhua.github.io/pull/${item.n}`;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.append(el('span', 'text-sm font-bold text-blue-500 shrink-0', `#${item.n}`), el('span', '', item[lang]));
+                li.appendChild(a);
+                return li;
+            }));
+        }
+
+        let currentLang = 'zh';
+        try { if (localStorage.getItem('lang') === 'en') currentLang = 'en'; } catch (e) {}
+
+        function render(lang) {
+            const t = UI[lang];
+            document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+            document.querySelectorAll('[data-i18n]').forEach(node => {
+                node.textContent = t[node.getAttribute('data-i18n')];
+            });
+            document.querySelectorAll('[data-list]').forEach(list => {
+                list.replaceChildren(...t[list.getAttribute('data-list')].map(text => {
+                    const li = el('li', 'flex');
+                    li.append(el('span', 'mr-2 text-slate-400', '•'), el('span', '', text));
+                    return li;
+                }));
+            });
+            document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+            renderFlow(lang, t);
+            renderHow(lang);
+            renderPrFormat(lang);
+            renderHistory(lang);
+        }
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            try { localStorage.setItem('lang', currentLang); } catch (e) {}
+            render(currentLang);
+        });
+
+        // Theme: shares the same 'theme' setting as the home page.
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+        let savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+        });
+
+        render(currentLang);
+    </script>
+</body>
+</html>
