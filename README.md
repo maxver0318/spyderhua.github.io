@@ -176,7 +176,7 @@ const STOCK_REGISTRY = {
 ## � 技能專長詳細
 
 ### 開發工具和語言
-- **AI 工具應用** - 善用 ChatGPT、Gemini 等 AI 工具
+- **AI 輔助開發** - 以 Copilot、Claude Code 協作寫程式與 Code Review，並撰寫自訂 Skill 把重複流程自動化
 - **前端框架** - Angular
 - **後端語言** - C#、Java
 - **系統編程** - C / C++
