@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <title>北海道賞雪之旅 | Joe</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Inter', 'Noto Sans TC', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; scroll-padding-top: 7.5rem; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; }
+        .tl-item { position: relative; padding-left: 1.75rem; }
+        .tl-item::before { content: ''; position: absolute; left: 0.4rem; top: 0.35rem; bottom: -1.25rem; width: 2px; background: #cbd5e1; }
+        .dark .tl-item::before { background: #334155; }
+        .tl-item:last-child::before { display: none; }
+        .tl-dot { position: absolute; left: 0; top: 0.3rem; width: 0.95rem; height: 0.95rem; border-radius: 9999px; border: 3px solid #38bdf8; background: white; }
+        .dark .tl-dot { background: #0f172a; }
+        .tl-item.is-past { opacity: 0.55; }
+        .tl-item.is-next .tl-dot { background: #38bdf8; box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.3); }
+        .snow { position: absolute; inset: 0; pointer-events: none; background-image:
+            radial-gradient(2px 2px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 80px 120px, #fff, transparent),
+            radial-gradient(1.5px 1.5px at 150px 60px, #fff, transparent), radial-gradient(2px 2px at 220px 160px, #fff, transparent),
+            radial-gradient(1.5px 1.5px at 300px 90px, #fff, transparent);
+            background-size: 320px 200px; opacity: 0.6; animation: snowfall 14s linear infinite; }
+        @keyframes snowfall { from { background-position: 0 0; } to { background-position: 60px 400px; } }
+        @media (prefers-reduced-motion: reduce) { .snow { animation: none; } html { scroll-behavior: auto; } }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
+
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+            <a href="index.html#projects" class="flex items-center text-sm font-medium hover:text-sky-500 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                回到首頁
+            </a>
+            <span class="text-sm font-bold tracking-wide text-sky-600 dark:text-sky-400">北海道賞雪 2027</span>
+            <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="切換深淺色">
+                <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+        <!-- Section chips -->
+        <div class="max-w-5xl mx-auto px-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar text-xs font-semibold" id="chipNav">
+            <a href="#overview" class="shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">總覽</a>
+            <a href="#day1" data-day="1" class="day-chip shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">2/9</a>
+            <a href="#day2" data-day="2" class="day-chip shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">2/10</a>
+            <a href="#day3" data-day="3" class="day-chip shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">2/11</a>
+            <a href="#day4" data-day="4" class="day-chip shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">2/12</a>
+            <a href="#day5" data-day="5" class="day-chip shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">2/13</a>
+            <a href="#day6" data-day="6" class="day-chip shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">2/14</a>
+            <a href="#weather" class="shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">天氣穿搭</a>
+            <a href="#gear" class="shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">裝備清單</a>
+            <a href="#car" class="shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">租車</a>
+            <a href="#info" class="shrink-0 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-sky-100 dark:hover:bg-sky-900/50">實用資訊</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="relative overflow-hidden bg-slate-900 text-white">
+        <img src="hokkaido/shikotsu-night.jpg" alt="支笏湖冰濤祭夜間點燈的冰洞" class="absolute inset-0 w-full h-full object-cover opacity-60">
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-900/40 to-slate-900/90"></div>
+        <div class="snow"></div>
+        <div class="relative max-w-5xl mx-auto px-4 pt-20 pb-12 md:pt-28 md:pb-16">
+            <p class="text-sm font-bold tracking-widest text-sky-300 mb-3">2027.2.9（二）– 2.14（日）· 6 天 5 夜</p>
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4">北海道賞雪之旅</h1>
+            <p class="text-base md:text-lg text-slate-200 max-w-2xl">支笏湖冰濤祭的彩色冰洞、札幌雪祭最後三天、小樽雪燈之路，再往北到旭山動物園與美瑛的銀白丘陵。出發前看行程，到當地打開這頁就是導覽。</p>
+            <div id="statusBanner" class="mt-6 inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur px-4 py-2 text-sm font-semibold">
+                <span class="w-2 h-2 rounded-full bg-sky-300 animate-pulse"></span><span id="statusText">行程規劃中</span>
+            </div>
+            <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div class="rounded-2xl bg-white/10 backdrop-blur p-3"><div class="text-slate-300 text-xs">去程</div><div class="font-bold">2/9 10:20 起飛</div><div class="text-slate-300 text-xs">約 15:00 抵新千歲</div></div>
+                <div class="rounded-2xl bg-white/10 backdrop-blur p-3"><div class="text-slate-300 text-xs">回程</div><div class="font-bold">2/14 15:00 起飛</div><div class="text-slate-300 text-xs">新千歲國際線</div></div>
+                <div class="rounded-2xl bg-white/10 backdrop-blur p-3"><div class="text-slate-300 text-xs">氣溫（平年）</div><div class="font-bold">0 ～ -13°C</div><div class="text-slate-300 text-xs">美瑛夜間可到 -20°C</div></div>
+                <div class="rounded-2xl bg-white/10 backdrop-blur p-3"><div class="text-slate-300 text-xs">交通</div><div class="font-bold">租車 × JR</div><div class="text-slate-300 text-xs">分兩段租車，城市搭電車</div></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4">
+
+        <!-- Overview -->
+        <section id="overview" class="py-12">
+            <h2 class="text-2xl md:text-3xl font-bold mb-2 flex items-center"><span class="w-8 h-1 bg-sky-500 inline-block mr-4"></span>行程總覽</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-6">新千歲 → 支笏湖 → 札幌 → 小樽 → 旭川・美瑛 → 札幌 → 新千歲。點下面任一天直接跳到當天行程。</p>
+            <div id="overviewCards" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+            <!-- Festivals -->
+            <h3 class="text-xl font-bold mt-12 mb-4">這趟一定要參加的兩個祭典</h3>
+            <div class="grid md:grid-cols-2 gap-5">
+                <article class="rounded-3xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <img src="hokkaido/shikotsu-igloo.jpg" alt="支笏湖冰濤祭的冰屋" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-1"><h4 class="text-lg font-bold">千歲・支笏湖冰濤祭</h4><span class="text-xs font-bold px-2 py-1 rounded-full bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300">Day 1 晚上</span></div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">用支笏湖水一層層噴在骨架上凍成的冰塔、冰洞與冰滑梯。白天是透亮的「支笏湖藍」，晚上換成彩色燈光，是北海道最夢幻的冰祭之一。</p>
+                        <dl class="text-sm grid grid-cols-[4.5rem_1fr] gap-y-1">
+                            <dt class="text-slate-500">期間</dt><dd>2027/1/30（六）– 2/23（二）</dd>
+                            <dt class="text-slate-500">時間</dt><dd>10:00–20:00，點燈 16:30–20:00</dd>
+                            <dt class="text-slate-500">門票</dt><dd>平日 ¥1,000（2/9 是平日）；週末假日較貴</dd>
+                            <dt class="text-slate-500">地點</dt><dd>支笏湖溫泉街旁，離新千歲機場約 50 分鐘車程</dd>
+                        </dl>
+                    </div>
+                </article>
+                <article class="rounded-3xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <img src="hokkaido/odori-sculpture.jpg" alt="札幌雪祭大通會場的大雪像" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-1"><h4 class="text-lg font-bold">札幌雪祭（大通公園）</h4><span class="text-xs font-bold px-2 py-1 rounded-full bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300">Day 2 整天</span></div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">大通公園 1 丁目到 11 丁目約 1.5 公里，排滿數層樓高的大雪像與上百座市民雪像；入夜後點燈、投影光雕。薄野會場則是精緻的冰雕街。</p>
+                        <dl class="text-sm grid grid-cols-[4.5rem_1fr] gap-y-1">
+                            <dt class="text-slate-500">期間</dt><dd>2027/2/4（四）– 2/11（四・國定假日）</dd>
+                            <dt class="text-slate-500">點燈</dt><dd>傍晚至約 22:00（以官網公布為準）</dd>
+                            <dt class="text-slate-500">門票</dt><dd>免費</dd>
+                            <dt class="text-slate-500">注意</dt><dd class="text-rose-600 dark:text-rose-400 font-semibold">我們 2/9 才到，只趕得上最後三天；2/12 起雪像就拆除了</dd>
+                        </dl>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Days -->
+        <div id="days"></div>
+
+        <!-- Weather & clothing -->
+        <section id="weather" class="py-12 border-t border-slate-200 dark:border-slate-800">
+            <h2 class="text-2xl md:text-3xl font-bold mb-2 flex items-center"><span class="w-8 h-1 bg-sky-500 inline-block mr-4"></span>天氣與穿搭</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-6">現在離出發還太遠，查不到真正的預報，下表是氣象廳 1991–2020 年 2 月平年值（札幌為官方數值，其他地點為依鄰近測站估算）。<b>出發前 16 天起，這頁會自動抓取每天目的地的即時預報</b>，顯示在每天行程的天氣欄。</p>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <table class="w-full text-sm min-w-[560px]">
+                    <thead class="bg-slate-100 dark:bg-slate-900/60 text-left">
+                        <tr><th class="p-3">日期</th><th class="p-3">地點</th><th class="p-3">平年高／低溫</th><th class="p-3">寒冷度</th><th class="p-3">穿搭重點</th></tr>
+                    </thead>
+                    <tbody id="weatherTable" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
+                </table>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">日出約 6:40、日落約 16:55（札幌，2 月中旬）。2026 年 2 月北海道曾是史上最暖的 2 月，實際溫度可能偏差 5°C 以上，出發前一週請再看預報。</p>
+
+            <h3 class="text-xl font-bold mt-10 mb-4">洋蔥式穿法（由內到外）</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <div class="text-3xl mb-2">🧦</div><h4 class="font-bold mb-1">1. 貼身保暖層</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">發熱衣褲（UNIQLO HEATTECH 極暖／超極暖、羊毛衣），加一雙羊毛襪。避免純棉，流汗後會變冷。</p>
+                </div>
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <div class="text-3xl mb-2">🧥</div><h4 class="font-bold mb-1">2. 中間保暖層</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">刷毛衣或輕羽絨背心。室內、電車、商店暖氣很強，要能快速脫掉。</p>
+                </div>
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <div class="text-3xl mb-2">🧊</div><h4 class="font-bold mb-1">3. 防風防水外層</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">蓋過臀部的長版羽絨或防水雪衣，帽子可拆。支笏湖、美瑛晚上建議再加防水雪褲。</p>
+                </div>
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <div class="text-3xl mb-2">🥾</div><h4 class="font-bold mb-1">4. 頭、手、腳</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">遮耳毛帽、脖圍、觸控內手套＋防水外手套、防滑雪靴。暖暖包貼在腰、腳底。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gear -->
+        <section id="gear" class="py-12 border-t border-slate-200 dark:border-slate-800">
+            <h2 class="text-2xl md:text-3xl font-bold mb-2 flex items-center"><span class="w-8 h-1 bg-sky-500 inline-block mr-4"></span>賞雪裝備清單</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-6">打勾會記在這支手機的瀏覽器裡，收行李時可以直接拿來對。</p>
+            <div id="gearList" class="grid md:grid-cols-2 gap-5"></div>
+            <div class="mt-6 rounded-2xl p-5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm">
+                <p class="font-bold text-amber-800 dark:text-amber-300 mb-1">最重要的一件事：鞋子</p>
+                <p class="text-amber-900/80 dark:text-amber-200/80">札幌、小樽的人行道被踩成「鏡面冰」，跌倒是遊客最常見的受傷原因。鞋底要有深紋的防水雪靴，再準備一副可拆式冰爪（鞋釘），在冰濤祭會場、小樽運河、美瑛停車場特別有用。台灣可在迪卡儂買；札幌的唐吉訶德、地下街鞋店與便利商店也買得到。</p>
+            </div>
+        </section>
+
+        <!-- Car -->
+        <section id="car" class="py-12 border-t border-slate-200 dark:border-slate-800">
+            <h2 class="text-2xl md:text-3xl font-bold mb-2 flex items-center"><span class="w-8 h-1 bg-sky-500 inline-block mr-4"></span>租車建議</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-6">札幌市區塞車、停車貴，雪祭期間更嚴重；札幌到旭川 140 公里的雪地高速公路也不適合第一次雪地開車。所以建議<b>只在需要的兩段租車</b>，城市之間搭 JR。</p>
+            <div class="grid md:grid-cols-2 gap-5 mb-8">
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border-2 border-sky-400/60">
+                    <div class="text-xs font-bold text-sky-600 dark:text-sky-400 mb-1">第 1 段 · 2/9 – 2/10</div>
+                    <h4 class="font-bold text-lg mb-2">新千歲機場取車 → 札幌還車</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">支笏湖沒有方便的大眾運輸（溫泉巴士班次少、末班早），租車最自由。約 100 公里，開車時間合計 2 小時。異地還車（乗り捨て）在道央區內通常免費或很便宜，預約時確認。</p>
+                </div>
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border-2 border-sky-400/60">
+                    <div class="text-xs font-bold text-sky-600 dark:text-sky-400 mb-1">第 2 段 · 2/12 – 2/13</div>
+                    <h4 class="font-bold text-lg mb-2">旭川站取車 → 旭川站還車</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">旭山動物園、美瑛丘陵、白金青池分散在鄉間，冬季巴士班次很少。旭川站前租車公司多，同點取還車最省。<b>不想開車</b>：可改參加從札幌出發的「旭山動物園＋美瑛青池」一日巴士團（KKday、Klook 都有）。</p>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-5">
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <h4 class="font-bold mb-3">📄 需要準備</h4>
+                    <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-400 list-disc pl-5">
+                        <li><b>台灣駕照正本 ＋ 日文譯本</b>＋護照。譯本到監理站申請，當場可拿；台灣核發的國際駕照在日本不能用。</li>
+                        <li>預約時選 <b>4WD</b>，冬季一律標配雪胎；加租 <b>ETC 卡</b>、加保 <b>NOC 免責補償</b>。</li>
+                        <li>比價：Toyota、Nippon、Times、Orix 官網，或 Tabirai、樂天トラベル。雪祭期間車很搶，盡早訂。</li>
+                        <li>導航輸入：電話號碼或 MAPCODE 最準，本頁每站都附 Google 地圖連結。</li>
+                    </ul>
+                </div>
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <h4 class="font-bold mb-3">❄️ 雪地開車重點</h4>
+                    <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-400 list-disc pl-5">
+                        <li>車距拉到平常的 <b>2–3 倍</b>，不急煞、不急轉，下坡提早減速。</li>
+                        <li>小心<b>黑冰</b>（看起來濕濕的路面其實是冰）：橋上、隧道口、陰影處最常見。</li>
+                        <li>遇到<b>地吹雪</b>（地上的雪被風吹起、視線全白）：減速、開大燈與霧燈，必要時停到停車場等。</li>
+                        <li>16:55 就天黑，山路盡量天黑前開完；過夜停車時把<b>雨刷立起來</b>，避免凍在玻璃上。</li>
+                        <li>加油說「レギュラー、満タン」（一般汽油加滿），還車前要加滿並保留收據。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info -->
+        <section id="info" class="py-12 border-t border-slate-200 dark:border-slate-800">
+            <h2 class="text-2xl md:text-3xl font-bold mb-6 flex items-center"><span class="w-8 h-1 bg-sky-500 inline-block mr-4"></span>實用資訊</h2>
+            <div class="grid md:grid-cols-3 gap-5">
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <h4 class="font-bold mb-3">🆘 緊急電話</h4>
+                    <ul class="text-sm space-y-1 text-slate-600 dark:text-slate-400">
+                        <li>警察 <a class="text-sky-600 dark:text-sky-400 font-semibold" href="tel:110">110</a>　救護車／火警 <a class="text-sky-600 dark:text-sky-400 font-semibold" href="tel:119">119</a></li>
+                        <li>道路救援 JAF <a class="text-sky-600 dark:text-sky-400 font-semibold" href="tel:0570-00-8139">0570-00-8139</a></li>
+                        <li>台北駐日經濟文化代表處 札幌分處 <a class="text-sky-600 dark:text-sky-400 font-semibold" href="tel:+81112226788">011-222-6788</a></li>
+                        <li>訪日外國人醫療諮詢（JNTO）<a class="text-sky-600 dark:text-sky-400 font-semibold" href="tel:050-3816-2787">050-3816-2787</a></li>
+                    </ul>
+                </div>
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <h4 class="font-bold mb-3">🔗 官方網站（出發前再確認）</h4>
+                    <ul class="text-sm space-y-1">
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://www.snowfes.com/" target="_blank" rel="noopener noreferrer">札幌雪祭</a></li>
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://www.visit-hokkaido.jp/event/detail_11029.html" target="_blank" rel="noopener noreferrer">千歲・支笏湖冰濤祭</a></li>
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://yukiakarinomichi.org/" target="_blank" rel="noopener noreferrer">小樽雪燈之路</a></li>
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://www.city.asahikawa.hokkaido.jp/asahiyamazoo/" target="_blank" rel="noopener noreferrer">旭山動物園</a></li>
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://www.biei-hokkaido.jp/" target="_blank" rel="noopener noreferrer">美瑛町觀光協會（青池點燈）</a></li>
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://www.jrhokkaido.co.jp/" target="_blank" rel="noopener noreferrer">JR 北海道（時刻、指定席）</a></li>
+                    </ul>
+                </div>
+                <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <h4 class="font-bold mb-3">🌨️ 天氣與路況</h4>
+                    <ul class="text-sm space-y-1">
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://tenki.jp/forecast/1/" target="_blank" rel="noopener noreferrer">tenki.jp 北海道 10 日預報</a></li>
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://www.jma.go.jp/bosai/warning/#area_type=offices&area_code=016000" target="_blank" rel="noopener noreferrer">氣象廳 警報・注意報（石狩・空知・後志）</a></li>
+                        <li><a class="text-sky-600 dark:text-sky-400 hover:underline" href="https://northern-road.jp/navi/" target="_blank" rel="noopener noreferrer">北の道ナビ（道路封閉、路面狀況）</a></li>
+                    </ul>
+                    <p class="text-xs text-slate-500 mt-3">若遇暴風雪，JR 與機場可能停駛／停飛，2/14 早上先看航班狀態再出門。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Credits -->
+        <section class="py-10 border-t border-slate-200 dark:border-slate-800">
+            <details class="text-xs text-slate-500">
+                <summary class="cursor-pointer font-semibold">照片來源（Wikimedia Commons）</summary>
+                <ul id="credits" class="mt-3 space-y-1 list-disc pl-5"></ul>
+            </details>
+            <p class="text-xs text-slate-500 mt-4">資料整理於 2026 年 11 月：祭典日期依主辦單位公告與旅遊媒體報導，小樽雪燈之路 2027 年日期尚未公布。營業時間、票價可能變動，請以官網為準。</p>
+        </section>
+    </main>
+
+    <footer class="py-8 text-center text-sm text-slate-500">
+        <a href="index.html#projects" class="hover:text-sky-500">← 回到 Joe 的專案展示</a>
+    </footer>
+
+    <script>
+        // ===== Trip data =====
+        const DAYS = [
+            {
+                date: '2027-02-09', label: '2/9（二）', title: '抵達北海道・支笏湖冰濤祭', area: '新千歲 → 支笏湖', stay: '支笏湖溫泉', move: '🚗 租車第 1 段',
+                cover: 'shikotsu-night', lat: 42.773, lon: 141.404, normal: '-3 / -12°C', cold: 4,
+                wear: '夜間在戶外 1.5–2 小時、湖邊有風：全套保暖＋雪褲＋冰爪，手機放內層口袋。',
+                items: [
+                    { t: '10:20', title: '桃園機場起飛', desc: '飛行約 3.5–4 小時，日本比台灣快 1 小時。機上先把外套、毛帽放手提行李，下機就能穿。' },
+                    { t: '15:00', title: '抵達新千歲機場（CTS）', desc: '入境、領行李約 40–60 分鐘。到國際線航廈 1 樓租車櫃台報到，搭接駁車到營業所取車。', tip: '取車時確認：4WD、雪胎、ETC 卡、雪刷（車上通常有）。先在停車場繞一圈熟悉煞車手感。', map: '新千歳空港' },
+                    { t: '16:30', title: '開車前往支笏湖', desc: '約 45 km、50 分鐘，走道道 16 號。沿途是針葉林雪景，天色會在 17:00 前後轉暗。', tip: '山路多彎，有些路段會結冰，保持 40–50 km/h。', map: '支笏湖温泉' },
+                    { t: '17:30', title: '千歲・支笏湖冰濤祭', star: true, imgs: ['shikotsu-night', 'shikotsu-igloo'], desc: '把支笏湖水噴灑在骨架上，一層層凍成的冰塔與冰洞，最高可達十幾公尺。夜間點燈後，藍、綠、紅色燈光打進冰柱裡，走進冰窟像進入發光的洞穴。會場有冰滑梯、冰之神社、苔蘚冰窟與屋台熱食。', tip: '點燈 16:30–20:00，平日門票 ¥1,000。地面是壓實的冰，一定要穿防滑鞋。屋台的熱甘酒、烤玉米很適合暖手。', map: '千歳・支笏湖氷濤まつり' },
+                    { t: '19:15', title: '入住支笏湖溫泉、晚餐', desc: '會場旁就是支笏湖溫泉街，走路就能回旅館。泡完湯消除飛行疲勞。推薦：支笏湖第一寶亭留 翠山亭、休暇村支笏湖、丸駒溫泉（車程 15 分，露天湯直接連著湖面）。', tip: '旅館晚餐多在 18:00–19:30 開始，訂房時選晚一點的晚餐時段，或先在冰濤祭吃屋台。' },
+                ]
+            },
+            {
+                date: '2027-02-10', label: '2/10（三）', title: '札幌雪祭一日', area: '支笏湖 → 札幌', stay: '札幌（大通／薄野一帶）', move: '🚗 上午開車 → 札幌還車',
+                cover: 'odori-night', lat: 43.062, lon: 141.354, normal: '0 / -6°C', cold: 3,
+                wear: '白天走 1.5 km 會場、晚上看點燈：全套保暖，室內進出多，中層要好脫。',
+                items: [
+                    { t: '08:00', title: '支笏湖晨景', imgs: ['shikotsu-day'], desc: '支笏湖是日本最北的「不凍湖」，冬天湖面不結冰，清晨水氣、雪山與湖色很美。散步到湖畔的山線鐵橋與遊客中心。', tip: '想看白天「支笏湖藍」的冰濤祭，10:00 開場後可再購票入場約 30 分鐘。', map: '支笏湖ビジターセンター' },
+                    { t: '10:30', title: '開車前往札幌', desc: '約 45 km、70 分鐘，走國道 453 號。進入札幌市區後路面較窄、雪堆高，注意行人。' },
+                    { t: '12:00', title: '札幌還車、寄放行李', desc: '還車點選札幌站或大通附近的營業所，再搭地鐵到飯店寄放行李。住大通或薄野一帶，晚上看完點燈走路就能回去。' },
+                    { t: '12:30', title: '午餐：湯咖哩', desc: '札幌發源的湯咖哩，大塊蔬菜和雞腿浸在香料湯裡，冬天吃最暖。名店：Suage+、GARAKU、Picante（多需排隊）。' },
+                    { t: '13:30', title: '札幌雪祭 大通會場（白天）', star: true, imgs: ['odori-sculpture'], desc: '從 1 丁目電視塔一路走到 11 丁目，約 1.5 km。白天最適合看大雪像的細節：數層樓高的城堡、建築、動漫角色，加上國際雪雕比賽與上百座市民小雪像。沿途有北海道美食攤位（烤扇貝、牛奶、哈密瓜）。', tip: '2/9 起是雪祭最後三天，人潮多。看雪像不要站在雪堆邊緣，地面濕滑。', map: '大通公園' },
+                    { t: '16:00', title: '札幌電視塔展望台', imgs: ['tv-tower'], desc: '90 公尺高的展望台，可以從正上方俯瞰整條雪祭會場延伸到遠方，再等日落後點燈的瞬間。', tip: '日落約 16:55，16:30 前上去最好。', map: 'さっぽろテレビ塔' },
+                    { t: '17:00', title: '大雪像點燈與光雕投影', star: true, imgs: ['odori-night'], desc: '天黑後大雪像打上燈光，部分大雪像有光雕投影秀（Projection Mapping），每晚定時播放。夜晚的大通公園是雪祭最經典的畫面。', tip: '投影場次與時間在官網公布；氣溫會降到 -6°C 左右，記得戴手套。' },
+                    { t: '19:00', title: '晚餐：成吉思汗烤羊肉', imgs: ['jingisukan'], desc: '北海道代表料理，在中間隆起的鐵鍋上烤羊肉，旁邊用肉汁煮蔬菜。名店：だるま（本店常排隊）、成吉思汗 しろくま。', map: 'だるま 本店 札幌' },
+                    { t: '20:00', title: '薄野會場冰雕 ＆ 拉麵橫丁', imgs: ['susukino-ice', 'ramen-alley'], desc: '薄野站周邊的街道兩旁排滿冰雕，晚上燈光透過冰塊很漂亮。逛完到元祖拉麵橫丁吃一碗味噌拉麵當宵夜。', tip: '冰雕點燈約到 22:00；拉麵橫丁很窄，店外排隊要穿暖。', map: 'すすきの 元祖ラーメン横丁' },
+                ]
+            },
+            {
+                date: '2027-02-11', label: '2/11（四・國定假日）', title: '小樽運河與雪燈之路', area: '札幌 ⇄ 小樽', stay: '札幌', move: '🚆 JR 來回',
+                cover: 'otaru-light-path', lat: 43.197, lon: 140.994, normal: '0 / -5°C', cold: 3,
+                wear: '海港城市風大，加脖圍與遮耳帽；石板坡道易滑，冰爪很有用。',
+                items: [
+                    { t: '07:30', title: '早餐：二條市場海鮮丼', imgs: ['nijo-market'], desc: '札幌市區的老市場，早上就能吃到海膽、鮭魚卵、螃蟹蓋飯。從大通走路約 5 分鐘。', map: '二条市場' },
+                    { t: '08:45', title: '順路看札幌市鐘樓', imgs: ['clock-tower'], desc: '1878 年建成的木造洋館，是札幌最古老的建築之一，雪中的白色鐘樓特別上相。外觀拍照即可。', map: '札幌市時計台' },
+                    { t: '09:30', title: 'JR 札幌 → 小樽', desc: '快速 Airport 或普通車約 35–50 分鐘，約 ¥750，可直接刷 Suica／ICOCA。', tip: '坐行進方向右側，銭函到朝里之間鐵道就貼著日本海。' },
+                    { t: '10:30', title: '小樽運河（白天）', imgs: ['otaru-canal'], desc: '大正時代的運河，兩旁是石造倉庫改建的餐廳與商店。從淺草橋拍運河與倉庫是經典角度。', map: '小樽運河 浅草橋' },
+                    { t: '11:30', title: '堺町通商店街', imgs: ['sakaimachi'], desc: '一整條明治、大正時期的石造建築：北一硝子（玻璃工藝）、小樽音樂盒堂（蒸汽時鐘）、LeTAO 本店（雙層起司蛋糕）、六花亭、北菓樓。', tip: '北一硝子三號館的「北一 Hall」咖啡廳點了 167 盞煤油燈，下午很適合坐下暖身。', map: '堺町通り商店街' },
+                    { t: '13:00', title: '午餐：小樽壽司', desc: '小樽港的海鮮新鮮又比札幌便宜，「壽司屋通」一整排壽司店；想便宜一點可以去小樽站旁的三角市場吃海鮮丼。', map: '小樽 寿司屋通り' },
+                    { t: '17:00', title: '小樽雪燈之路', star: true, imgs: ['otaru-light-path'], desc: '運河水面漂浮著浮球蠟燭，岸邊與舊手宮線鐵道兩旁排滿雪做的小燈籠，整座城市被燭光包圍，是比札幌更安靜浪漫的冬季祭典。', tip: '2027 年日期尚未公布（2026 年為 2/7–2/14、17:00–21:00），出發前到官網確認。若未舉辦，傍晚的運河點燈一樣很美。', map: '小樽運河' },
+                    { t: '19:30', title: 'JR 回札幌', desc: '回到札幌約 20:30，還趕得上雪祭最後一晚的點燈（約到 22:00），可再去大通走一段。', tip: '2/11 是日本「建國紀念日」連假，小樽與雪祭人潮都多，回程電車可能要站。' },
+                ]
+            },
+            {
+                date: '2027-02-12', label: '2/12（五）', title: '旭山動物園・美瑛・白金青池', area: '札幌 → 旭川 → 美瑛', stay: '白金溫泉（美瑛）', move: '🚆 JR ＋ 🚗 租車第 2 段',
+                cover: 'blue-pond', lat: 43.588, lon: 142.467, normal: '-3 / -13°C', cold: 5,
+                wear: '全程最冷的一天，夜間可能 -15°C 以下：雪褲、厚羽絨、暖暖包貼腳底，眼鏡族注意起霧。',
+                items: [
+                    { t: '07:30', title: 'JR 特急 札幌 → 旭川', desc: '特急 Lilac／Kamui 約 85 分鐘。建議先在 JR 北海道網站訂指定席。', tip: '若多天都搭 JR，可評估「札幌－富良野區域鐵路周遊券」等外國人票券是否划算。' },
+                    { t: '09:00', title: '旭川站前取車', desc: '取 4WD 車，前往旭山動物園約 30 分鐘。', map: '旭川駅' },
+                    { t: '10:30', title: '旭山動物園', star: true, imgs: ['penguin-walk'], desc: '日本最有名的「行動展示」動物園。冬天限定的「企鵝散步」：國王企鵝排成一列在雪地上搖搖擺擺走過遊客面前，距離不到一公尺。還有從水底隧道看企鵝「飛翔」的企鵝館、北極熊館、海豹的圓柱水槽。', tip: '冬季開園時間較短（約 10:30–15:30）；企鵝散步往年在 11:00 起，視積雪與天候實施，出發前查官網。園區是坡地，雪很滑。', map: '旭山動物園' },
+                    { t: '13:00', title: '午餐：旭川拉麵', imgs: ['asahikawa-ramen'], desc: '旭川拉麵是豬骨＋海鮮雙湯頭的醬油拉麵，表面浮一層豬油保溫。名店：山頭火 本店、青葉、蜂屋。', map: 'らーめん山頭火 旭川本店' },
+                    { t: '14:30', title: '開往美瑛', desc: '約 1 小時。沿途進入美瑛丘陵，一片片起伏的白色田地，偶爾一棵孤單的樹。', tip: '美瑛的丘陵多是私人農地，千萬不要踩進田裡拍照，路邊停車也要避開彎道。' },
+                    { t: '15:45', title: '新榮之丘 夕陽', imgs: ['biei-hills'], desc: '美瑛著名的夕陽觀景點，晴天時雪原會被夕陽染成粉橘色，遠方是十勝岳連峰。', map: '新栄の丘展望公園' },
+                    { t: '16:45', title: '白鬚瀑布', desc: '從岩壁間流出的地下水像白鬍子一樣灑進美瑛川，冬天河水呈現藍綠色，與白雪形成強烈對比。從白金溫泉旁的「白金ブルーリバー橋」上觀看。', map: '白ひげの滝' },
+                    { t: '17:15', title: '白金青池 冬季點燈', star: true, imgs: ['blue-pond'], desc: '夏天以夢幻藍色聞名的青池，冬天水面會被雪覆蓋，晚上燈光打在池中枯木上，配合落雪是完全不同的靜謐風景。免費參觀。', tip: '點燈從日落後到 21:00。停車場有收費；夜間步道很暗、結冰，帶頭燈或用手機照明。', map: '白金青い池' },
+                    { t: '18:00', title: '入住白金溫泉', desc: '十勝岳山腳下的溫泉鄉，雪中露天溫泉是這趟的重頭戲。推薦：大雪山白金觀光飯店、湯元白金溫泉飯店、森之旅亭美瑛。', tip: '晴朗無風的清晨，零下 15°C 以下有機會看到「鑽石塵」（空氣中閃閃發亮的冰晶）。' },
+                ]
+            },
+            {
+                date: '2027-02-13', label: '2/13（六）', title: '美瑛雪原・回札幌', area: '美瑛 → 旭川 → 札幌', stay: '札幌', move: '🚗 旭川還車 → 🚆 JR',
+                cover: 'biei-tree', lat: 43.588, lon: 142.467, normal: '-3 / -13°C', cold: 5,
+                wear: '早上最冷、雪原反光強：全套保暖＋太陽眼鏡；下午回札幌可減一層。',
+                items: [
+                    { t: '08:30', title: '退房，拼布之路雪景', star: true, imgs: ['biei-tree'], desc: '美瑛西側的「拼布之路」，有很多因為廣告和攝影作品而出名的樹：聖誕樹之木（像聖誕樹的冷杉）、Ken & Mary 之木、親子之木、七星之木。早上天空最藍、雪原最乾淨。', tip: '樹都在私人農地裡，只能在路邊拍，不要走進田裡。', map: 'クリスマスツリーの木 美瑛' },
+                    { t: '10:30', title: '四季彩之丘', desc: '夏天是花田，冬天變成大片雪原，有雪上摩托、雪地香蕉船等冬季活動（依當年營業為準），還有羊駝牧場。', map: '展望花畑 四季彩の丘' },
+                    { t: '12:00', title: '午餐：美瑛咖哩烏龍', desc: '美瑛當地名物，咖哩烏龍麵放在焗烤盤裡，搭配美瑛牛奶與小麥，常附一瓶美瑛牛乳。', map: '美瑛 カレーうどん' },
+                    { t: '13:30', title: '開回旭川還車', desc: '約 40–50 分鐘。還車前加滿油並留收據。', map: '旭川駅' },
+                    { t: '15:00', title: 'JR 特急 旭川 → 札幌', desc: '約 85 分鐘，16:30 左右回到札幌。', tip: '2/12 起大通雪祭會場開始拆除，晚上安排購物與美食。' },
+                    { t: '17:00', title: '狸小路・札幌站 購物', desc: '狸小路商店街有藥妝店、唐吉訶德、伴手禮店；札幌站的大丸百貨地下街、Stellar Place 也很好逛。', map: '狸小路商店街' },
+                    { t: '19:00', title: '最後晚餐：螃蟹或迴轉壽司', desc: '北海道三大蟹（帝王蟹、松葉蟹、毛蟹）：かに本家、冰雪之門；想輕鬆一點，札幌站 Stellar Place 的根室花まる迴轉壽司很受歡迎（要先抽號碼牌）。' },
+                ]
+            },
+            {
+                date: '2027-02-14', label: '2/14（日）', title: '新千歲機場・回台灣', area: '札幌 → 新千歲', stay: '—', move: '🚆 JR 快速 Airport',
+                cover: 'new-chitose', lat: 42.787, lon: 141.681, normal: '-1 / -11°C', cold: 2,
+                wear: '大多在室內：外套可以收進托運行李，穿輕便一點。',
+                items: [
+                    { t: '08:00', title: '早餐、退房', desc: '把液體伴手禮（湯咖哩、果醬、牛奶醬）放進托運行李。' },
+                    { t: '10:00', title: 'JR 快速 Airport 札幌 → 新千歲機場', desc: '約 37–40 分鐘，約每 12 分鐘一班。可加購 u-seat 指定席，大行李比較好放。', tip: '若前一晚下大雪，提早一班出發，並先查 JR 運行狀況與航班。' },
+                    { t: '10:45', title: '新千歲機場 國內線航廈', imgs: ['new-chitose'], desc: '國內線航廈本身就是景點：ROYCE\' 巧克力工廠、北海道拉麵道場（10 家名店，可當午餐）、哆啦A夢空中樂園，以及最齊全的伴手禮區（白色戀人、六花亭、LeTAO、じゃがポックル、北菓樓）。', map: '新千歳空港 国内線ターミナル' },
+                    { t: '12:30', title: '前往國際線航廈報到', desc: '國內線到國際線有連通道，步行約 10 分鐘。起飛前 2.5 小時報到較保險。' },
+                    { t: '15:00', title: '起飛回台灣', desc: '約 4–4.5 小時，抵達台灣約傍晚。北海道，再見！' },
+                ]
+            },
+        ];
+
+        const GEAR = [
+            { title: '台灣出發前先買', items: ['防水防滑雪靴（鞋底深紋）', '可拆式冰爪／鞋釘', '防水雪褲（支笏湖、美瑛用）', '長版羽絨或防水雪衣', '發熱衣褲 2–3 套（HEATTECH 極暖）', '羊毛襪 3 雙以上', '遮耳毛帽、脖圍', '觸控內手套＋防水外手套', '大容量行動電源'] },
+            { title: '日本當地補買也可以', items: ['暖暖包（貼式腳底用、腰用）—藥妝、便利商店', '冰爪—唐吉訶德、地下街鞋店', '防寒小物—WORKMAN 便宜好用', '護唇膏、保濕乳液（非常乾燥）'] },
+            { title: '攝影與手機', items: ['手機殼外加保暖套或放內層口袋', '相機備用電池（低溫耗電快）', '夾鏈袋（從室外進室內時裝相機防結露）', '偏光鏡／太陽眼鏡（雪地反光）', '手機三腳架（點燈夜拍）'] },
+            { title: '證件與其他', items: ['護照', '台灣駕照正本＋日文譯本', '信用卡＋日圓現金（屋台多收現金）', 'Suica／ICOCA 或手機綁定', '網卡／eSIM', '旅遊平安險（含海外醫療）'] },
+        ];
+
+        const CREDITS = [
+            ['shikotsu-night', '千歳・支笏湖氷濤まつり（Lake Shikotsu Ice Festival） - panoramio (3).jpg', 't-konno', 'CC BY-SA 3.0'],
+            ['shikotsu-igloo', '千歳・支笏湖氷濤まつり2015（Lake Shikotsu Ice Festival 2015） - panoramio.jpg', 't-konno', 'CC BY-SA 3.0'],
+            ['shikotsu-day', '千歳・支笏湖氷濤まつり（Lake Shikotsu Ice Festival） - panoramio.jpg', 't-konno', 'CC BY-SA 3.0'],
+            ['odori-sculpture', 'Snow fes. of Sapporo／札幌雪まつり大雪像２ - panoramio.jpg', 'T DMY', 'CC BY 3.0'],
+            ['odori-night', 'Sapporo Snow Festival Odori-Site At Night Panorama 1.jpg', '京浜にけ', 'CC BY-SA 3.0'],
+            ['tv-tower', 'Winter Night- Sapporo TV Tower.JPG', 'Chiranthi W.', 'CC BY-SA 4.0'],
+            ['susukino-ice', 'Great Phoenix Ice Sculpture.JPG', 'Ominae', 'CC BY-SA 4.0'],
+            ['ramen-alley', 'Ramen Alley Sapporo Japan.jpg', 'Sgroey', 'CC BY-SA 4.0'],
+            ['jingisukan', 'Jingisukan (32663955448).jpg', 'Raita Futo', 'CC BY 2.0'],
+            ['nijo-market', 'Nijo fish Market 2014.jpg', 'Wing1990hk', 'CC BY 3.0'],
+            ['clock-tower', 'Sapporo Clock Tower 20090112.jpg', 'MiNe', 'CC BY 2.0'],
+            ['otaru-canal', 'Otaru Canal Night.jpg', 'Haha169', 'CC BY-SA 4.0'],
+            ['otaru-light-path', '小樽雪あかりの路（Otaru Snow Light Path Festival） - panoramio.jpg', 't-konno', 'CC BY-SA 3.0'],
+            ['sakaimachi', 'Sakaimachi street Otaru Hokkaido04bs3.jpg', '663highland', 'CC BY 2.5'],
+            ['penguin-walk', 'Walking Penguins in Asahiyama Zoo (back).JPG', '青子守歌', 'CC BY-SA 3.0'],
+            ['asahikawa-ramen', 'Santoka ramen.jpg', 'Totti', 'CC BY-SA 4.0'],
+            ['biei-hills', 'Blue Sky And White World (131608635).jpeg', 'Yascolo', 'CC BY 3.0'],
+            ['blue-pond', 'Shirogane Blue Pond by night, April 2023 08.jpg', 'Calistemon', 'CC BY-SA 4.0'],
+            ['biei-tree', 'The Christmas-tree called in Biei, Hokkaidou - panoramio.jpg', 'oyakata', 'CC BY 3.0'],
+            ['new-chitose', 'Hokkaido New Chitose Airport13n4272.jpg', '663highland', 'CC BY 2.5'],
+        ];
+
+        const COLD = ['', '涼', '冷', '很冷', '嚴寒', '極寒'];
+        const COLD_CLS = ['', 'bg-sky-100 text-sky-700', 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300', 'bg-sky-200 text-sky-800 dark:bg-sky-800/60 dark:text-sky-200', 'bg-indigo-200 text-indigo-800 dark:bg-indigo-800/60 dark:text-indigo-200', 'bg-violet-200 text-violet-800 dark:bg-violet-800/60 dark:text-violet-200'];
+        const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const mapUrl = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+        const img = (name, cls) => `<img src="hokkaido/${name}.jpg" alt="" loading="lazy" class="${cls}">`;
+
+        // ===== Render overview cards =====
+        document.getElementById('overviewCards').innerHTML = DAYS.map((d, i) => `
+            <a href="#day${i + 1}" class="group block rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                <div class="relative h-28">${img(d.cover, 'w-full h-full object-cover')}
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                    <div class="absolute bottom-2 left-3 text-white"><div class="text-xs font-bold text-sky-300">Day ${i + 1} · ${d.label}</div><div class="font-bold">${d.title}</div></div>
+                </div>
+                <div class="px-3 py-2 text-xs text-slate-600 dark:text-slate-400 flex justify-between gap-2"><span>${d.area}</span><span class="shrink-0">${d.move}</span></div>
+            </a>`).join('');
+
+        // ===== Render days =====
+        document.getElementById('days').innerHTML = DAYS.map((d, i) => `
+            <section id="day${i + 1}" class="py-12 border-t border-slate-200 dark:border-slate-800">
+                <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+                    <div>
+                        <p class="text-sm font-bold text-sky-600 dark:text-sky-400">Day ${i + 1} · ${d.label}<span class="today-badge hidden ml-2 px-2 py-0.5 rounded-full bg-rose-500 text-white text-xs">今天</span></p>
+                        <h2 class="text-2xl md:text-3xl font-bold">${d.title}</h2>
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-xs font-semibold">
+                        <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800">📍 ${d.area}</span>
+                        <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800">${d.move}</span>
+                        <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800">🛏 ${d.stay}</span>
+                    </div>
+                </div>
+                <div class="grid lg:grid-cols-[1fr_17rem] gap-6">
+                    <ol class="space-y-5">
+                        ${d.items.map((it, j) => `
+                        <li class="tl-item" data-day="${i}" data-idx="${j}" data-time="${it.t}">
+                            <span class="tl-dot"></span>
+                            <div class="rounded-2xl p-4 bg-white dark:bg-slate-800 border ${it.star ? 'border-sky-400/70 shadow-md shadow-sky-500/10' : 'border-slate-200 dark:border-slate-700'}">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div>
+                                        <div class="text-xs font-bold text-sky-600 dark:text-sky-400 font-mono">${it.t}${it.star ? ' <span class="ml-1 px-1.5 py-0.5 rounded bg-amber-400 text-slate-900 font-sans">必看</span>' : ''}<span class="next-badge hidden ml-1 px-1.5 py-0.5 rounded bg-sky-500 text-white font-sans">下一站</span></div>
+                                        <h3 class="font-bold text-lg leading-snug">${esc(it.title)}</h3>
+                                    </div>
+                                    ${it.map ? `<a href="${mapUrl(it.map)}" target="_blank" rel="noopener noreferrer" class="shrink-0 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-full bg-sky-50 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 hover:bg-sky-100" aria-label="在 Google 地圖開啟 ${esc(it.title)}">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>地圖</a>` : ''}
+                                </div>
+                                ${it.imgs ? `<div class="grid ${it.imgs.length > 1 ? 'grid-cols-2' : 'grid-cols-1'} gap-2 my-3">${it.imgs.map(n => img(n, 'w-full rounded-xl object-cover ' + (it.imgs.length > 1 ? 'h-36 md:h-44' : 'h-48 md:h-64'))).join('')}</div>` : ''}
+                                <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${esc(it.desc)}</p>
+                                ${it.tip ? `<p class="text-sm mt-2 rounded-lg px-3 py-2 bg-amber-50 dark:bg-amber-900/20 text-amber-900 dark:text-amber-200">💡 ${esc(it.tip)}</p>` : ''}
+                            </div>
+                        </li>`).join('')}
+                    </ol>
+                    <aside class="order-first lg:order-none lg:sticky lg:top-32 self-start grid grid-cols-2 lg:grid-cols-1 gap-3 lg:gap-4">
+                        <div class="rounded-2xl p-4 bg-gradient-to-br from-sky-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 border border-sky-100 dark:border-slate-700">
+                            <h4 class="text-sm font-bold mb-2">🌡️ 當天天氣</h4>
+                            <div class="text-2xl font-bold">${d.normal}</div>
+                            <div class="text-xs text-slate-500 mb-2">2 月平年值（高／低）</div>
+                            <div class="forecast text-sm" data-day="${i}"></div>
+                            <div class="mt-2"><span class="text-xs font-bold px-2 py-0.5 rounded-full ${COLD_CLS[d.cold]}">寒冷度 ${'❄'.repeat(d.cold)} ${COLD[d.cold]}</span></div>
+                        </div>
+                        <div class="rounded-2xl p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                            <h4 class="text-sm font-bold mb-1">🧥 今天怎麼穿</h4>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">${esc(d.wear)}</p>
+                        </div>
+                    </aside>
+                </div>
+            </section>`).join('');
+
+        // ===== Weather table =====
+        document.getElementById('weatherTable').innerHTML = DAYS.map(d => `
+            <tr><td class="p-3 whitespace-nowrap font-semibold">${d.label}</td><td class="p-3">${d.area}</td><td class="p-3 whitespace-nowrap font-mono">${d.normal}</td>
+            <td class="p-3 whitespace-nowrap"><span class="text-xs font-bold px-2 py-0.5 rounded-full ${COLD_CLS[d.cold]}">${'❄'.repeat(d.cold)} ${COLD[d.cold]}</span></td>
+            <td class="p-3 text-slate-600 dark:text-slate-400">${esc(d.wear)}</td></tr>`).join('');
+
+        // ===== Gear checklist (saved in this browser) =====
+        let checked = {};
+        try { checked = JSON.parse(localStorage.getItem('hokkaidoGear') || '{}'); } catch (e) {}
+        document.getElementById('gearList').innerHTML = GEAR.map((g, gi) => `
+            <div class="rounded-2xl p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <h4 class="font-bold mb-3">${g.title}</h4>
+                <ul class="space-y-2">${g.items.map((it, ii) => `
+                    <li><label class="flex items-start gap-3 text-sm cursor-pointer">
+                        <input type="checkbox" data-key="${gi}-${ii}" class="gear-cb mt-0.5 w-4 h-4 accent-sky-500" ${checked[gi + '-' + ii] ? 'checked' : ''}>
+                        <span>${esc(it)}</span></label></li>`).join('')}</ul>
+            </div>`).join('');
+        document.querySelectorAll('.gear-cb').forEach(cb => cb.addEventListener('change', () => {
+            checked[cb.dataset.key] = cb.checked;
+            try { localStorage.setItem('hokkaidoGear', JSON.stringify(checked)); } catch (e) {}
+        }));
+
+        // ===== Credits =====
+        document.getElementById('credits').innerHTML = CREDITS.map(([, file, author, lic]) =>
+            `<li><a class="hover:underline" href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file.replace(/ /g, '_'))}" target="_blank" rel="noopener noreferrer">${esc(file)}</a> — ${esc(author)}，${lic}（已縮圖）</li>`).join('');
+
+        // ===== Trip status: countdown before, "today / next stop" during =====
+        const jstNow = () => { const n = new Date(); return new Date(n.getTime() + (n.getTimezoneOffset() + 540) * 60000); };
+        const pad = n => String(n).padStart(2, '0');
+        function updateStatus() {
+            const now = jstNow();
+            const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+            const hm = pad(now.getHours()) + ':' + pad(now.getMinutes());
+            const dayIdx = DAYS.findIndex(d => d.date === today);
+            const status = document.getElementById('statusText');
+            document.querySelectorAll('.tl-item').forEach(li => li.classList.remove('is-past', 'is-next'));
+            document.querySelectorAll('.next-badge, .today-badge').forEach(b => b.classList.add('hidden'));
+            if (dayIdx >= 0) {
+                const d = DAYS[dayIdx];
+                const items = [...document.querySelectorAll(`.tl-item[data-day="${dayIdx}"]`)];
+                const next = items.find(li => li.dataset.time > hm);
+                const started = items.filter(li => li.dataset.time <= hm);
+                started.slice(0, -1).forEach(li => li.classList.add('is-past'));   // keep the stop in progress fully visible
+                document.querySelector(`#day${dayIdx + 1} .today-badge`).classList.remove('hidden');
+                document.querySelector(`.day-chip[data-day="${dayIdx + 1}"]`).classList.add('ring-2', 'ring-sky-400');
+                if (next) { next.classList.add('is-next'); next.querySelector('.next-badge').classList.remove('hidden'); }
+                status.textContent = `今天是 Day ${dayIdx + 1}（${d.label}）` + (next ? `・下一站 ${next.dataset.time} ${d.items[+next.dataset.idx].title}` : '・今天行程結束，好好休息');
+            } else {
+                const start = new Date(2027, 1, 9), end = new Date(2027, 1, 14, 23, 59);
+                const days = Math.ceil((start - now) / 86400000);
+                status.textContent = now < start ? `距離出發還有 ${days} 天` : now > end ? '旅程結束，歡迎回家！' : '旅途中';
+            }
+            return dayIdx;
+        }
+        const todayIdx = updateStatus();
+        setInterval(updateStatus, 60000);
+        if (todayIdx >= 0 && !location.hash) setTimeout(() => document.getElementById('day' + (todayIdx + 1)).scrollIntoView(), 300);
+
+        // ===== Live forecast (Open-Meteo, only available within ~16 days) =====
+        const WMO = { 0: '晴', 1: '晴時多雲', 2: '多雲', 3: '陰', 45: '霧', 48: '霧凇', 51: '毛毛雨', 53: '毛毛雨', 55: '毛毛雨', 56: '凍雨', 57: '凍雨', 61: '雨', 63: '雨', 65: '大雨', 66: '凍雨', 67: '凍雨', 71: '小雪', 73: '雪', 75: '大雪', 77: '霰', 80: '陣雨', 81: '陣雨', 82: '大陣雨', 85: '陣雪', 86: '大陣雪', 95: '雷雨', 96: '雷雨', 99: '雷雨' };
+        const daysUntil = d => Math.floor((new Date(d + 'T00:00:00+09:00') - new Date()) / 86400000);
+        DAYS.forEach((d, i) => {
+            const box = document.querySelector(`.forecast[data-day="${i}"]`);
+            const until = daysUntil(d.date);
+            if (until > 15) { box.innerHTML = `<span class="text-xs text-slate-500">出發前 16 天起自動顯示即時預報</span>`; return; }
+            if (until < -1) { box.innerHTML = ''; return; }
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${d.lat}&longitude=${d.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,snowfall_sum&timezone=Asia%2FTokyo&start_date=${d.date}&end_date=${d.date}`;
+            box.innerHTML = '<span class="text-xs text-slate-500">讀取預報中…</span>';
+            fetch(url).then(r => r.json()).then(j => {
+                const x = j.daily;
+                if (!x || x.temperature_2m_max[0] == null) throw new Error('no data');
+                box.innerHTML = `<div class="rounded-lg bg-white/70 dark:bg-slate-900/60 px-3 py-2"><div class="text-xs font-bold text-sky-600 dark:text-sky-400">即時預報</div>
+                    <div class="font-semibold">${WMO[x.weather_code[0]] || '—'}　${Math.round(x.temperature_2m_max[0])} / ${Math.round(x.temperature_2m_min[0])}°C</div>
+                    <div class="text-xs text-slate-500">降雪 ${x.snowfall_sum[0]} cm（Open-Meteo）</div></div>`;
+            }).catch(() => { box.innerHTML = `<a class="text-xs text-sky-600 dark:text-sky-400 hover:underline" href="https://tenki.jp/forecast/1/" target="_blank" rel="noopener noreferrer">預報讀取失敗，改看 tenki.jp →</a>`; });
+        });
+
+        // ===== Theme: shares the same 'theme' setting as the home page =====
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+        let savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+        });
+    </script>
+</body>
+</html>
