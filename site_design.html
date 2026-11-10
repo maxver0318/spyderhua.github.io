@@ -194,7 +194,7 @@
                 <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
                 <span data-i18n="history.title">改版紀錄</span>
             </h2>
-            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="history.sub">用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。</p>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="history.sub">最近 6 個用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。</p>
             <ol id="history" class="space-y-3 border-l-2 border-slate-200 dark:border-slate-700 ml-2"></ol>
         </div>
     </section>
@@ -228,7 +228,7 @@
                 'flow.loop': '需要調整？回到 ④',
                 'how.title': 'Max 怎麼做', 'how.sub': '流程裡比較關鍵的幾個做法。',
                 'pr.title': '每個 PR 的固定格式', 'pr.sub': '我只要看 PR 說明，就能判斷這次改版能不能上線。',
-                'history.title': '改版紀錄', 'history.sub': '用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。'
+                'history.title': '改版紀錄', 'history.sub': '最近 6 個用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。'
             },
             en: {
                 'nav.back': 'Back to home',
@@ -251,7 +251,7 @@
                 'flow.loop': 'Needs changes? Back to ④',
                 'how.title': 'How Max does it', 'how.sub': 'The practices that matter most in the workflow.',
                 'pr.title': 'A fixed format for every PR', 'pr.sub': 'The PR description alone tells me whether a change is ready to go live.',
-                'history.title': 'Change history', 'history.sub': 'PRs merged with this workflow. Open one to see its full notes and screenshots on GitHub.'
+                'history.title': 'Change history', 'history.sub': 'The latest 6 PRs merged with this workflow. Open one to see its full notes and screenshots on GitHub.'
             }
         };
 
@@ -285,7 +285,8 @@
             { zh: ['待確認事項', '需要我決定或補充的內容'], en: ['Open questions', 'Anything that needs my decision or input'] }
         ];
 
-        // Merged PRs with English titles. Newer PRs are picked up from the GitHub API (see loadHistory).
+        // Latest merged PRs with English titles. Newer PRs are picked up from the GitHub API (see loadHistory).
+        const HISTORY_LIMIT = 6;
         const HISTORY = [
             { n: 17, zh: '專案展示新增北海道賞雪之旅行程頁', en: 'Add a Hokkaido snow trip itinerary page to the projects' },
             { n: 16, zh: '技能卡片：AI 工具應用改寫為 AI 輔助開發', en: 'Rewrite the AI skill card as AI-assisted development' },
@@ -293,16 +294,6 @@
             { n: 14, zh: '專案展示新增「60 秒認識 Joe」面試官簡介頁', en: 'Add a "Joe in 60 Seconds" page for interviewers to the projects' },
             { n: 13, zh: '「關於我」補上需求訪談與使用者體驗的段落', en: 'Expand About with requirements discovery and usability' },
             { n: 12, zh: '新增幕僚長 Iris 並調整 AI 團隊架構', en: 'Add chief of staff Iris and restructure the AI team' },
-            { n: 11, zh: 'AI 小助理們獨立成首頁的「AI 團隊」區塊', en: 'Move the AI assistants into an "AI Team" section on the home page' },
-            { n: 10, zh: '網站名字統一改為 Joe', en: 'Use the name Joe across the site' },
-            { n: 9, zh: '新增「網站設計」頁面與專案卡片', en: 'Add the "Site Design" page and project card' },
-            { n: 8, zh: '為 AI 小助理們加上像素風格頭像', en: 'Pixel-art avatars for the AI assistants' },
-            { n: 7, zh: '新增「AI 小助理們」頁面', en: 'New "AI Assistants" page' },
-            { n: 6, zh: '暫時移除華邦工作重點段落，待內容完善後再補上', en: 'Temporarily remove the Winbond highlights until the content is ready' },
-            { n: 5, zh: '新增「關於我」，更新首頁標語與技能', en: 'Add an About section; refresh the tagline and skills' },
-            { n: 3, zh: '華邦的三個職稱整合在同一間公司底下，顯示總年資', en: 'Group the three Winbond roles under one company with total tenure' },
-            { n: 2, zh: '中文版的職稱與公司只顯示中文', en: 'Show job titles and companies in Chinese only on the Chinese version' },
-            { n: 1, zh: '更新工作經歷時間軸', en: 'Update the work experience timeline' }
         ];
 
         function el(tag, className, text) {
@@ -381,7 +372,7 @@
         }
 
         function renderHistory(lang) {
-            document.getElementById('history').replaceChildren(...HISTORY.map(item => {
+            document.getElementById('history').replaceChildren(...HISTORY.slice(0, HISTORY_LIMIT).map(item => {
                 const li = el('li', 'relative pl-6');
                 li.appendChild(el('span', 'absolute -left-[7px] top-2 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-slate-50 dark:ring-slate-900'));
                 const a = el('a', 'group flex flex-wrap items-baseline gap-x-3 hover:text-blue-500 transition-colors');
