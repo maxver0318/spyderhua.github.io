@@ -362,11 +362,22 @@
                 <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
                 <span data-i18n="nav.proj">專案展示</span>
             </h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-                <!-- 專案卡片依新增日期由新到舊排列；新專案放最前面（Joe 指定的例外除外） -->
+            <!-- Project search & category filter -->
+            <div class="mt-10 space-y-4">
+                <label class="relative block">
+                    <span class="sr-only" data-i18n="proj.search.label">搜尋專案</span>
+                    <svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"></path></svg>
+                    <input id="projectSearch" type="search" autocomplete="off" placeholder="搜尋專案…" class="w-full pl-12 pr-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400">
+                </label>
+                <div id="projectFilters" class="flex flex-wrap gap-2" role="group"></div>
+            </div>
+
+            <!-- 專案卡片：每張 <a data-project> 標上 data-date（加入網站的日期時間）與 data-cat（分類）。
+                 網頁載入後依 data-date 由新到舊自動排序，data-pin 的卡片固定排最前面。新增專案只要貼一張卡片並填好這兩個屬性。 -->
+            <div id="projectGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
                 <!-- Hokkaido Trip Project Card -->
-                <a href="hokkaido.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-11-10T00:00" data-cat="life" data-pin href="hokkaido.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <svg class="w-full h-full p-8 text-sky-400" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 104 L62 46 L84 70 L118 30 L190 104 Z" fill="#334155" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round" />
                             <path d="M104 46 L118 30 L132 46 L124 42 L118 48 L111 42 Z" fill="#e0f2fe" />
@@ -389,8 +400,8 @@
                 </a>
 
                 <!-- Interviewer Pitch Project Card -->
-                <a href="pitch.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border-2 border-blue-500/60 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-11-09T00:00" data-cat="intro" href="pitch.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border-2 border-blue-500/60 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <svg class="w-full h-full p-6" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <clipPath id="pitchWafer"><circle cx="100" cy="60" r="46" /></clipPath>
@@ -419,8 +430,8 @@
                 </a>
 
                 <!-- Site Design Project Card -->
-                <a href="site_design.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-11-05T00:00" data-cat="design" href="site_design.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <svg class="w-full h-full p-8 text-indigo-500" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="14" y="14" width="56" height="24" rx="6" fill="#334155" stroke="#f59e0b" stroke-width="2" />
                             <rect x="130" y="14" width="56" height="24" rx="6" fill="#334155" stroke="#6366f1" stroke-width="2" />
@@ -450,8 +461,8 @@
                 </a>
 
                 <!-- File System Project Card -->
-                <a href="fileSystem/" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-04-04T00:00" data-cat="tool" href="fileSystem/" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <svg class="w-full h-full p-10 text-amber-500" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M40 35 L65 35 L75 45 L160 45 L160 95 L40 95 Z" stroke="#f59e0b" stroke-width="2" fill="#334155" />
                             <path d="M40 45 L160 45" stroke="#f59e0b" stroke-width="2" />
@@ -471,8 +482,8 @@
                 </a>
 
                 <!-- CRM Design Project Card -->
-                <a href="crm_design.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-02-13T00:00" data-cat="design" href="crm_design.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <svg class="w-full h-full p-8 text-purple-500" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="30" y="20" width="140" height="80" rx="8" fill="#2d3748" stroke="#a855f7" stroke-width="2" />
                             <circle cx="50" cy="40" r="8" fill="#a855f7" />
@@ -495,8 +506,8 @@
                 </a>
 
                 <!-- Design Pattern Project Card -->
-                <a href="design_pattern.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-01-31T23:37" data-cat="teach" href="design_pattern.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <!-- Schematic Illustration for Design Patterns -->
                         <svg class="w-full h-full p-10 text-emerald-500" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="40" y="30" width="40" height="40" rx="4" stroke="#10b981" stroke-width="2" />
@@ -518,8 +529,8 @@
                 </a>
 
                 <!-- YouTube Playlist Project Card -->
-                <a href="playlist.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-01-31T09:17" data-cat="tool" href="playlist.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <!-- YouTube Schematic SVG -->
                         <svg class="w-full h-full p-10 text-red-500" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="20" y="20" width="160" height="80" rx="10" fill="#2d3748" />
@@ -541,8 +552,8 @@
                 </a>
 
                 <!-- File System Project Card -->
-                <a href="file_system.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-01-31T08:56" data-cat="design" href="file_system.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <svg class="w-full h-full p-8 text-cyan-500" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M100 20C75 20 60 40 60 40C40 40 40 65 60 65H140C160 65 160 40 140 40C140 40 125 20 100 20Z" fill="#334155" stroke="#06b6d4" stroke-width="3" stroke-linejoin="round"/>
                             <rect x="90" y="85" width="20" height="25" rx="2" fill="#06b6d4"/>
@@ -559,8 +570,8 @@
                 </a>
 
                 <!-- Stock Dashboard Project Card -->
-                <a href="stock.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <a data-project data-date="2026-01-29T00:00" data-cat="tool" href="stock.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <svg class="w-full h-full p-8 text-blue-500" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="10" y="10" width="180" height="100" rx="4" fill="#1e293b" />
                             <path d="M20 90 L50 60 L80 75 L120 40 L150 55 L180 25" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
@@ -582,6 +593,10 @@
                     </div>
                 </a>
 
+            </div>
+            <p id="projectEmpty" class="hidden text-center text-slate-500 dark:text-slate-400 py-12" data-i18n="proj.empty">找不到相關專案，換個關鍵字試試。</p>
+            <div class="mt-10 text-center">
+                <button id="projectMore" type="button" class="hidden px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"></button>
             </div>
         </div>
     </section>
@@ -810,6 +825,7 @@
                 'exp.ms.title': '研發實習生', 'exp.ms.company': '台灣微軟 | 台北', 'exp.ms.program': '台灣微軟未來生涯體驗計劃', 'exp.ms.d1': '研究並推廣 Microsoft Azure 上的 Open Source Software', 'exp.ms.d2': '撰寫程式取代人工方式，自動化市場分析工作',
                 'edu.nctu.title': '多媒體工程研究所 碩士', 'edu.nctu.school': '國立交通大學 (NCTU)', 'edu.nctu.lab': '計算機圖學與多媒體實驗室・指導教授 黃世強', 'edu.nctu.thesisLabel': '碩士論文', 'edu.nctu.thesis': '具有情緒之人群模擬及導覽技術之互動式虛擬導覽系統', 'edu.nctu.thesisDesc': '以頭戴式顯示器操作的 VR 虛擬導覽系統，比較五種導覽模式並結合具情緒的虛擬人群，以使用者測試驗證對沉浸感的影響。', 'edu.nctu.pubLabel': '期刊論文', 'edu.yzu.title': '資訊工程學系 學士', 'edu.yzu.school': '元智大學 (YZU)',
                 'skills.sub': '核心技術能力與開發工具。', 'skills.ai.name': 'AI 輔助開發', 'skills.ai.desc': '以 Copilot、Claude Code 協作寫程式與 Code Review，並撰寫自訂 Skill 把重複流程自動化', 'skills.fe': '前端開發', 'skills.be': '後端開發', 'skills.sys': '系統程式設計', 'skills.os': '系統與環境', 'skills.app': '應用程式開發', 'skills.db': '資料庫設計與效能調校',
+                'proj.search.label': '搜尋專案', 'proj.search.ph': '搜尋專案…', 'proj.empty': '找不到相關專案，換個關鍵字試試。', 'proj.showAll': '看全部 {n} 個專案', 'proj.less': '收合', 'proj.cat.all': '全部', 'proj.cat.design': '系統設計', 'proj.cat.tool': '工具', 'proj.cat.teach': '教學', 'proj.cat.life': '生活', 'proj.cat.intro': '介紹',
                 'proj.pitch.badge': '面試官請先看', 'proj.pitch.title': '60 秒認識 Joe', 'proj.pitch.desc': '給面試官的一頁式簡介：我擅長什麼、怎麼接需求、一路的成長，以及最值得先看的作品。',
                 'proj.sitedesign.title': '網站設計', 'proj.sitedesign.desc': '記錄我如何和 AI 助理 Max 一起打造這個網站：分工、流程圖，以及每次改版怎麼驗證。',
                 'proj.crm.title': 'CRM 系統設計', 'proj.crm.desc': '客戶關係管理系統的完整設計與架構分析，涵蓋功能需求與數據建模。', 'proj.stock.title': '股票庫存損益管理儀表板', 'proj.stock.desc': '提供完整的股票庫存追蹤與即時損益分析，幫助投資者更精確地管理資產組合。',
@@ -830,6 +846,7 @@
                 'exp.ms.title': 'RD Intern', 'exp.ms.company': 'Microsoft Taiwan, Taipei, Taiwan', 'exp.ms.program': 'Microsoft Taiwan Future Career Experience Program', 'exp.ms.d1': 'Researched and promoted open-source software on Microsoft Azure', 'exp.ms.d2': 'Wrote programs to automate market analysis that had been done manually',
                 'edu.nctu.title': 'Master of Multimedia Engineering', 'edu.nctu.school': 'National Chiao Tung University (NCTU)', 'edu.nctu.lab': 'Computer Graphics and Multimedia Lab · Advisor: Prof. Sai-Keung Wong', 'edu.nctu.thesisLabel': 'Master’s thesis', 'edu.nctu.thesis': 'An Interactive Virtual Tour System based on Emotional Crowd Simulation and Travelling Techniques', 'edu.nctu.thesisDesc': 'A VR virtual tour system operated with a head-mounted display, comparing five travel modes and an emotional virtual crowd through user studies on immersion.', 'edu.nctu.pubLabel': 'Journal publication', 'edu.yzu.title': 'Bachelor of Computer Science and Engineering', 'edu.yzu.school': 'Yuan Ze University (YZU)',
                 'skills.sub': 'Core technical competencies and tools.', 'skills.ai.name': 'AI-Assisted Development', 'skills.ai.desc': 'Pair-programming & code review with Copilot and Claude Code; custom Skills to automate repetitive workflows', 'skills.fe': 'Front-End Development', 'skills.be': 'Back-End Development', 'skills.sys': 'System Programming', 'skills.os': 'System & Environment', 'skills.app': 'Application Development', 'skills.db': 'Database Design & Tuning',
+                'proj.search.label': 'Search projects', 'proj.search.ph': 'Search projects…', 'proj.empty': 'No matching projects. Try another keyword.', 'proj.showAll': 'Show all {n} projects', 'proj.less': 'Show less', 'proj.cat.all': 'All', 'proj.cat.design': 'System Design', 'proj.cat.tool': 'Tools', 'proj.cat.teach': 'Tutorials', 'proj.cat.life': 'Life', 'proj.cat.intro': 'About Me',
                 'proj.pitch.badge': 'Interviewers, start here', 'proj.pitch.title': 'Joe in 60 Seconds', 'proj.pitch.desc': 'A one-page brief for interviewers: what I do best, how I take on requests, my path so far, and the work worth seeing first.',
                 'proj.sitedesign.title': 'Site Design', 'proj.sitedesign.desc': 'How I build this site together with my AI assistant Max: who does what, the workflow, and how every change is verified.',
                 'proj.crm.title': 'CRM System Design', 'proj.crm.desc': 'End-to-end design and architecture analysis of a customer relationship management system, covering functional requirements and data modeling.', 'proj.stock.title': 'Stock Portfolio Dashboard', 'proj.stock.desc': 'A comprehensive dashboard for tracking stock inventory and real-time P&L analysis.',
@@ -847,6 +864,64 @@
         const langToggle = document.getElementById('langToggle');
         const langToggleMobile = document.getElementById('langToggleMobile');
 
+        // Projects: sort newest first (pinned on top), search, category filter, show more
+        const PROJECT_CATS = ['all', 'design', 'tool', 'teach', 'life', 'intro'];
+        const PROJECT_PAGE = 6;
+        const projectGrid = document.getElementById('projectGrid');
+        const projectCards = [...projectGrid.querySelectorAll('[data-project]')].sort((a, b) =>
+            (b.hasAttribute('data-pin') - a.hasAttribute('data-pin')) || b.dataset.date.localeCompare(a.dataset.date));
+        projectCards.forEach(card => projectGrid.appendChild(card));
+        const projectState = { query: '', cat: 'all', expanded: false };
+        const projectSearch = document.getElementById('projectSearch');
+        const projectFilters = document.getElementById('projectFilters');
+        const projectMore = document.getElementById('projectMore');
+
+        function projectText(card) {
+            const keys = [...card.querySelectorAll('[data-i18n]')].map(el => el.getAttribute('data-i18n'));
+            return keys.flatMap(k => [i18n.zh[k], i18n.en[k]]).concat(card.textContent).join(' ').toLowerCase();
+        }
+
+        function renderProjects(lang = currentLang) {
+            const t = i18n[lang];
+            projectSearch.placeholder = t['proj.search.ph'];
+            projectFilters.innerHTML = PROJECT_CATS.map(c => {
+                const on = c === projectState.cat;
+                return `<button type="button" data-cat="${c}" aria-pressed="${on}" class="px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${on
+                    ? 'bg-blue-600 border-blue-600 text-white'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-blue-500'}">${t['proj.cat.' + c]}</button>`;
+            }).join('');
+            const words = projectState.query.toLowerCase().split(/\s+/).filter(Boolean);
+            const matches = projectCards.filter(card =>
+                (projectState.cat === 'all' || card.dataset.cat === projectState.cat) &&
+                words.every(w => projectText(card).includes(w)));
+            const filtering = words.length > 0 || projectState.cat !== 'all';
+            const limit = filtering || projectState.expanded ? Infinity : PROJECT_PAGE;
+            projectCards.forEach(card => {
+                card.classList.toggle('hidden', !(matches.indexOf(card) > -1 && matches.indexOf(card) < limit));
+                let meta = card.querySelector('.proj-meta');
+                if (!meta) {
+                    meta = document.createElement('p');
+                    meta.className = 'proj-meta text-xs font-semibold text-slate-400 dark:text-slate-500 mb-2';
+                    card.querySelector(':scope > div.p-6').prepend(meta);
+                }
+                meta.textContent = card.dataset.date.slice(0, 7).replace('-', '/') + ' · ' + t['proj.cat.' + card.dataset.cat];
+            });
+            document.getElementById('projectEmpty').classList.toggle('hidden', matches.length > 0);
+            projectMore.classList.toggle('hidden', filtering || projectCards.length <= PROJECT_PAGE);
+            projectMore.textContent = projectState.expanded ? t['proj.less'] : t['proj.showAll'].replace('{n}', projectCards.length);
+        }
+
+        projectSearch.addEventListener('input', () => { projectState.query = projectSearch.value; renderProjects(); });
+        projectFilters.addEventListener('click', e => {
+            const btn = e.target.closest('button[data-cat]');
+            if (btn) { projectState.cat = btn.dataset.cat; renderProjects(); }
+        });
+        projectMore.addEventListener('click', () => {
+            projectState.expanded = !projectState.expanded;
+            renderProjects();
+            if (!projectState.expanded) document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+        });
+
         function updateLanguage(lang) {
             Object.entries(EXPERIENCE_DATES).forEach(([key, range]) => {
                 i18n[lang][key] = getExperienceDate(range, lang);
@@ -860,6 +935,7 @@
             langToggle.innerText = lang === 'zh' ? 'EN' : '中文';
             langToggleMobile.innerText = lang === 'zh' ? 'EN' : '中文';
             renderAiTeam(lang);
+            renderProjects(lang);
             currentLang = lang;
         }
 
