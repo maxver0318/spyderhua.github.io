@@ -199,10 +199,24 @@
         </div>
     </section>
 
+    <!-- Prompts -->
+    <section id="prompts" class="bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="prompts.title">我給 Max 的提示詞</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-3" data-i18n="prompts.sub">每次請 Max 做事時實際打的那段話，附上做出來的成果。想做類似的東西，可以直接複製來改。</p>
+            <p class="text-sm text-slate-500 mb-8"><span class="px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 font-semibold" data-i18n="prompts.placeholder">〔方括號〕</span> <span data-i18n="prompts.note">裡的內容是為了保護隱私替換掉的個資、網址或金鑰，使用時換成你自己的。</span></p>
+            <div id="promptList" class="space-y-5"></div>
+        </div>
+    </section>
+
     <footer class="py-10 border-t border-slate-200 dark:border-slate-800 text-center text-slate-500 text-sm">
         <p>© <span id="year"></span> Joe Huang. Built for GitHub Pages.</p>
     </footer>
 
+    <script src="prompts-data.js"></script>
     <script>
         document.getElementById('year').innerText = new Date().getFullYear();
 
@@ -228,7 +242,10 @@
                 'flow.loop': '需要調整？回到 ④',
                 'how.title': 'Max 怎麼做', 'how.sub': '流程裡比較關鍵的幾個做法。',
                 'pr.title': '每個 PR 的固定格式', 'pr.sub': '我只要看 PR 說明，就能判斷這次改版能不能上線。',
-                'history.title': '改版紀錄', 'history.sub': '最近 6 個用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。'
+                'history.title': '改版紀錄', 'history.sub': '最近 6 個用這個流程合併的 PR，點擊可以在 GitHub 看到完整的說明與截圖。',
+                'prompts.title': '我給 Max 的提示詞', 'prompts.sub': '每次請 Max 做事時實際打的那段話，附上做出來的成果。想做類似的東西，可以直接複製來改。',
+                'prompts.placeholder': '〔方括號〕', 'prompts.note': '裡的內容是為了保護隱私替換掉的個資、網址或金鑰，使用時換成你自己的。',
+                'prompts.copy': '複製', 'prompts.copied': '已複製', 'prompts.why': '為什麼這樣寫', 'prompts.result': '成果', 'prompts.pr': 'PR', 'prompts.more': '展開全文', 'prompts.less': '收合'
             },
             en: {
                 'nav.back': 'Back to home',
@@ -251,7 +268,10 @@
                 'flow.loop': 'Needs changes? Back to ④',
                 'how.title': 'How Max does it', 'how.sub': 'The practices that matter most in the workflow.',
                 'pr.title': 'A fixed format for every PR', 'pr.sub': 'The PR description alone tells me whether a change is ready to go live.',
-                'history.title': 'Change history', 'history.sub': 'The latest 6 PRs merged with this workflow. Open one to see its full notes and screenshots on GitHub.'
+                'history.title': 'Change history', 'history.sub': 'The latest 6 PRs merged with this workflow. Open one to see its full notes and screenshots on GitHub.',
+                'prompts.title': 'The prompts I give Max', 'prompts.sub': 'The exact messages I typed when asking Max for something, with what came out of them. Copy one and adapt it to build something similar. Prompts are shown as written, in Traditional Chinese.',
+                'prompts.placeholder': '〔brackets〕', 'prompts.note': 'mark personal data, URLs or keys replaced for privacy. Swap in your own when you use them.',
+                'prompts.copy': 'Copy', 'prompts.copied': 'Copied', 'prompts.why': 'Why it works', 'prompts.result': 'Result', 'prompts.pr': 'PR', 'prompts.more': 'Show all', 'prompts.less': 'Show less'
             }
         };
 
@@ -385,6 +405,98 @@
             }));
         }
 
+        // Copy text to the clipboard, with a fallback for browsers without the async clipboard API.
+        async function copyText(text) {
+            try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
+            const ta = el('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) {}
+            ta.remove();
+            return ok;
+        }
+
+        // Render a prompt with 〔placeholders〕 highlighted; the copy button still copies the raw text.
+        function promptBody(text) {
+            const pre = el('pre', 'whitespace-pre-wrap break-words font-sans text-sm leading-relaxed text-slate-800 dark:text-slate-200');
+            text.split(/(〔[^〕]*〕)/).forEach(part => {
+                if (!part) return;
+                pre.appendChild(/^〔/.test(part)
+                    ? el('span', 'px-1 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 font-semibold', part)
+                    : document.createTextNode(part));
+            });
+            return pre;
+        }
+
+        function renderPrompts(lang, t) {
+            const list = typeof PROMPTS === 'undefined' ? [] : PROMPTS;
+            document.getElementById('promptList').replaceChildren(...list.map(item => {
+                const card = el('article', 'rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 overflow-hidden');
+                card.id = 'prompt-' + item.id;
+
+                const head = el('div', 'flex flex-wrap items-start justify-between gap-3 p-5 pb-3');
+                const titleWrap = el('div', 'min-w-0');
+                titleWrap.appendChild(el('p', 'text-xs font-semibold text-slate-500', item.date));
+                titleWrap.appendChild(el('h3', 'font-bold text-lg', item.title[lang]));
+                const links = el('div', 'flex flex-wrap gap-2 text-xs font-semibold');
+                if (item.page) {
+                    const a = el('a', 'px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 hover:underline', `${t['prompts.result']} ↗`);
+                    a.href = item.page; a.target = '_blank'; a.rel = 'noopener noreferrer';
+                    links.appendChild(a);
+                }
+                if (item.pr) {
+                    const a = el('a', 'px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 hover:underline', `${t['prompts.pr']} #${item.pr}`);
+                    a.href = `https://github.com/spyderhua/spyderhua.github.io/pull/${item.pr}`; a.target = '_blank'; a.rel = 'noopener noreferrer';
+                    links.appendChild(a);
+                }
+                head.append(titleWrap, links);
+
+                const box = el('div', 'relative mx-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700');
+                const copy = el('button', 'absolute top-2 right-2 inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-colors');
+                copy.type = 'button';
+                copy.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>';
+                const label = el('span', '', t['prompts.copy']);
+                copy.appendChild(label);
+                copy.setAttribute('aria-label', `${t['prompts.copy']}: ${item.title[lang]}`);
+                copy.addEventListener('click', async () => {
+                    if (!(await copyText(item.prompt))) return;
+                    label.textContent = t['prompts.copied'];
+                    copy.classList.replace('bg-blue-600', 'bg-emerald-600');
+                    setTimeout(() => { label.textContent = t['prompts.copy']; copy.classList.replace('bg-emerald-600', 'bg-blue-600'); }, 1600);
+                });
+                const body = el('div', 'p-4 pt-12 sm:pt-4 sm:pr-24 max-h-64 overflow-hidden');
+                body.appendChild(promptBody(item.prompt));
+                box.append(copy, body);
+
+                const foot = el('div', 'p-5 pt-3 space-y-3');
+                // Long prompts start collapsed; the toggle only appears when the text is actually clipped.
+                const toggle = el('button', 'hidden text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline', t['prompts.more']);
+                toggle.type = 'button';
+                toggle.addEventListener('click', () => {
+                    const open = body.classList.toggle('max-h-64');
+                    toggle.textContent = open ? t['prompts.more'] : t['prompts.less'];
+                });
+                requestAnimationFrame(() => { if (body.scrollHeight > body.clientHeight + 4) toggle.classList.remove('hidden'); });
+                foot.appendChild(toggle);
+                if (item.why) {
+                    const why = el('p', 'text-sm text-slate-600 dark:text-slate-400');
+                    why.append(el('span', 'font-semibold text-slate-800 dark:text-slate-200', t['prompts.why'] + (lang === 'zh' ? '：' : ': ')), document.createTextNode(item.why[lang]));
+                    foot.appendChild(why);
+                }
+                if (item.tags && item.tags[lang] && item.tags[lang].length) {
+                    const tags = el('div', 'flex flex-wrap gap-2');
+                    item.tags[lang].forEach(tag => tags.appendChild(el('span', 'text-xs px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300', '#' + tag)));
+                    foot.appendChild(tags);
+                }
+                card.append(head, box, foot);
+                return card;
+            }));
+        }
+
         let currentLang = 'zh';
         try { if (localStorage.getItem('lang') === 'en') currentLang = 'en'; } catch (e) {}
 
@@ -406,6 +518,7 @@
             renderHow(lang);
             renderPrFormat(lang);
             renderHistory(lang);
+            renderPrompts(lang, t);
         }
 
         document.getElementById('langToggle').addEventListener('click', () => {
