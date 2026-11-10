@@ -4,6 +4,28 @@
 // `prompt` stays in the language it was written in; title, why and tags are bilingual.
 const PROMPTS = [
     {
+        id: 'interviewer-pitch',
+        date: '2026-11-09',
+        title: { zh: '建立給面試官看的動畫自我介紹頁', en: 'Build an animated self-introduction page for interviewers' },
+        why: {
+            zh: '先講清楚目標讀者（面試官）和目的（一眼抓住注意力）；看到第一版後再追加「要更視覺、有動畫，但不能跳 tone」，Max 就能在既有設計語言內大膽改版。',
+            en: 'It names the reader (interviewers) and the goal (grab attention at a glance); after the first version, the follow-up asks for more visuals and animation without breaking the site’s tone, so Max can redesign boldly within the existing design language.'
+        },
+        tags: { zh: ['新頁面', '求職', '動畫', '改版'], en: ['new page', 'job search', 'animation', 'redesign'] },
+        pr: 19,
+        page: 'pitch.html',
+        prompt: `〔我的網站網址〕
+請幫我在這個自我介紹網站中的 專案展示 區域再新增一個 html
+我的目標是用來求職的時候讓面試的人能夠馬上抓住他的吸引力來看我的自我介紹。
+
+（追加）
+我覺得這個做出來的東西，基本上也還是只是一個網頁而已，內容比較簡短。
+
+我想要可以再抓住他們的眼光、抓住他們的注意力：可能比較強調視覺的部分，或者是可以給一些動畫。
+
+不過做這個動畫的主題以及類型，也還是要符合這個網站的設計，不能夠太跳tone`
+    },
+    {
         id: 'hokkaido-trip',
         date: '2026-11-09',
         title: { zh: '建立北海道賞雪行程頁', en: 'Build a Hokkaido snow-trip itinerary page' },
