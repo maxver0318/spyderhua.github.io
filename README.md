@@ -1,8 +1,8 @@
-# Joe's Portfolio Website
+# Joe Huang's Portfolio Website
 
 個人作品集網站，展示專業經驗、技能和專案成果。
 
-**主人：Joe** | 資深工程師，專注於軟體開發與技術創新，現職於華邦電子 (Winbond Electronics Corporation)
+**主人：Joe Huang** | 資深工程師，專注於軟體開發與技術創新，現職於華邦電子 (Winbond Electronics Corporation)
 
 ## 🎯 個人簡介
 
@@ -106,7 +106,7 @@ spyderhua.github.io/
    - 檔案管理系統：在瀏覽器中打開 `file_system.html`
 
 ### 在線訪問
-訪問 [Joe's Portfolio](https://spyderhua.github.io)
+訪問 [Joe Huang's Portfolio](https://spyderhua.github.io)
 
 ## 📋 股票系統使用指南
 
@@ -152,8 +152,8 @@ spyderhua.github.io/
 ### 修改個人信息
 編輯 `index.html` 中的以下部分：
 ```html
-<h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight">Joe</h1>
-<img src="profile.jpg" alt="Joe">
+<h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight">Joe Huang</h1>
+<img src="profile.jpg" alt="Joe Huang">
 ```
 
 ### 修改股票初始數據
@@ -186,7 +186,7 @@ const STOCK_REGISTRY = {
 ## 📧 聯絡方式
 
 歡迎透過以下方式與我聯繫，期待與您的交流！
-- **LinkedIn** - [Joe](https://www.linkedin.com/in/spyderhua)
+- **LinkedIn** - [Joe Huang](https://www.linkedin.com/in/spyderhua)
 - **Email** - spyderhua@gmail.com
 - **GitHub** - https://github.com/spyderhua
 

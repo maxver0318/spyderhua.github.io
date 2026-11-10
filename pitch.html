@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>60 秒認識 Joe | Joe</title>
-    <meta name="description" content="給面試官的 60 秒簡介：Joe，華邦電子資深工程師，專注晶圓製造資料系統。">
+    <title>60 秒認識 Joe | Joe Huang</title>
+    <meta name="description" content="給面試官的 60 秒簡介：Joe Huang，華邦電子資深工程師，專注晶圓製造資料系統。">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -374,7 +374,7 @@
     </section>
 
     <footer class="py-8 text-center text-sm text-slate-500 border-t border-slate-200 dark:border-slate-800">
-        © <span id="year"></span> Joe
+        © <span id="year"></span> Joe Huang
     </footer>
 
     <script>
@@ -699,7 +699,7 @@
         function render(lang) {
             const t = UI[lang];
             document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
-            document.title = lang === 'zh' ? '60 秒認識 Joe | Joe' : 'Joe in 60 Seconds | Joe';
+            document.title = lang === 'zh' ? '60 秒認識 Joe | Joe Huang' : 'Joe in 60 Seconds | Joe Huang';
             document.querySelectorAll('[data-i18n]').forEach(node => {
                 node.textContent = t[node.getAttribute('data-i18n')].replace('{y}', YEARS);
             });
