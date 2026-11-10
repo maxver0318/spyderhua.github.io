@@ -114,6 +114,7 @@
         <p>© <span id="year"></span> Joe Huang. Built for GitHub Pages.</p>
     </footer>
 
+    <script src="prompt-ui.js"></script>
     <script src="assistants-data.js"></script>
     <script>
         document.getElementById('year').innerText = new Date().getFullYear();
@@ -147,7 +148,6 @@
                 teamIndependent: '獨立運作，只聽 Joe', teamStaff: '由幕僚長協調',
                 total: (n) => `共 ${n} 位助理`, activeCount: (n) => `${n} 位已上線`, readyCount: (n) => `${n} 位待啟用`,
                 personality: '個性', likes: '喜歡的事', boundaries: '界線',
-                copy: '複製提示詞', copied: '已複製！', showPrompt: '查看提示詞'
             },
             en: {
                 'nav.back': 'Back to home',
@@ -177,7 +177,6 @@
                 teamIndependent: 'Independent; takes orders only from Joe', teamStaff: 'Coordinated by the chief of staff',
                 total: (n) => `${n} assistants`, activeCount: (n) => `${n} active`, readyCount: (n) => `${n} on standby`,
                 personality: 'Personality', likes: 'Likes', boundaries: 'Boundaries',
-                copy: 'Copy prompt', copied: 'Copied!', showPrompt: 'View prompt'
             }
         };
 
@@ -329,33 +328,9 @@
 
             const prompt = buildPrompt(agent);
             const actions = el('div', 'mt-auto');
-            const copyBtn = el('button', 'agent-avatar w-full text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition-opacity', t.copy);
-            copyBtn.addEventListener('click', () => copyText(prompt, copyBtn, t));
-            actions.appendChild(copyBtn);
-            const details = el('details', 'mt-3 text-sm');
-            details.appendChild(el('summary', 'cursor-pointer text-slate-500 hover:text-slate-700 dark:hover:text-slate-300', t.showPrompt));
-            details.appendChild(el('pre', 'mt-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg whitespace-pre-wrap text-xs text-slate-600 dark:text-slate-400', prompt));
-            actions.appendChild(details);
+            actions.appendChild(promptBlock(prompt, { lang, color: agent.color, label: agent.name }));
             card.appendChild(actions);
             return card;
-        }
-
-        function copyText(text, button, t) {
-            const done = () => {
-                button.textContent = t.copied;
-                setTimeout(() => { button.textContent = t.copy; }, 1500);
-            };
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(done);
-                return;
-            }
-            const area = document.createElement('textarea');
-            area.value = text;
-            document.body.appendChild(area);
-            area.select();
-            document.execCommand('copy');
-            area.remove();
-            done();
         }
 
         let currentLang = 'zh';
