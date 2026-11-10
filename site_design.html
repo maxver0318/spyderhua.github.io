@@ -99,8 +99,56 @@
         </div>
     </section>
 
+    <!-- Setup -->
+    <section id="setup" class="max-w-4xl mx-auto px-4 py-14">
+        <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+            <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+            <span data-i18n="env.title">我們用什麼工具溝通</span>
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="env.sub">我不用坐在電腦前：提出需求、審查、上線，都在手機上完成。</p>
+        <div class="grid md:grid-cols-3 gap-5">
+                <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <div class="flex items-center mb-3">
+                        <span class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 flex items-center justify-center mr-3 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        </span>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400" data-i18n="env.phoneWho">我（Joe）</p>
+                            <h3 class="font-bold text-lg leading-tight" data-i18n="env.phoneTool">手機上的 Claude App</h3>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed" data-i18n="env.phoneDesc">我用手機版的 Claude 跟 Max 對話。想到要改什麼，打一段話就能交代，Max 有問題也會在對話裡直接問我。</p>
+                </div>
+                <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <div class="flex items-center mb-3">
+                        <span class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-3 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </span>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400" data-i18n="env.macWho">Max</p>
+                            <h3 class="font-bold text-lg leading-tight" data-i18n="env.macTool">Mac mini 上的 Claude Desktop</h3>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed" data-i18n="env.macDesc">Max 是架在一台 Mac mini 上的 Claude Desktop。這台電腦專門給 Max 使用：讀程式碼、修改、用 Chrome 截圖、推送分支、開 PR，都在這台機器上完成。</p>
+                </div>
+                <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <div class="flex items-center mb-3">
+                        <span class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 flex items-center justify-center mr-3 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7a2 2 0 100-4 2 2 0 000 4zm0 0v10m0 0a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zm0 0V9a4 4 0 00-4-4h-3"></path></svg>
+                        </span>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400" data-i18n="env.githubWho">我（Joe）</p>
+                            <h3 class="font-bold text-lg leading-tight" data-i18n="env.githubTool">手機上的 GitHub App</h3>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed" data-i18n="env.githubDesc">Max 開好 PR 後，我用 GitHub App 看 PR 的說明與前後截圖，確認沒問題就直接點 Merge 按鈕，網站自動更新。</p>
+                </div>
+        </div>
+    </section>
+
     <!-- Flowchart -->
-    <section id="workflow" class="max-w-4xl mx-auto px-4 py-14">
+    <section id="workflow" class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
         <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
             <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
             <span data-i18n="flow.title">一次改版的流程</span>
@@ -112,10 +160,11 @@
             <div class="text-center" style="color: var(--claude)" data-i18n="flow.laneClaude">Max</div>
         </div>
         <div id="flow"></div>
+        </div>
     </section>
 
     <!-- How -->
-    <section class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+    <section>
         <div class="max-w-4xl mx-auto px-4 py-14">
             <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
                 <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
@@ -127,17 +176,19 @@
     </section>
 
     <!-- PR format -->
-    <section class="max-w-4xl mx-auto px-4 py-14">
+    <section class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
         <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
             <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
             <span data-i18n="pr.title">每個 PR 的固定格式</span>
         </h2>
         <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="pr.sub">我只要看 PR 說明，就能判斷這次改版能不能上線。</p>
         <ol id="prFormat" class="grid sm:grid-cols-2 gap-4"></ol>
+        </div>
     </section>
 
     <!-- History -->
-    <section class="bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
+    <section>
         <div class="max-w-4xl mx-auto px-4 py-14">
             <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
                 <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
@@ -165,6 +216,13 @@
                 'roles.title': '誰負責什麼', 'roles.joe': '我（Joe）', 'roles.claude': 'Max（AI 助理）',
                 'roles.joeItems': ['提出想改的地方，說明原因', '提供真實內容：經歷、專案、介紹文字', '回答 Max 提出的待確認問題', '審查 PR 的截圖與說明，決定是否上線'],
                 'roles.claudeItems': ['讀取現有網站與程式碼，掌握現況', '規劃修改方式，主動提出不清楚的地方', '撰寫 HTML／Tailwind／JavaScript，中英文同步修改', '自動檢查、截圖，整理成固定格式的 PR'],
+                'env.title': '我們用什麼工具溝通', 'env.sub': '我不用坐在電腦前：提出需求、審查、上線，都在手機上完成。',
+                'env.phoneWho': '我（Joe）', 'env.phoneTool': '手機上的 Claude App',
+                'env.phoneDesc': '我用手機版的 Claude 跟 Max 對話。想到要改什麼，打一段話就能交代，Max 有問題也會在對話裡直接問我。',
+                'env.macWho': 'Max', 'env.macTool': 'Mac mini 上的 Claude Desktop',
+                'env.macDesc': 'Max 是架在一台 Mac mini 上的 Claude Desktop。這台電腦專門給 Max 使用：讀程式碼、修改、用 Chrome 截圖、推送分支、開 PR，都在這台機器上完成。',
+                'env.githubWho': '我（Joe）', 'env.githubTool': '手機上的 GitHub App',
+                'env.githubDesc': 'Max 開好 PR 後，我用 GitHub App 看 PR 的說明與前後截圖，確認沒問題就直接點 Merge 按鈕，網站自動更新。',
                 'flow.title': '一次改版的流程', 'flow.sub': '從提出需求到網站上線，每一步由誰負責、做了什麼。',
                 'flow.laneJoe': '我（Joe）', 'flow.laneClaude': 'Max',
                 'flow.loop': '需要調整？回到 ④',
@@ -181,6 +239,13 @@
                 'roles.title': 'Who does what', 'roles.joe': 'Me (Joe)', 'roles.claude': 'Max (AI assistant)',
                 'roles.joeItems': ['Say what I want changed, and why', 'Provide the real content: experience, projects, intro text', "Answer Max's open questions", 'Review the PR screenshots and notes, and decide what ships'],
                 'roles.claudeItems': ['Read the current site and code to understand where things stand', 'Plan the change and raise anything unclear', 'Write the HTML / Tailwind / JavaScript, keeping Chinese and English in sync', 'Run checks, take screenshots, and write the PR in a fixed format'],
+                'env.title': 'The tools we talk through', 'env.sub': "I don't need to sit at a computer: requests, reviews and releases all happen on my phone.",
+                'env.phoneWho': 'Me (Joe)', 'env.phoneTool': 'Claude app on my phone',
+                'env.phoneDesc': 'I talk to Max through the Claude mobile app. Whenever I think of a change, a short message is enough, and Max asks me right in the chat when something is unclear.',
+                'env.macWho': 'Max', 'env.macTool': 'Claude Desktop on a Mac mini',
+                'env.macDesc': 'Max is Claude Desktop running on a Mac mini set aside just for it. Reading the code, editing, taking screenshots in Chrome, pushing branches and opening PRs all happen on that machine.',
+                'env.githubWho': 'Me (Joe)', 'env.githubTool': 'GitHub app on my phone',
+                'env.githubDesc': 'Once Max opens a PR, I read its notes and before/after screenshots in the GitHub app. If everything looks right, I tap Merge and the site updates on its own.',
                 'flow.title': 'The workflow for one change', 'flow.sub': 'From request to live site: who owns each step and what happens.',
                 'flow.laneJoe': 'Me (Joe)', 'flow.laneClaude': 'Max',
                 'flow.loop': 'Needs changes? Back to ④',
@@ -191,21 +256,21 @@
         };
 
         const FLOW = [
-            { lane: 'joe', zh: ['提出需求', '用一段話說明想改什麼、為什麼'], en: ['Make a request', 'Describe what to change and why'] },
+            { lane: 'joe', zh: ['提出需求', '在手機的 Claude App 用一段話說明想改什麼、為什麼'], en: ['Make a request', 'In the Claude app on my phone, describe what to change and why'] },
             { lane: 'claude', zh: ['理解現況', '讀取網站與程式碼，先問清楚不確定的地方'], en: ['Understand the site', 'Read the site and code; ask about anything unclear'] },
             { lane: 'claude', zh: ['開獨立分支', '從正式網站的最新版開分支，一個需求一個 PR'], en: ['Branch off', 'Branch from the latest live version: one request, one PR'] },
             { lane: 'claude', zh: ['修改程式', 'HTML、Tailwind、JavaScript，中英文一起改'], en: ['Edit the code', 'HTML, Tailwind and JavaScript, Chinese and English together'] },
             { lane: 'claude', zh: ['自動檢查', 'JS 錯誤、連結、翻譯是否齊全、手機版寬度'], en: ['Run checks', 'JS errors, links, translation coverage, mobile width'] },
             { lane: 'claude', zh: ['前後截圖', '桌機與手機 × 淺色與深色，親自檢查每張畫面'], en: ['Before/after shots', 'Desktop and mobile × light and dark, each one inspected'] },
             { lane: 'claude', zh: ['開 PR', '依固定格式寫好說明，附上截圖'], en: ['Open a PR', 'Notes in a fixed format, with screenshots'] },
-            { lane: 'joe', zh: ['審查', '看截圖與說明，回覆待確認事項'], en: ['Review', 'Check the screenshots and notes; answer open questions'], loop: true },
-            { lane: 'joe', zh: ['合併上線', '按下 Merge，GitHub Pages 自動部署'], en: ['Merge and ship', 'Press Merge; GitHub Pages deploys automatically'] }
+            { lane: 'joe', zh: ['審查', '在 GitHub App 看截圖與說明，回覆待確認事項'], en: ['Review', 'Check the screenshots and notes in the GitHub app; answer open questions'], loop: true },
+            { lane: 'joe', zh: ['合併上線', '在 GitHub App 點 Merge，GitHub Pages 自動部署'], en: ['Merge and ship', 'Tap Merge in the GitHub app; GitHub Pages deploys automatically'] }
         ];
 
         const HOW = [
             { icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', zh: ['永遠從最新版開始', '工作用的 fork 常常落後正式網站，所以每次都從正式網站的最新版開分支，避免把舊內容帶回去，也讓多個 PR 可以各自獨立合併。'], en: ['Always start from the latest', 'The working fork often lags behind the live site, so each branch starts from the latest live version. Old content never sneaks back in, and PRs can be merged independently.'] },
             { icon: 'M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129', zh: ['中英文同步', '每段文字都有對應的翻譯 key，中文與英文一起修改，並自動比對兩邊的 key 是否一致，切換語言不會出現漏翻。'], en: ['Chinese and English in sync', 'Every piece of text has a translation key. Both languages are edited together and the keys are compared automatically, so switching languages never shows a gap.'] },
-            { icon: 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z', zh: ['真實瀏覽器截圖', 'Max 在專屬的 Mac 上用 Chrome 搭配 Playwright 開啟網頁，模擬 1440px 桌機與 390px 手機，各截淺色與深色，並親自檢查每一張。'], en: ['Real-browser screenshots', "On its own Mac, Max opens the pages in Chrome through Playwright at 1440px desktop and 390px mobile, in light and dark mode, and inspects every shot."] },
+            { icon: 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z', zh: ['真實瀏覽器截圖', 'Max 在專屬的 Mac mini 上用 Chrome 搭配 Playwright 開啟網頁，模擬 1440px 桌機與 390px 手機，各截淺色與深色，並親自檢查每一張。'], en: ['Real-browser screenshots', "On its own Mac mini, Max opens the pages in Chrome through Playwright at 1440px desktop and 390px mobile, in light and dark mode, and inspects every shot."] },
             { icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', zh: ['自動檢查', '截圖的同時檢查 JavaScript 錯誤、頁內連結有沒有對應的區塊、手機版會不會左右滑動、圖片能不能載入。修改後不能出現修改前沒有的問題。'], en: ['Automated checks', 'While taking screenshots it checks for JavaScript errors, in-page links without a target, horizontal scrolling on mobile, and images that fail to load. A change may not add problems that were not there before.'] },
             { icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z', zh: ['截圖另外存放', '截圖放在獨立的 pr-assets 分支，PR 說明直接引用，不會混進網站的程式碼。'], en: ['Screenshots kept separate', 'Screenshots live on a separate pr-assets branch and are embedded in the PR notes, so they never mix with the site code.'] },
             { icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', zh: ['把流程寫成 Skill', '整套步驟與 PR 格式寫成一份 Claude Skill。之後每次改版，Max 都照同一套流程做，我不用每次重新交代。'], en: ['The workflow as a Skill', 'The steps and PR format are written down as a Claude Skill. Every later change follows the same process without me having to explain it again.'] }
@@ -220,7 +285,17 @@
             { zh: ['待確認事項', '需要我決定或補充的內容'], en: ['Open questions', 'Anything that needs my decision or input'] }
         ];
 
+        // Merged PRs with English titles. Newer PRs are picked up from the GitHub API (see loadHistory).
         const HISTORY = [
+            { n: 17, zh: '專案展示新增北海道賞雪之旅行程頁', en: 'Add a Hokkaido snow trip itinerary page to the projects' },
+            { n: 16, zh: '技能卡片：AI 工具應用改寫為 AI 輔助開發', en: 'Rewrite the AI skill card as AI-assisted development' },
+            { n: 15, zh: '教育背景補上論文與期刊、微軟實習內容，新增 GitHub 聯絡方式', en: 'Add thesis, publication and Microsoft internship to education; add GitHub contact' },
+            { n: 14, zh: '專案展示新增「60 秒認識 Joe」面試官簡介頁', en: 'Add a "Joe in 60 Seconds" page for interviewers to the projects' },
+            { n: 13, zh: '「關於我」補上需求訪談與使用者體驗的段落', en: 'Expand About with requirements discovery and usability' },
+            { n: 12, zh: '新增幕僚長 Iris 並調整 AI 團隊架構', en: 'Add chief of staff Iris and restructure the AI team' },
+            { n: 11, zh: 'AI 小助理們獨立成首頁的「AI 團隊」區塊', en: 'Move the AI assistants into an "AI Team" section on the home page' },
+            { n: 10, zh: '網站名字統一改為 Joe', en: 'Use the name Joe across the site' },
+            { n: 9, zh: '新增「網站設計」頁面與專案卡片', en: 'Add the "Site Design" page and project card' },
             { n: 8, zh: '為 AI 小助理們加上像素風格頭像', en: 'Pixel-art avatars for the AI assistants' },
             { n: 7, zh: '新增「AI 小助理們」頁面', en: 'New "AI Assistants" page' },
             { n: 6, zh: '暫時移除華邦工作重點段落，待內容完善後再補上', en: 'Temporarily remove the Winbond highlights until the content is ready' },
@@ -264,7 +339,7 @@
 
         function renderHow(lang) {
             document.getElementById('how').replaceChildren(...HOW.map(item => {
-                const card = el('div', 'p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700');
+                const card = el('div', 'p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700');
                 const head = el('div', 'flex items-center mb-2');
                 const icon = el('span', 'w-9 h-9 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-3 shrink-0');
                 icon.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"></path></svg>`;
@@ -276,7 +351,7 @@
 
         function renderPrFormat(lang) {
             document.getElementById('prFormat').replaceChildren(...PR_FORMAT.map((item, i) => {
-                const li = el('li', 'flex p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700');
+                const li = el('li', 'flex p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700');
                 li.appendChild(el('span', 'w-7 h-7 rounded-full bg-blue-500 text-white text-sm font-bold flex items-center justify-center mr-3 shrink-0', String(i + 1)));
                 const body = el('div');
                 body.append(el('p', 'font-bold', item[lang][0]), el('p', 'text-sm text-slate-600 dark:text-slate-400', item[lang][1]));
@@ -285,10 +360,30 @@
             }));
         }
 
+        // Add merged PRs that are not in HISTORY yet, so new changes show up without editing this page.
+        // Titles come from GitHub as written (usually Chinese); "中文 / English" titles are split.
+        async function loadHistory() {
+            try {
+                const res = await fetch('https://api.github.com/repos/spyderhua/spyderhua.github.io/pulls?state=closed&per_page=100');
+                if (!res.ok) return;
+                const known = new Set(HISTORY.map(item => item.n));
+                const added = (await res.json())
+                    .filter(pr => pr.merged_at && pr.base.ref === 'master' && !known.has(pr.number))
+                    .map(pr => {
+                        const [zh, en] = pr.title.split(' / ');
+                        return { n: pr.number, zh, en: en || zh };
+                    });
+                if (!added.length) return;
+                HISTORY.push(...added);
+                HISTORY.sort((a, b) => b.n - a.n);
+                renderHistory(currentLang);
+            } catch (e) {}
+        }
+
         function renderHistory(lang) {
             document.getElementById('history').replaceChildren(...HISTORY.map(item => {
                 const li = el('li', 'relative pl-6');
-                li.appendChild(el('span', 'absolute -left-[7px] top-2 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-white dark:ring-slate-800'));
+                li.appendChild(el('span', 'absolute -left-[7px] top-2 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-slate-50 dark:ring-slate-900'));
                 const a = el('a', 'group flex flex-wrap items-baseline gap-x-3 hover:text-blue-500 transition-colors');
                 a.href = `https://github.com/spyderhua/spyderhua.github.io/pull/${item.n}`;
                 a.target = '_blank';
@@ -346,6 +441,7 @@
         });
 
         render(currentLang);
+        loadHistory();
     </script>
 </body>
 </html>
