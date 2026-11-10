@@ -51,7 +51,7 @@ const PROMPTS = [
     {
         id: 'site-design-page',
         date: '2026-11-05',
-        title: { zh: '建立「網站設計」流程介紹頁', en: 'Build the "Site Design" workflow page' },
+        title: { zh: '建立「AI 協作開發流程」介紹頁', en: 'Build the "AI-Assisted Workflow" page' },
         why: {
             zh: '指定放在哪裡（專案展示的卡片）、要講什麼（我怎麼透過 Max、Max 做了哪些事、怎麼做）以及呈現方式（流程圖），Max 就能把協作過程整理成一頁清楚的說明。',
             en: 'It says where it goes (a project card), what to cover (how I work through Max, what Max does and how) and how to show it (a flowchart), so Max can turn the collaboration into one clear page.'
