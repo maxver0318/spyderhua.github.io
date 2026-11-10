@@ -48,4 +48,36 @@ const PROMPTS = [
 
 5. 想要去參加 支笏湖冰濤祭 大通公園的雪季`
     },
+    {
+        id: 'site-design-page',
+        date: '2026-11-05',
+        title: { zh: '建立「網站設計」流程介紹頁', en: 'Build the "Site Design" workflow page' },
+        why: {
+            zh: '指定放在哪裡（專案展示的卡片）、要講什麼（我怎麼透過 Max、Max 做了哪些事、怎麼做）以及呈現方式（流程圖），Max 就能把協作過程整理成一頁清楚的說明。',
+            en: 'It says where it goes (a project card), what to cover (how I work through Max, what Max does and how) and how to show it (a flowchart), so Max can turn the collaboration into one clear page.'
+        },
+        tags: { zh: ['新頁面', '流程圖', 'AI 協作'], en: ['new page', 'flowchart', 'AI collaboration'] },
+        pr: 9,
+        page: 'site_design.html',
+        prompt: `我想要在網站的專案展示裡面，新增一個叫做「網站設計」的卡片。
+
+裡面主要是想向大家介紹我如何透過你，你做了哪些事情、怎麼做的，然後畫成流程圖，用一個 HTML 放在這個卡片裡面介紹。`
+    },
+    {
+        id: 'ai-assistants',
+        date: '2026-11-04',
+        title: { zh: '建立 AI 小助理介紹頁與像素頭像', en: 'Build the AI assistants page with pixel-art avatars' },
+        why: {
+            zh: '說明這頁之後的用途（照著這些角色去養 Grok bot），Max 就會把每個助理的名字和個性寫得具體可用；頭像則要求「先給我看過」，確認風格後才放上網頁。',
+            en: 'It explains what the page is for later (building Grok bots from these characters), so Max makes each assistant’s name and personality concrete; for the avatars it asks to "show me first", so the style is approved before it goes live.'
+        },
+        tags: { zh: ['新頁面', 'AI 團隊', '像素風', '先確認再上線'], en: ['new page', 'AI team', 'pixel art', 'review first'] },
+        pr: 7,
+        page: 'assistants.html',
+        prompt: `想要在我自我介紹的網站上面（也就是剛剛的那個 repository 裡面）多一個分頁或區塊，介紹我所飼養的個人小助理，其中一個就是你。
+
+另外，之後我可能會用 Grok bot 來養一群小助理。我希望在這個網站會有一個地方介紹你和這一群助理，他們也都會有自己的名字和獨特的個性。你可以幫我先建立這一頁嗎？之後我在用 Grok bot 的時候，就可以根據你建立的這些 agent 的獨特特色來建立。
+
+做幾張屬於你自己的頭像和其他助理的頭像 像素風格 每個都要有特色 先給我看過 再放到介紹網頁中`
+    },
 ];
