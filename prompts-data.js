@@ -59,7 +59,7 @@ const PROMPTS = [
         tags: { zh: ['新頁面', '流程圖', 'AI 協作'], en: ['new page', 'flowchart', 'AI collaboration'] },
         pr: 9,
         page: 'site_design.html',
-        prompt: `我想要在網站的專案展示裡面，新增一個叫做「網站設計」的卡片。
+        prompt: `我想要在網站的專案展示裡面，新增一個叫做「AI 協作開發流程」的卡片。
 
 裡面主要是想向大家介紹我如何透過你，你做了哪些事情、怎麼做的，然後畫成流程圖，用一個 HTML 放在這個卡片裡面介紹。`
     },
