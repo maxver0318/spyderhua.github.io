@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員制網站建置計畫 | Joe Huang</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --joe: #f59e0b; --claude: #6366f1; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
+
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html#projects" class="flex items-center text-sm font-medium hover:text-blue-500 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <span data-i18n="nav.back">回到首頁</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                <button id="langToggle" class="px-3 py-1 rounded-full border border-slate-300 dark:border-slate-600 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EN</button>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
+                    <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="max-w-4xl mx-auto px-4 pt-16 pb-12 text-center">
+        <p class="text-sm font-bold tracking-widest uppercase text-emerald-500 mb-3" data-i18n="hero.kicker">會員制網站建置計畫</p>
+        <h1 class="text-3xl md:text-5xl font-bold mb-5 tracking-tight leading-tight" data-i18n="hero.title">從零開始，用說的架一個付費會員網站</h1>
+        <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto" data-i18n="hero.sub">這次要做的是有前端、也有後端的網站：會員可以用 Google、Apple 等帳號登入，付費會員才能看到專屬內容。流程和這個網站一樣，我用對話提出需求，Max 實作並開 PR，我審查後合併就自動上線。</p>
+        <div class="mt-8 flex flex-wrap justify-center gap-2 text-sm font-semibold">
+            <span class="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300" data-i18n="hero.status">狀態：規劃中</span>
+            <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Vercel + Supabase</span>
+            <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300" data-i18n="hero.chip2">Google／Apple 登入</span>
+            <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300" data-i18n="hero.chip3">付費會員內容</span>
+        </div>
+    </header>
+
+    <!-- Stack -->
+    <section id="stack" class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="stack.title">用了哪些服務</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="stack.sub">比較過 Vercel、Railway、Cloudflare、Render、Fly.io 與 AI 建站工具後，選了最符合「用說的就能開 PR、預覽、上線」的組合。</p>
+            <div id="stackList" class="grid md:grid-cols-2 gap-5"></div>
+        </div>
+    </section>
+
+    <!-- Daily flow -->
+    <section id="flow">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="flow.title">建好之後，一次改版怎麼走</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="flow.sub">比現在的網站多了一步：每個 PR 都有一個預覽網址，看過真的能用再合併。</p>
+            <ol id="flowList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></ol>
+        </div>
+    </section>
+
+    <!-- Steps -->
+    <section id="steps" class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="steps.title">建置步驟</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-6" data-i18n="steps.sub">分成八個階段。每一步都標出由誰負責：需要用我本人帳號申請、付款或貼上金鑰的事由我來做，其餘交給 Max。</p>
+            <div class="flex flex-wrap gap-4 text-sm font-semibold mb-8">
+                <span class="flex items-center"><span class="w-3 h-3 rounded-full mr-2" style="background: var(--joe)"></span><span data-i18n="who.joe">我（Joe）</span></span>
+                <span class="flex items-center"><span class="w-3 h-3 rounded-full mr-2" style="background: var(--claude)"></span><span data-i18n="who.max">Max</span></span>
+            </div>
+            <div id="phaseList" class="space-y-6"></div>
+        </div>
+    </section>
+
+    <!-- Cost -->
+    <section id="cost">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="cost.title">費用估算</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="cost.sub">開發期間幾乎都能用免費方案，正式對外收費後再升級。金額以美元計，為 2026 年 11 月整理的參考值，實際以各家價目頁為準。</p>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-slate-100 dark:bg-slate-700/60">
+                        <tr>
+                            <th class="px-4 py-3 font-bold" data-i18n="cost.item">項目</th>
+                            <th class="px-4 py-3 font-bold" data-i18n="cost.dev">開發期間</th>
+                            <th class="px-4 py-3 font-bold" data-i18n="cost.live">正式上線後</th>
+                        </tr>
+                    </thead>
+                    <tbody id="costRows" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Open decisions -->
+    <section id="decisions" class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="dec.title">還要決定的事</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="dec.sub">這些會影響後面的步驟，決定後就更新這一頁。</p>
+            <div id="decisionList" class="grid md:grid-cols-2 gap-5"></div>
+        </div>
+    </section>
+
+    <footer class="py-10 text-center text-sm text-slate-500" data-i18n="footer">這一頁會隨著專案進度更新。</footer>
+
+    <script>
+        const UI = {
+            zh: {
+                'nav.back': '回到首頁',
+                'hero.kicker': '會員制網站建置計畫',
+                'hero.title': '從零開始，用說的架一個付費會員網站',
+                'hero.sub': '這次要做的是有前端、也有後端的網站：會員可以用 Google、Apple 等帳號登入，付費會員才能看到專屬內容。流程和這個網站一樣，我用對話提出需求，Max 實作並開 PR，我審查後合併就自動上線。',
+                'hero.status': '狀態：規劃中', 'hero.chip2': 'Google／Apple 登入', 'hero.chip3': '付費會員內容',
+                'stack.title': '用了哪些服務',
+                'stack.sub': '比較過 Vercel、Railway、Cloudflare、Render、Fly.io 與 AI 建站工具後，選了最符合「用說的就能開 PR、預覽、上線」的組合。',
+                'flow.title': '建好之後，一次改版怎麼走',
+                'flow.sub': '比現在的網站多了一步：每個 PR 都有一個預覽網址，看過真的能用再合併。',
+                'steps.title': '建置步驟',
+                'steps.sub': '分成八個階段。每一步都標出由誰負責：需要用我本人帳號申請、付款或貼上金鑰的事由我來做，其餘交給 Max。',
+                'who.joe': '我（Joe）', 'who.max': 'Max', 'phase': '階段',
+                'cost.title': '費用估算',
+                'cost.sub': '開發期間幾乎都能用免費方案，正式對外收費後再升級。金額以美元計，為 2026 年 11 月整理的參考值，實際以各家價目頁為準。',
+                'cost.item': '項目', 'cost.dev': '開發期間', 'cost.live': '正式上線後',
+                'dec.title': '還要決定的事',
+                'dec.sub': '這些會影響後面的步驟，決定後就更新這一頁。',
+                'dec.rec': 'Max 的建議',
+                'footer': '這一頁會隨著專案進度更新。'
+            },
+            en: {
+                'nav.back': 'Back to home',
+                'hero.kicker': 'Membership Site Plan',
+                'hero.title': 'Building a paid membership site from scratch, just by talking',
+                'hero.sub': 'This time the site has both a front end and a back end: members sign in with Google, Apple and other accounts, and only paying members can see members-only content. The workflow is the same as this site: I describe what I want, Max builds it and opens a PR, and once I review and merge it, it goes live automatically.',
+                'hero.status': 'Status: planning', 'hero.chip2': 'Google / Apple sign-in', 'hero.chip3': 'Paid member content',
+                'stack.title': 'The services',
+                'stack.sub': 'After comparing Vercel, Railway, Cloudflare, Render, Fly.io and AI site builders, I picked the combination that best fits "describe it, get a PR, preview it, ship it".',
+                'flow.title': 'Once it is built: one change, end to end',
+                'flow.sub': 'One step more than this site: every PR gets its own preview URL, so I can try it before merging.',
+                'steps.title': 'Build steps',
+                'steps.sub': 'Eight phases. Each step shows who owns it: anything that needs my own account, a payment or a secret key is mine; the rest is Max\'s.',
+                'who.joe': 'Me (Joe)', 'who.max': 'Max', 'phase': 'Phase',
+                'cost.title': 'Estimated cost',
+                'cost.sub': 'Free plans cover almost everything during development; upgrade once the site starts charging. Amounts in USD, reference figures gathered in November 2026; each vendor\'s pricing page is the final word.',
+                'cost.item': 'Item', 'cost.dev': 'During development', 'cost.live': 'After launch',
+                'dec.title': 'Still to decide',
+                'dec.sub': 'These affect later steps. I will update this page as each one is decided.',
+                'dec.rec': 'Max\'s suggestion',
+                'footer': 'This page is updated as the project moves forward.'
+            }
+        };
+
+        const STACK = [
+            { name: 'Next.js', color: '#0f172a', zh: ['網站本體', '前端畫面和後端 API 寫在同一個專案裡，Max 最熟悉，也最容易部署到 Vercel。'], en: ['The site itself', 'Front-end pages and back-end API live in one project. Max knows it best, and it deploys to Vercel with no setup.'] },
+            { name: 'Vercel', color: '#334155', zh: ['主機與自動部署', '連上 GitHub 後，每個 PR 自動產生預覽網址；合併到 main 就自動上線。'], en: ['Hosting and auto-deploy', 'Once linked to GitHub, every PR gets a preview URL, and merging to main deploys to production.'] },
+            { name: 'Supabase', color: '#10b981', zh: ['會員、資料庫與檔案', '內建 Google、Apple、GitHub 等多種登入方式，加上 Postgres 資料庫與檔案儲存。用資料列權限（RLS）讓付費內容只有會員讀得到。'], en: ['Members, database and files', 'Built-in sign-in with Google, Apple, GitHub and more, plus a Postgres database and file storage. Row-level security (RLS) makes paid content readable only by members.'] },
+            { name: 'GitHub', color: '#6366f1', zh: ['程式碼與 PR', '和這個網站一樣：Max 開分支、開 PR，我在手機上的 GitHub App 審查並合併。'], en: ['Code and PRs', 'Same as this site: Max opens branches and PRs, and I review and merge them in the GitHub app on my phone.'] },
+            { name: { zh: '金流', en: 'Payments' }, color: '#f59e0b', zh: ['收款與訂閱', '台灣本地可用綠界或藍新的信用卡定期定額；要收海外會員則考慮 Paddle 或 Lemon Squeezy。待決定。'], en: ['Payments and subscriptions', 'For Taiwan, ECPay or NewebPay recurring card payments; for overseas members, Paddle or Lemon Squeezy. Still to decide.'] },
+            { name: { zh: '網域', en: 'Domain' }, color: '#0ea5e9', zh: ['自己的網域', '例如 joe-xxx.com，在 Cloudflare 或其他註冊商購買，再指向 Vercel。'], en: ['A custom domain', 'Something like joe-xxx.com, bought from Cloudflare or another registrar and pointed at Vercel.'] }
+        ];
+
+        const FLOW = [
+            { who: 'joe', zh: ['提出需求', '在 Claude App 用一段話說想改什麼。'], en: ['Ask', 'Describe the change in a message in the Claude app.'] },
+            { who: 'max', zh: ['實作並開 PR', '開分支、寫程式；需要改資料庫時附上 migration 檔。'], en: ['Build and open a PR', 'Branch and code; database changes ship as migration files in the PR.'] },
+            { who: 'max', zh: ['自動預覽', 'Vercel 在 PR 下留下預覽網址，Max 用它截圖並驗證。'], en: ['Automatic preview', 'Vercel posts a preview URL on the PR; Max screenshots and verifies against it.'] },
+            { who: 'joe', zh: ['實際試用', '用手機點預覽網址，登入、付款流程都能真的走一遍（測試模式）。'], en: ['Try it', 'Open the preview on my phone and actually walk through sign-in and checkout (in test mode).'] },
+            { who: 'joe', zh: ['合併', '沒問題就在 GitHub App 按 Merge。'], en: ['Merge', 'If it looks right, tap Merge in the GitHub app.'] },
+            { who: 'max', zh: ['上線與確認', 'Vercel 自動部署正式站，Max 確認正式網站已更新。'], en: ['Ship and confirm', 'Vercel deploys to production, and Max confirms the live site updated.'] }
+        ];
+
+        const PHASES = [
+            {
+                zh: ['決定與開帳號', '先把需要我本人處理的帳號準備好。'], en: ['Decisions and accounts', 'Set up the accounts only I can create.'],
+                steps: [
+                    { who: 'joe', zh: '決定網站名稱與網域，並購買網域。', en: 'Pick the site name and domain, and buy the domain.' },
+                    { who: 'joe', zh: '在我的 GitHub 開一個新的私有 repo，把 maxver0318 加成 collaborator，Max 就能直接開分支與 PR。', en: 'Create a new private repo on my GitHub and add maxver0318 as a collaborator, so Max can open branches and PRs directly.' },
+                    { who: 'joe', zh: '用 GitHub 帳號註冊 Vercel 與 Supabase。', en: 'Sign up for Vercel and Supabase with my GitHub account.' }
+                ]
+            },
+            {
+                zh: ['專案骨架與自動部署', '讓「開 PR → 預覽 → 合併上線」先跑起來。'], en: ['Skeleton and auto-deploy', 'Get "PR → preview → merge to ship" working first.'],
+                steps: [
+                    { who: 'max', zh: '建立 Next.js + TypeScript + Tailwind 專案，加上首頁、README，以及記錄工作規則的 CLAUDE.md，開第一個 PR。', en: 'Scaffold Next.js + TypeScript + Tailwind with a home page, a README and a CLAUDE.md of working rules, and open the first PR.' },
+                    { who: 'joe', zh: '在 Vercel 匯入這個 repo（點幾下就好），之後每個 PR 都會自動出現預覽網址。', en: 'Import the repo in Vercel (a few clicks); from then on every PR gets a preview URL.' },
+                    { who: 'max', zh: '把網域接到 Vercel，確認 https 正常。', en: 'Point the domain at Vercel and confirm HTTPS works.' }
+                ]
+            },
+            {
+                zh: ['資料庫', '會員資料、會員等級和內容的資料表。'], en: ['Database', 'Tables for profiles, membership tiers and content.'],
+                steps: [
+                    { who: 'joe', zh: '在 Supabase 建立專案，機房選東京，把網址與金鑰貼到 Vercel 的環境變數（Max 會列出要貼哪些）。', en: 'Create a Supabase project in the Tokyo region and paste its URL and keys into Vercel environment variables (Max lists which ones).' },
+                    { who: 'max', zh: '用 migration 檔建立資料表：會員資料（profiles）、訂閱狀態（subscriptions）、內容（posts，標註免費或付費）。', en: 'Create tables with migration files: profiles, subscriptions, and posts (marked free or paid).' },
+                    { who: 'max', zh: '設定資料列權限（RLS）：付費內容只有訂閱有效的會員讀得到，這道檢查在資料庫層，不只在畫面上。', en: 'Set up row-level security (RLS): paid posts are readable only by members with an active subscription, enforced in the database, not just the UI.' }
+                ]
+            },
+            {
+                zh: ['會員登入', '至少 Google 和 Apple，之後可以再加。'], en: ['Sign-in', 'Google and Apple at minimum; more can be added later.'],
+                steps: [
+                    { who: 'joe', zh: '在 Google Cloud Console 建立 OAuth 用戶端，把 Client ID 與 Secret 貼到 Supabase。（免費，Max 會給逐步說明）', en: 'Create an OAuth client in Google Cloud Console and paste the Client ID and Secret into Supabase. (Free; Max provides step-by-step instructions.)' },
+                    { who: 'joe', zh: '加入 Apple Developer Program（每年 US$99），建立 Sign in with Apple 的 Services ID 與金鑰，貼到 Supabase。', en: 'Join the Apple Developer Program (US$99/year), create a Sign in with Apple Services ID and key, and paste them into Supabase.' },
+                    { who: 'max', zh: '做登入頁、登入後的回呼、會員中心與登出；同一個 Email 用不同方式登入時，歸到同一個會員。', en: 'Build the sign-in page, auth callback, account page and sign-out; signing in with different providers on the same email maps to one member.' },
+                    { who: 'max', zh: '想加其他登入方式（GitHub、Facebook、Discord 等）時，只要再申請一組憑證、開一個小 PR。', en: 'Adding more providers later (GitHub, Facebook, Discord…) is just one more set of credentials and a small PR.' }
+                ]
+            },
+            {
+                zh: ['付費會員', '先用測試模式把整個流程做完，再切換成正式收款。'], en: ['Paid membership', 'Build the whole flow in test mode, then switch to live payments.'],
+                steps: [
+                    { who: 'joe', zh: '決定金流服務與方案價格（月費、年費），申請商店帳號，把測試用金鑰貼到 Vercel。', en: 'Choose the payment provider and pricing (monthly, yearly), apply for a merchant account, and paste the test keys into Vercel.' },
+                    { who: 'max', zh: '做方案介紹頁與結帳流程；付款成功由金流的通知（webhook）更新會員的訂閱狀態，不靠前端判斷。', en: 'Build the pricing page and checkout; a payment webhook updates the member\'s subscription, never the browser.' },
+                    { who: 'max', zh: '處理續訂、取消、扣款失敗與到期，並在會員中心顯示目前方案。', en: 'Handle renewals, cancellations, failed charges and expiry, and show the current plan in the account page.' },
+                    { who: 'joe', zh: '在預覽網址用測試卡走一遍完整流程，確認沒問題後換成正式金鑰。', en: 'Run the full flow with a test card on a preview URL, then swap in the live keys.' }
+                ]
+            },
+            {
+                zh: ['內容與後台', '讓我能自己新增內容。'], en: ['Content and admin', 'So I can publish content myself.'],
+                steps: [
+                    { who: 'max', zh: '做付費內容頁：非會員看到前幾段與「升級會員」按鈕，會員看到全文。', en: 'Build the paid post page: non-members see a preview and an "Upgrade" button; members see everything.' },
+                    { who: 'max', zh: '做簡單的管理後台（只有管理員帳號能進）：新增、編輯、標記免費或付費。一開始也可以直接用 Supabase 的表格編輯器。', en: 'Build a simple admin area (admins only) to create, edit and mark posts free or paid. Early on, Supabase\'s table editor works too.' },
+                    { who: 'joe', zh: '決定網站主題，準備第一批內容。', en: 'Decide the site\'s topic and prepare the first batch of content.' }
+                ]
+            },
+            {
+                zh: ['上線前檢查', '對外收費之前一定要完成。'], en: ['Pre-launch checklist', 'Must be done before charging anyone.'],
+                steps: [
+                    { who: 'max', zh: '起草隱私權政策、服務條款、退款政策頁面（Google、Apple 登入與金流審核都會要求），由我確認內容。', en: 'Draft privacy, terms and refund pages (required by Google, Apple and payment providers); I review the wording.' },
+                    { who: 'joe', zh: '把 Vercel 升級到 Pro、Supabase 升級到 Pro（免費方案不能商用，且閒置會暫停）。', en: 'Upgrade Vercel and Supabase to Pro (free plans are non-commercial and pause when idle).' },
+                    { who: 'max', zh: '確認資料庫每日備份、錯誤通知、手機版畫面，並用非會員、會員、管理員三種身分各測一次。', en: 'Confirm daily backups, error alerts and mobile layouts, and test as a visitor, a member and an admin.' }
+                ]
+            },
+            {
+                zh: ['日常運作', '之後就和這個網站一樣，用說的改。'], en: ['Day to day', 'From here on, it works like this site: just ask.'],
+                steps: [
+                    { who: 'joe', zh: '在 Claude App 說需求，在預覽網址試用，在 GitHub App 合併。', en: 'Ask in the Claude app, try it on the preview URL, merge in the GitHub app.' },
+                    { who: 'max', zh: '每個 PR 附前後截圖與驗證結果；資料庫變更一律走 migration，不直接改正式資料庫。', en: 'Every PR has before/after screenshots and verification; database changes always go through migrations, never edits to the live database.' }
+                ]
+            }
+        ];
+
+        const COST = [
+            { zh: ['網域', '約 $10–15／年', '同左'], en: ['Domain', '~$10–15 / year', 'Same'] },
+            { zh: ['Vercel', '免費（Hobby）', 'Pro $20／月'], en: ['Vercel', 'Free (Hobby)', 'Pro $20 / month'] },
+            { zh: ['Supabase', '免費（閒置一週會暫停）', 'Pro $25／月起，依用量'], en: ['Supabase', 'Free (pauses after a week idle)', 'Pro from $25 / month, usage-based'] },
+            { zh: ['Google 登入', '免費', '免費'], en: ['Google sign-in', 'Free', 'Free'] },
+            { zh: ['Apple 登入', 'Apple Developer $99／年', '同左'], en: ['Apple sign-in', 'Apple Developer $99 / year', 'Same'] },
+            { zh: ['金流', '測試模式免費', '每筆交易抽成，依金流服務而定'], en: ['Payments', 'Free in test mode', 'A fee per transaction, depends on the provider'] },
+            { zh: ['合計', '約 $110／年', '約 $45／月 + 每年 $110 + 交易手續費'], en: ['Total', '~$110 / year', '~$45 / month + $110 / year + transaction fees'], total: true }
+        ];
+
+        const DECISIONS = [
+            { zh: ['金流服務', '會員主要在台灣：綠界或藍新的信用卡定期定額，台幣收款、撥款到台灣帳戶最直接。會員在海外：Paddle 或 Lemon Squeezy 代收並處理各國稅務，手續費較高。Stripe 目前不直接開放給台灣的個人或公司。', '先確認會員主要在哪裡；以台灣為主就先串綠界。'], en: ['Payment provider', 'Mostly Taiwan members: ECPay or NewebPay recurring card payments, in TWD, paid out to a Taiwan bank. Overseas members: Paddle or Lemon Squeezy act as merchant of record and handle foreign tax, at a higher fee. Stripe is not directly available to Taiwan individuals or companies.', 'Decide where most members are; if Taiwan, start with ECPay.'] },
+            { zh: ['網站主題與內容', '要賣什麼內容，會影響內容頁的版型（文章、影片、下載檔）。', '先做文章型，影片與檔案之後再加。'], en: ['Topic and content', 'What the paid content is decides the page layout (articles, videos, downloads).', 'Start with articles; add video and files later.'] },
+            { zh: ['方案與價格', '只有一種付費會員，還是分等級？月費、年費？', '先做單一方案、月費與年費兩種週期，之後要加等級也容易。'], en: ['Plans and pricing', 'One paid tier or several? Monthly, yearly?', 'Start with one tier, billed monthly or yearly; adding tiers later is easy.'] },
+            { zh: ['網站名稱與網域', '決定後才能設定 Google、Apple 登入的網址。', '越早決定越好，這是第一階段的第一步。'], en: ['Name and domain', 'Google and Apple sign-in need the final URL.', 'Decide early; it is the very first step.'] }
+        ];
+
+        function el(tag, className, text) {
+            const node = document.createElement(tag);
+            if (className) node.className = className;
+            if (text !== undefined) node.textContent = text;
+            return node;
+        }
+
+        const whoColor = who => who === 'joe' ? 'var(--joe)' : 'var(--claude)';
+
+        function whoBadge(who, t) {
+            const badge = el('span', 'shrink-0 text-xs font-bold text-white rounded-full px-2 py-0.5', t['who.' + who]);
+            badge.style.background = whoColor(who);
+            return badge;
+        }
+
+        function renderStack(lang) {
+            document.getElementById('stackList').replaceChildren(...STACK.map(item => {
+                const card = el('div', 'p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700');
+                const head = el('div', 'flex items-center gap-3 mb-2');
+                const dot = el('span', 'w-3 h-3 rounded-full shrink-0');
+                dot.style.background = item.color;
+                head.append(dot, el('h3', 'font-bold text-lg', typeof item.name === 'string' ? item.name : item.name[lang]), el('span', 'text-sm text-slate-500 dark:text-slate-400', item[lang][0]));
+                card.append(head, el('p', 'text-sm text-slate-600 dark:text-slate-400 leading-relaxed', item[lang][1]));
+                return card;
+            }));
+        }
+
+        function renderFlow(lang, t) {
+            document.getElementById('flowList').replaceChildren(...FLOW.map((step, i) => {
+                const li = el('li', 'p-4 rounded-2xl bg-white dark:bg-slate-800 border-2 shadow-sm');
+                li.style.borderColor = whoColor(step.who);
+                const head = el('div', 'flex items-center justify-between gap-2 mb-1');
+                head.append(el('span', 'font-bold', `${i + 1}. ${step[lang][0]}`), whoBadge(step.who, t));
+                li.append(head, el('p', 'text-sm text-slate-600 dark:text-slate-400 leading-snug', step[lang][1]));
+                return li;
+            }));
+        }
+
+        function renderPhases(lang, t) {
+            document.getElementById('phaseList').replaceChildren(...PHASES.map((phase, i) => {
+                const card = el('article', 'rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-5 md:p-6');
+                const head = el('div', 'flex items-start gap-4 mb-4');
+                head.appendChild(el('span', 'w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center shrink-0', String(i)));
+                const title = el('div', 'min-w-0');
+                title.append(el('p', 'text-xs font-semibold uppercase tracking-wide text-slate-500', `${t.phase} ${i}`), el('h3', 'font-bold text-lg leading-tight', phase[lang][0]), el('p', 'text-sm text-slate-600 dark:text-slate-400 mt-1', phase[lang][1]));
+                head.appendChild(title);
+                const list = el('ul', 'space-y-3');
+                phase.steps.forEach(step => {
+                    const li = el('li', 'flex items-start gap-3 text-sm md:text-base');
+                    const badgeWrap = el('span', 'w-20 shrink-0 pt-0.5');
+                    badgeWrap.appendChild(whoBadge(step.who, t));
+                    li.append(badgeWrap, el('span', 'text-slate-700 dark:text-slate-300 leading-relaxed', step[lang]));
+                    list.appendChild(li);
+                });
+                card.append(head, list);
+                return card;
+            }));
+        }
+
+        function renderCost(lang) {
+            document.getElementById('costRows').replaceChildren(...COST.map(row => {
+                const tr = el('tr', row.total ? 'font-bold bg-slate-50 dark:bg-slate-700/30' : '');
+                row[lang].forEach((cell, i) => tr.appendChild(el('td', 'px-4 py-3' + (i === 0 ? ' font-semibold whitespace-nowrap' : ''), cell)));
+                return tr;
+            }));
+        }
+
+        function renderDecisions(lang, t) {
+            document.getElementById('decisionList').replaceChildren(...DECISIONS.map(item => {
+                const card = el('div', 'p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex flex-col');
+                card.append(el('h3', 'font-bold text-lg mb-2', item[lang][0]), el('p', 'text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4', item[lang][1]));
+                const rec = el('p', 'mt-auto text-sm p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-200');
+                rec.append(el('span', 'font-semibold', t['dec.rec'] + (lang === 'zh' ? '：' : ': ')), document.createTextNode(item[lang][2]));
+                card.appendChild(rec);
+                return card;
+            }));
+        }
+
+        let currentLang = 'zh';
+        try { if (localStorage.getItem('lang') === 'en') currentLang = 'en'; } catch (e) {}
+
+        function render(lang) {
+            const t = UI[lang];
+            document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+            document.title = (lang === 'zh' ? '會員制網站建置計畫' : 'Membership Site Plan') + ' | Joe Huang';
+            document.querySelectorAll('[data-i18n]').forEach(node => {
+                node.textContent = t[node.getAttribute('data-i18n')];
+            });
+            document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+            renderStack(lang);
+            renderFlow(lang, t);
+            renderPhases(lang, t);
+            renderCost(lang);
+            renderDecisions(lang, t);
+        }
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            try { localStorage.setItem('lang', currentLang); } catch (e) {}
+            render(currentLang);
+        });
+
+        // Theme: shares the same 'theme' setting as the home page.
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+        let savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+        });
+
+        render(currentLang);
+    </script>
+</body>
+</html>

@@ -375,6 +375,33 @@
             <!-- 專案卡片：每張 <a data-project> 標上 data-date（加入網站的日期時間）與 data-cat（分類）。
                  網頁載入後依 data-date 由新到舊自動排序，data-pin 的卡片固定排最前面。新增專案只要貼一張卡片並填好這兩個屬性。 -->
             <div id="projectGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                <!-- Membership Site (member_site.html) Project Card -->
+                <a data-project data-date="2026-11-11T00:00" data-cat="design" href="member_site.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                        <svg class="w-full h-full p-8" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="12" y="20" width="62" height="80" rx="8" fill="#334155" stroke="#10b981" stroke-width="2" />
+                            <circle cx="43" cy="44" r="10" fill="#10b981" />
+                            <path d="M27 72 Q43 56 59 72" stroke="#10b981" stroke-width="2" fill="none" />
+                            <rect x="24" y="82" width="38" height="8" rx="4" fill="#f59e0b" />
+                            <path d="M74 60 H104" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4" />
+                            <rect x="108" y="20" width="80" height="80" rx="8" fill="#334155" stroke="#6366f1" stroke-width="2" />
+                            <rect x="120" y="34" width="56" height="6" rx="3" fill="#94a3b8" />
+                            <rect x="120" y="48" width="44" height="6" rx="3" fill="#94a3b8" />
+                            <rect x="136" y="64" width="24" height="20" rx="3" fill="#f59e0b" />
+                            <path d="M141 64 V58 A7 7 0 0 1 155 58 V64" stroke="#f59e0b" stroke-width="2.5" fill="none" />
+                        </svg>
+                        <span class="absolute top-3 left-3 inline-flex items-center text-xs font-bold text-white bg-emerald-600 rounded-full px-3 py-1 shadow-lg" data-i18n="proj.member.badge">規劃中</span>
+                        <div class="absolute inset-0 bg-emerald-600/10 group-hover:bg-transparent transition-colors"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold" data-i18n="proj.member.title">會員制網站建置計畫</h3>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm" data-i18n="proj.member.desc">和 Max 用對話打造一個前後端都有的網站：Google／Apple 登入、付費會員專屬內容，附完整建置步驟與費用估算。</p>
+                    </div>
+                </a>
+
                 <!-- Hokkaido Trip Project Card -->
                 <a data-project data-date="2026-11-10T00:00" data-cat="life" data-pin href="hokkaido.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
                     <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
@@ -866,6 +893,7 @@
                 'proj.design.title': '設計模式教學：從混亂到優雅', 'proj.design.desc': '深入淺出探討常用軟體設計模式，透過實例展示如何重構代碼以提升系統的靈活性與可維護性。',
                 'proj.filesystem.title': '檔案管理系統', 'proj.filesystem.desc': '互動式檔案系統管理工具，提供直觀的檔案瀏覽與操作介面。',
                 'proj.news.badge': 'Max 每日更新', 'proj.news.title': 'AI 早報', 'proj.news.desc': 'AI 助理 Max 每天台灣時間早上 8 點出刊，整理前一晚美國的 AI 新聞，附圖片與原文來源，可切換查看每一期。',
+                'proj.member.badge': '規劃中', 'proj.member.title': '會員制網站建置計畫', 'proj.member.desc': '和 Max 用對話打造一個前後端都有的網站：Google／Apple 登入、付費會員專屬內容，附完整建置步驟與費用估算。',
                 'proj.hokkaido.title': '北海道賞雪之旅', 'proj.hokkaido.desc': '2027 年 2 月的 6 天行程：支笏湖冰濤祭、札幌雪祭、小樽與美瑛，附天氣、穿搭與租車指南，旅途中也能當導覽。',
                 'nav.aiteam': 'AI 團隊', 'aiteam.sub': '我培養的 AI 小助理們，各自有名字、個性與專長，分工處理工作與生活中的大小事。',
                 'proj.more': '更多專案開發中...', 'contact.sub': '歡迎透過以下方式與我聯繫，期待與您的交流！'
@@ -888,6 +916,7 @@
                 'proj.design.title': 'Design Patterns: From Chaos to Elegance', 'proj.design.desc': 'Exploration of software design patterns with practical examples on refactoring for maintainability.',
                 'proj.filesystem.title': 'File Management System', 'proj.filesystem.desc': 'Interactive file system management tool with intuitive interface for browsing and operations.',
                 'proj.news.badge': 'Daily by Max', 'proj.news.title': 'AI Morning Brief', 'proj.news.desc': "Published by my AI assistant Max at 8 a.m. Taiwan time: last night's AI news from the US, with images and sources, and every past issue one tap away. (Written in Chinese.)",
+                'proj.member.badge': 'Planning', 'proj.member.title': 'Membership Site Plan', 'proj.member.desc': 'Building a full-stack site with Max, just by talking: Google / Apple sign-in and members-only paid content, with every build step and the estimated cost.',
                 'proj.hokkaido.title': 'Hokkaido Snow Trip', 'proj.hokkaido.desc': 'A 6-day itinerary for February 2027: the Shikotsu Ice Festival, Sapporo Snow Festival, Otaru and Biei, with weather, clothing and car-rental tips. Doubles as an on-the-road guide.',
                 'nav.aiteam': 'AI Team', 'aiteam.sub': 'The AI assistants I am raising, each with its own name, personality and strengths, sharing the work and everyday tasks between them.',
                 'proj.more': 'More projects coming soon...', 'contact.sub': 'Feel free to reach out to me. Looking forward to connecting!'
