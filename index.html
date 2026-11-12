@@ -375,8 +375,8 @@
             <!-- 專案卡片：每張 <a data-project> 標上 data-date（加入網站的日期時間）與 data-cat（分類）。
                  網頁載入後依 data-date 由新到舊自動排序，data-pin 的卡片固定排最前面。新增專案只要貼一張卡片並填好這兩個屬性。 -->
             <div id="projectGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-                <!-- Defect Hunter game (defect_hunter.html) Project Card -->
-                <a data-project data-date="2026-11-12T00:00" data-cat="intro" href="defect_hunter.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                <!-- Piece Together Joe puzzle (joe_puzzle.html) Project Card -->
+                <a data-project data-date="2026-11-12T00:00" data-cat="intro" href="joe_puzzle.html" target="_blank" rel="noopener noreferrer" class="group block bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all">
                     <div class="h-32 md:h-48 bg-slate-900 flex items-center justify-center relative overflow-hidden">
                         <svg class="w-full h-full p-6" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <defs>
@@ -385,21 +385,23 @@
                             </defs>
                             <circle cx="100" cy="60" r="50" fill="#0f172a" stroke="#a78bfa" stroke-opacity="0.6" stroke-width="2" />
                             <rect x="54" y="14" width="92" height="92" fill="url(#huntDies)" clip-path="url(#huntWafer)" />
-                            <rect x="103" y="39" width="10" height="10" rx="1.5" fill="#f59e0b" />
-                            <circle cx="108" cy="44" r="10" stroke="#fbbf24" stroke-width="1.6" />
-                            <rect x="67" y="75" width="10" height="10" rx="1.5" fill="#a78bfa" />
-                            <path d="M126 70 l6 16 l3-6 l6 5 l2-2 l-6-5 l6-2 z" fill="#fff" />
+                            <path d="M100 60 L100 10 A50 50 0 0 1 143 85 Z" fill="#0f172a" fill-opacity="0.75" clip-path="url(#huntWafer)" />
+                            <path d="M100 60 L100 10 A50 50 0 0 1 143 85 Z" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4 3" />
+                            <g transform="translate(150 22) rotate(12)">
+                                <path d="M0 0 L36 0 L36 30 L0 30 Z" fill="#a78bfa" fill-opacity="0.9" />
+                                <path d="M8 6 h20 M8 13 h14 M8 20 h18" stroke="#1e1b4b" stroke-width="2" stroke-linecap="round" />
+                            </g>
                             <path d="M92 110 L100 104 L108 110 Z" fill="#0f172a" />
                         </svg>
-                        <span class="absolute top-3 left-3 inline-flex items-center text-xs font-bold text-white bg-violet-600 rounded-full px-3 py-1 shadow-lg" data-i18n="proj.game.badge">60 秒小遊戲</span>
+                        <span class="absolute top-3 left-3 inline-flex items-center text-xs font-bold text-white bg-violet-600 rounded-full px-3 py-1 shadow-lg" data-i18n="proj.game.badge">自我介紹拼圖</span>
                         <div class="absolute inset-0 bg-violet-600/10 group-hover:bg-transparent transition-colors"></div>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold" data-i18n="proj.game.title">缺陷獵人：60 秒認識 Joe</h3>
+                            <h3 class="text-xl font-bold" data-i18n="proj.game.title">拼出 Joe：晶圓拼圖</h3>
                             <svg class="w-5 h-5 text-slate-300 group-hover:text-violet-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </div>
-                        <p class="text-slate-600 dark:text-slate-400 text-sm" data-i18n="proj.game.desc">在晶圓圖上抓缺陷，每抓到一顆就解鎖一張我的檔案卡。玩完拿到你的檢測報告。</p>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm" data-i18n="proj.game.desc">讀卡片上的線索，把我的成長時間軸和做事方式拼回晶圓上。拼完，你就認識我了。</p>
                     </div>
                 </a>
 
@@ -881,7 +883,7 @@
                 'edu.nctu.title': '多媒體工程研究所 碩士', 'edu.nctu.school': '國立交通大學 (NCTU)', 'edu.nctu.lab': '計算機圖學與多媒體實驗室・指導教授 黃世強', 'edu.nctu.thesisLabel': '碩士論文', 'edu.nctu.thesis': '具有情緒之人群模擬及導覽技術之互動式虛擬導覽系統', 'edu.nctu.thesisDesc': '以頭戴式顯示器操作的 VR 虛擬導覽系統，比較五種導覽模式並結合具情緒的虛擬人群，以使用者測試驗證對沉浸感的影響。', 'edu.nctu.pubLabel': '期刊論文', 'edu.yzu.title': '資訊工程學系 學士', 'edu.yzu.school': '元智大學 (YZU)',
                 'skills.sub': '核心技術能力與開發工具。', 'skills.ai.name': 'AI 輔助開發', 'skills.ai.desc': '以 Copilot、Claude Code 協作寫程式與 Code Review，並撰寫自訂 Skill 把重複流程自動化', 'skills.fe': '前端開發', 'skills.be': '後端開發', 'skills.sys': '系統程式設計', 'skills.os': '系統與環境', 'skills.app': '應用程式開發', 'skills.db': '資料庫設計與效能調校',
                 'proj.search.label': '搜尋專案', 'proj.search.ph': '搜尋專案…', 'proj.empty': '找不到相關專案，換個關鍵字試試。', 'proj.showAll': '看全部 {n} 個專案', 'proj.less': '收合', 'proj.cat.all': '全部', 'proj.cat.design': '系統設計', 'proj.cat.tool': '工具', 'proj.cat.teach': '教學', 'proj.cat.life': '生活', 'proj.cat.intro': '介紹',
-                'proj.game.badge': '60 秒小遊戲', 'proj.game.title': '缺陷獵人：60 秒認識 Joe', 'proj.game.desc': '在晶圓圖上抓缺陷，每抓到一顆就解鎖一張我的檔案卡。玩完拿到你的檢測報告。',
+                'proj.game.badge': '自我介紹拼圖', 'proj.game.title': '拼出 Joe：晶圓拼圖', 'proj.game.desc': '讀卡片上的線索，把我的成長時間軸和做事方式拼回晶圓上。拼完，你就認識我了。',
                 'proj.pitch.badge': '面試官請先看', 'proj.pitch.title': '60 秒認識 Joe', 'proj.pitch.desc': '給面試官的一頁式簡介：我擅長什麼、怎麼接需求、一路的成長，以及最值得先看的作品。',
                 'proj.sitedesign.title': 'AI 協作開發流程', 'proj.sitedesign.desc': '記錄我如何和 AI 助理 Max 一起打造這個網站：分工、流程圖，以及每次改版怎麼驗證。',
                 'proj.crm.title': 'CRM 系統設計', 'proj.crm.desc': '客戶關係管理系統的完整設計與架構分析，涵蓋功能需求與數據建模。', 'proj.stock.title': '股票庫存損益管理儀表板', 'proj.stock.desc': '提供完整的股票庫存追蹤與即時損益分析，幫助投資者更精確地管理資產組合。',
@@ -904,7 +906,7 @@
                 'edu.nctu.title': 'Master of Multimedia Engineering', 'edu.nctu.school': 'National Chiao Tung University (NCTU)', 'edu.nctu.lab': 'Computer Graphics and Multimedia Lab · Advisor: Prof. Sai-Keung Wong', 'edu.nctu.thesisLabel': 'Master’s thesis', 'edu.nctu.thesis': 'An Interactive Virtual Tour System based on Emotional Crowd Simulation and Travelling Techniques', 'edu.nctu.thesisDesc': 'A VR virtual tour system operated with a head-mounted display, comparing five travel modes and an emotional virtual crowd through user studies on immersion.', 'edu.nctu.pubLabel': 'Journal publication', 'edu.yzu.title': 'Bachelor of Computer Science and Engineering', 'edu.yzu.school': 'Yuan Ze University (YZU)',
                 'skills.sub': 'Core technical competencies and tools.', 'skills.ai.name': 'AI-Assisted Development', 'skills.ai.desc': 'Pair-programming & code review with Copilot and Claude Code; custom Skills to automate repetitive workflows', 'skills.fe': 'Front-End Development', 'skills.be': 'Back-End Development', 'skills.sys': 'System Programming', 'skills.os': 'System & Environment', 'skills.app': 'Application Development', 'skills.db': 'Database Design & Tuning',
                 'proj.search.label': 'Search projects', 'proj.search.ph': 'Search projects…', 'proj.empty': 'No matching projects. Try another keyword.', 'proj.showAll': 'Show all {n} projects', 'proj.less': 'Show less', 'proj.cat.all': 'All', 'proj.cat.design': 'System Design', 'proj.cat.tool': 'Tools', 'proj.cat.teach': 'Tutorials', 'proj.cat.life': 'Life', 'proj.cat.intro': 'About Me',
-                'proj.game.badge': '60-second game', 'proj.game.title': 'Defect Hunter: Joe in 60 Seconds', 'proj.game.desc': 'Catch defects on a wafer map — each one unlocks a file about me. Finish to get your inspection report.',
+                'proj.game.badge': 'Intro puzzle', 'proj.game.title': 'Piece Together Joe', 'proj.game.desc': 'Read the clues and put my timeline and working style back onto the wafer. Finish it, and you know me.',
                 'proj.pitch.badge': 'Interviewers, start here', 'proj.pitch.title': 'Joe in 60 Seconds', 'proj.pitch.desc': 'A one-page brief for interviewers: what I do best, how I take on requests, my path so far, and the work worth seeing first.',
                 'proj.sitedesign.title': 'AI-Assisted Workflow', 'proj.sitedesign.desc': 'How I build this site together with my AI assistant Max: who does what, the workflow, and how every change is verified.',
                 'proj.crm.title': 'CRM System Design', 'proj.crm.desc': 'End-to-end design and architecture analysis of a customer relationship management system, covering functional requirements and data modeling.', 'proj.stock.title': 'Stock Portfolio Dashboard', 'proj.stock.desc': 'A comprehensive dashboard for tracking stock inventory and real-time P&L analysis.',
