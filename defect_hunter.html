@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>缺陷獵人：60 秒認識 Joe | Joe Huang</title>
+    <meta name="description" content="60 秒小遊戲：在晶圓圖上抓出缺陷，每抓到一顆就解鎖一張 Joe 的檔案卡。">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .hero-bg { background: radial-gradient(circle at 80% 20%, rgba(59,130,246,0.35), transparent 55%), radial-gradient(circle at 10% 90%, rgba(99,102,241,0.3), transparent 50%), #0b1120; }
+        .grad-text { background: linear-gradient(90deg, #60a5fa, #a78bfa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+        /* 晶圓與 die */
+        #wafer { touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; cursor: crosshair; }
+        .die { transition: fill 0.25s ease, fill-opacity 0.25s ease; }
+        .die.defect { fill: #f59e0b; fill-opacity: 1; }
+        .die.rare { fill: #a78bfa; fill-opacity: 1; }
+        .die.hit { fill: #10b981; fill-opacity: 1; }
+        .die.missed { fill: #ef4444; fill-opacity: 1; }
+        .life { transform: rotate(-90deg); transform-box: fill-box; transform-origin: center; }
+        .pulse { animation: pulse 1s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+        @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(2.2); opacity: 0; } }
+        .floater { animation: floater 0.9s ease-out forwards; pointer-events: none; font-weight: 800; font-family: Inter, sans-serif; }
+        @keyframes floater { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-22px); opacity: 0; } }
+        .shake { animation: shake 0.3s ease; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        .scan { animation: scan 3.2s linear infinite; }
+        @keyframes scan { from { transform: translateY(-120px); } to { transform: translateY(120px); } }
+
+        /* 解鎖卡片 */
+        .card-in { animation: card-in 0.45s cubic-bezier(.2,.8,.2,1); }
+        @keyframes card-in { from { opacity: 0; transform: translateY(12px) scale(0.97); } to { opacity: 1; transform: none; } }
+        .locked .card-body { filter: blur(5px); user-select: none; }
+        .count-pop { animation: count-pop 0.8s ease forwards; }
+        @keyframes count-pop { from { transform: scale(1.6); opacity: 0; } 30% { transform: scale(1); opacity: 1; } to { opacity: 0.9; } }
+        .combo-pop { animation: combo-pop 0.3s ease; }
+        @keyframes combo-pop { 50% { transform: scale(1.35); } }
+
+        /* 檢測報告印章 */
+        .stamp { opacity: 0; transform: rotate(-14deg) scale(2.2); transition: opacity 0.25s ease, transform 0.45s cubic-bezier(.2,1.4,.4,1); }
+        .stamp.on { opacity: 1; transform: rotate(-14deg) scale(1); }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+            .scan { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
+
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html#projects" class="flex items-center text-sm font-medium hover:text-blue-500 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <span data-i18n="nav.back">回到首頁</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                <button id="langToggle" class="px-3 py-1 rounded-full border border-slate-300 dark:border-slate-600 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EN</button>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
+                    <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Game -->
+    <main id="game" class="scroll-mt-16 hero-bg text-white overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 pt-6 pb-10 md:pt-10 md:pb-14">
+            <div class="text-center mb-5 md:mb-7">
+                <p class="font-mono text-xs tracking-widest text-blue-300 mb-2">DEFECT HUNTER · 60s</p>
+                <h1 class="text-3xl md:text-5xl font-bold" style="word-break: keep-all"><span data-i18n="title.a">缺陷獵人：</span><span class="grad-text" data-i18n="title.b">60 秒認識 Joe</span></h1>
+            </div>
+
+            <!-- HUD -->
+            <div class="grid grid-cols-4 gap-2 md:gap-3 mb-3 font-mono text-center">
+                <div class="rounded-xl bg-white/5 border border-white/10 py-2">
+                    <div class="text-[10px] md:text-xs text-slate-400" data-i18n="hud.time">時間</div>
+                    <div id="hudTime" class="text-lg md:text-2xl font-bold">60.0</div>
+                </div>
+                <div class="rounded-xl bg-white/5 border border-white/10 py-2">
+                    <div class="text-[10px] md:text-xs text-slate-400" data-i18n="hud.score">分數</div>
+                    <div id="hudScore" class="text-lg md:text-2xl font-bold">0</div>
+                </div>
+                <div class="rounded-xl bg-white/5 border border-white/10 py-2">
+                    <div class="text-[10px] md:text-xs text-slate-400" data-i18n="hud.combo">連擊</div>
+                    <div id="hudCombo" class="text-lg md:text-2xl font-bold text-amber-300">×0</div>
+                </div>
+                <div class="rounded-xl bg-white/5 border border-white/10 py-2">
+                    <div class="text-[10px] md:text-xs text-slate-400" data-i18n="hud.cards">檔案</div>
+                    <div class="text-lg md:text-2xl font-bold"><span id="hudCards">0</span><span class="text-slate-500">/<span id="hudTotal">12</span></span></div>
+                </div>
+            </div>
+            <div class="h-1.5 rounded-full bg-white/10 overflow-hidden mb-5 md:mb-6">
+                <div id="timeBar" class="h-full w-full origin-left bg-gradient-to-r from-blue-500 to-violet-500" style="transform: scaleX(1)"></div>
+            </div>
+
+            <div class="grid md:grid-cols-5 gap-5 md:gap-8 items-start">
+                <!-- Wafer stage -->
+                <div class="md:col-span-3 relative">
+                    <div class="relative mx-auto w-full max-w-[460px] aspect-square">
+                        <svg id="wafer" viewBox="-120 -120 240 240" class="w-full h-full" role="img" aria-label="Wafer map"></svg>
+
+                        <!-- Start overlay -->
+                        <div id="startPanel" class="absolute inset-0 flex items-center justify-center">
+                            <div class="mx-4 max-w-xs text-center rounded-2xl bg-slate-950/85 backdrop-blur border border-white/10 p-5 md:p-6 shadow-2xl">
+                                <p class="text-sm text-slate-300 leading-relaxed mb-4" data-i18n="start.rule">黃色 die 是缺陷，在它消失前點掉它。每抓到兩顆，就解鎖一張 Joe 的檔案卡。</p>
+                                <div class="flex justify-center gap-4 text-xs text-slate-300 mb-5">
+                                    <span class="inline-flex items-center"><span class="w-3 h-3 rounded-sm bg-amber-500 mr-1.5"></span><span data-i18n="start.defect">缺陷 +分</span></span>
+                                    <span class="inline-flex items-center"><span class="w-3 h-3 rounded-sm bg-violet-400 mr-1.5"></span><span data-i18n="start.rare">AI 晶片 +3 秒</span></span>
+                                </div>
+                                <button id="startBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg shadow-blue-500/30" data-i18n="start.btn">開始檢測</button>
+                                <p id="bestLine" class="font-mono text-xs text-slate-500 mt-3 hidden"></p>
+                            </div>
+                        </div>
+
+                        <!-- Countdown / pause overlay -->
+                        <div id="countPanel" class="absolute inset-0 hidden items-center justify-center pointer-events-none">
+                            <span id="countNum" class="text-7xl md:text-8xl font-black grad-text"></span>
+                        </div>
+                        <div id="pausePanel" class="absolute inset-0 hidden items-center justify-center">
+                            <button id="resumeBtn" class="bg-slate-950/85 backdrop-blur border border-white/10 px-6 py-3 rounded-xl font-bold" data-i18n="pause.btn">已暫停，點我繼續</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unlock feed -->
+                <aside class="md:col-span-2">
+                    <p class="font-mono text-xs text-slate-400 mb-2">UNLOCKED FILES</p>
+                    <div id="feed" class="space-y-3 min-h-[9rem]">
+                        <div id="feedEmpty" class="rounded-2xl border border-dashed border-white/15 p-5 text-sm text-slate-400" data-i18n="feed.empty">抓到的缺陷會出現在這裡：每一顆都藏著 Joe 的一段故事。</div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Inspection report -->
+    <section id="report" class="hidden max-w-5xl mx-auto px-4 py-14 md:py-20 scroll-mt-16">
+        <div class="relative rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl overflow-hidden">
+            <div class="absolute inset-0" style="background: radial-gradient(circle at 15% 20%, rgba(16,185,129,0.15), transparent 55%), radial-gradient(circle at 90% 90%, rgba(99,102,241,0.2), transparent 55%)"></div>
+            <div class="relative p-6 md:p-10">
+                <div class="flex items-start justify-between gap-4 mb-6">
+                    <div>
+                        <p class="font-mono text-xs text-slate-400 mb-1">INSPECTION REPORT · <span id="reportDate" class="whitespace-nowrap"></span></p>
+                        <h2 class="text-2xl md:text-3xl font-bold mb-1" data-i18n="report.title">檢測報告</h2>
+                        <p class="text-slate-300"><span data-i18n="report.rank">你的等級：</span><span id="rankName" class="font-bold text-amber-300"></span></p>
+                    </div>
+                    <div id="stamp" class="stamp shrink-0 mt-3 mr-1 px-3 md:px-4 py-1 md:py-1.5 rounded-lg border-4 border-emerald-400 text-emerald-400 font-black text-2xl md:text-4xl tracking-widest pointer-events-none">PASS</div>
+                </div>
+                <div id="stats" class="grid grid-cols-2 md:grid-cols-3 gap-3 font-mono"></div>
+                <p class="mt-6 text-sm text-slate-300"><span data-i18n="report.subject">受檢對象：Joe</span> · <span id="knowLine"></span></p>
+                <div class="flex flex-wrap gap-3 mt-7">
+                    <button id="againBtn" class="bg-blue-600 hover:bg-blue-500 px-5 py-2.5 rounded-lg font-semibold transition-colors" data-i18n="report.again">再玩一次</button>
+                    <button id="shareBtn" class="bg-white/10 hover:bg-white/20 border border-white/15 px-5 py-2.5 rounded-lg font-semibold transition-colors" data-i18n="report.share">分享我的成績</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All cards -->
+    <section id="files" class="max-w-5xl mx-auto px-4 py-14 md:py-20 scroll-mt-16">
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold mb-2 flex items-center">
+                    <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                    <span data-i18n="files.title">Joe 的檔案</span>
+                </h2>
+                <p class="text-slate-600 dark:text-slate-400" data-i18n="files.sub">玩遊戲解鎖，或直接全部打開。</p>
+            </div>
+            <button id="revealAll" class="text-sm font-semibold px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-i18n="files.reveal">不想玩？直接全部打開</button>
+        </div>
+        <div id="fileGrid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+
+        <div class="text-center mt-14">
+            <h2 class="text-2xl md:text-4xl font-bold mb-4" style="word-break: keep-all" data-i18n="cta.title">建議：進入下一關，和 Joe 聊聊。</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="cta.sub">歡迎來信，或在 LinkedIn 上找到我。</p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="mailto:spyderhua@gmail.com" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg shadow-blue-500/30">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    spyderhua@gmail.com
+                </a>
+                <a href="https://www.linkedin.com/in/spyderhua" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    LinkedIn
+                </a>
+                <a href="pitch.html" class="inline-flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <span data-i18n="cta.pitch">看 60 秒簡介</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 border-t border-slate-200 dark:border-slate-800 text-center text-sm text-slate-500">
+        © <span id="year"></span> Joe Huang
+    </footer>
+
+    <script>
+        const UI = {
+            zh: {
+                'nav.back': '回到首頁',
+                'title.a': '缺陷獵人：', 'title.b': '60 秒認識 Joe',
+                'hud.time': '時間', 'hud.score': '分數', 'hud.combo': '連擊', 'hud.cards': '檔案',
+                'start.rule': '黃色 die 是缺陷，在它消失前點掉它。每抓到兩顆，就解鎖一張 Joe 的檔案卡。',
+                'start.defect': '缺陷 +分', 'start.rare': 'AI 晶片 +3 秒',
+                'start.btn': '開始檢測', 'start.again': '再玩一次',
+                'pause.btn': '已暫停，點我繼續',
+                'feed.empty': '抓到的缺陷會出現在這裡：每一顆都藏著 Joe 的一段故事。',
+                'report.title': '檢測報告', 'report.rank': '你的等級：', 'report.subject': '受檢對象：Joe',
+                'report.again': '再玩一次', 'report.share': '分享我的成績', 'report.copied': '已複製連結！',
+                'files.title': 'Joe 的檔案', 'files.sub': '玩遊戲解鎖，或直接全部打開。', 'files.reveal': '不想玩？直接全部打開',
+                'cta.title': '建議：進入下一關，和 Joe 聊聊。', 'cta.sub': '歡迎來信，或在 LinkedIn 上找到我。', 'cta.pitch': '看 60 秒簡介',
+                best: '最佳紀錄 {n} 分', newBest: '新紀錄！',
+                hit: '命中', miss: '漏檢', wrong: '誤判', rate: '檢出率', maxCombo: '最高連擊', files: '解鎖檔案',
+                know: '你已認識 {p}% 的 Joe', missLabel: '漏檢', wrongLabel: '-1 秒',
+                locked: '尚未解鎖',
+                shareText: '我在「缺陷獵人：60 秒認識 Joe」拿到 {s} 分，解鎖了 {c}/{t} 張檔案。你能贏我嗎？',
+                ranks: ['實習檢測員', '檢測工程師', '資深檢測工程師', '良率守門員']
+            },
+            en: {
+                'nav.back': 'Back to Home',
+                'title.a': 'Defect Hunter: ', 'title.b': 'Joe in 60 Seconds',
+                'hud.time': 'Time', 'hud.score': 'Score', 'hud.combo': 'Combo', 'hud.cards': 'Files',
+                'start.rule': 'Yellow dies are defects — tap them before they vanish. Every two you catch unlock one of Joe’s files.',
+                'start.defect': 'Defect = points', 'start.rare': 'AI chip = +3s',
+                'start.btn': 'Start inspection', 'start.again': 'Play again',
+                'pause.btn': 'Paused — tap to resume',
+                'feed.empty': 'Defects you catch show up here — each one hides a piece of Joe’s story.',
+                'report.title': 'Inspection report', 'report.rank': 'Your rank: ', 'report.subject': 'Subject: Joe',
+                'report.again': 'Play again', 'report.share': 'Share my score', 'report.copied': 'Link copied!',
+                'files.title': 'Joe’s files', 'files.sub': 'Unlock them by playing — or just open them all.', 'files.reveal': 'Not a gamer? Open them all',
+                'cta.title': 'Recommendation: next round — talk with Joe.', 'cta.sub': 'Send me an email or find me on LinkedIn.', 'cta.pitch': 'Joe in 60 seconds',
+                best: 'Best: {n} pts', newBest: 'New best!',
+                hit: 'Caught', miss: 'Missed', wrong: 'False calls', rate: 'Catch rate', maxCombo: 'Best combo', files: 'Files unlocked',
+                know: 'You now know {p}% of Joe', missLabel: 'MISS', wrongLabel: '-1s',
+                locked: 'Locked',
+                shareText: 'I scored {s} in “Defect Hunter: Joe in 60 Seconds” and unlocked {c}/{t} files. Can you beat me?',
+                ranks: ['Trainee Inspector', 'Inspection Engineer', 'Senior Inspection Engineer', 'Yield Guardian']
+            }
+        };
+
+        // Joe 的檔案卡：依解鎖順序排列，內容取自網站首頁與 60 秒簡介。
+        const CARDS = [
+            { tag: 'WHO', zh: ['我是 Joe', '華邦電子資深工程師，負責晶圓廠內部的工程資料系統。'],
+              en: ['I’m Joe', 'Principal Engineer at Winbond, building the fab’s in-house engineering data systems.'] },
+            { tag: 'HABIT', zh: ['先問為什麼', '使用者說「我要一個這樣的畫面」，我會先問：這是要幫你解決什麼問題？'],
+              en: ['Ask why first', 'When someone says “I want a screen like this,” I ask: what problem should it solve for you?'] },
+            { tag: 'DOMAIN', zh: ['看得懂晶圓資料', 'Wafer、Shot、Die、Defect 每一層都熟，能和良率、缺陷工程師用同一種語言溝通。'],
+              en: ['Fluent in wafer data', 'Wafer, shot, die and defect level — I speak the same language as yield and defect engineers.'] },
+            { tag: 'STACK', zh: ['從介面到資料庫', 'Angular 前端、C# 後端、Oracle SQL / PL/SQL 與 ETL 排程，一手包辦。'],
+              en: ['From UI to database', 'Angular front end, C# back end, Oracle SQL / PL/SQL and ETL jobs — owned end to end.'] },
+            { tag: 'CAREER', zh: ['{y} 年、兩次晉升', '2018 年加入華邦，從工程師、高級工程師一路到資深工程師。'],
+              en: ['{y}+ years, two promotions', 'Joined Winbond in 2018 and grew from Engineer to Senior to Principal Engineer.'] },
+            { tag: 'UX', zh: ['好用是我的責任', '我把使用者體驗當成專業的一部分：系統要直覺，使用者不用摸索就能完成工作。'],
+              en: ['Usability is my job', 'Systems should feel intuitive, so people get their work done without figuring them out.'] },
+            { tag: 'AI', zh: ['把 AI 用進團隊', '持續自學 AI，導入團隊工作流程，協助建立專屬的 AI Skills，加速開發、除錯與文件。'],
+              en: ['AI in the team', 'I keep learning AI and bring it into the team’s workflow, building our own AI Skills.'] },
+            { tag: 'VALUE', zh: ['做完是基本，做好才是成就感', '設計時同時顧到資料表、效能、資料保存與 API，讓系統長期穩定運作。'],
+              en: ['Done is the baseline; done well is the reward', 'I design tables, performance, retention and APIs together, so systems keep working.'] },
+            { tag: 'AI', zh: ['這個網站，是和 AI 一起做的', '我負責需求和驗收，AI 助理負責動手——你正在玩的這個遊戲也是。'],
+              en: ['Built with my AI assistant', 'I own the requirements and review; my AI assistant builds — including this very game.'] },
+            { tag: 'INTERN', zh: ['台灣微軟研發實習生', '研究並推廣 Azure 上的開源軟體，也寫程式把人工市場分析自動化。'],
+              en: ['RD intern at Microsoft Taiwan', 'Promoted open-source software on Azure and automated a manual market analysis.'] },
+            { tag: 'EDU', zh: ['交大碩士、元智資工', '國立交通大學多媒體工程研究所碩士；大學就讀元智大學資訊工程學系。'],
+              en: ['NCTU M.S., YZU B.S.', 'M.S. in Multimedia Engineering at NCTU; B.S. in Computer Science at Yuan Ze University.'] },
+            { tag: 'SIDE', zh: ['下班也在做工具', '股票損益儀表板、YouTube 播放清單、北海道賞雪行程——都在首頁的專案區。'],
+              en: ['Builds tools after hours, too', 'A stock P&L dashboard, a YouTube playlist tool, a Hokkaido trip plan — all in Projects.'] }
+        ];
+        const TAG_COLOR = { WHO: 'text-blue-400', HABIT: 'text-violet-400', DOMAIN: 'text-sky-400', STACK: 'text-emerald-400', CAREER: 'text-amber-400',
+                            UX: 'text-pink-400', AI: 'text-violet-400', VALUE: 'text-emerald-400', INTERN: 'text-sky-400', EDU: 'text-blue-400', SIDE: 'text-amber-400' };
+
+        const GAME_MS = 60000;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const NS = 'http://www.w3.org/2000/svg';
+        const svgEl = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
+        const $ = id => document.getElementById(id);
+
+        // 年資自動計算（華邦 2018 年 12 月起）
+        function winbondYears() {
+            const now = new Date();
+            const months = (now.getFullYear() - 2018) * 12 + (now.getMonth() + 1 - 12) + 1;
+            return Math.floor(months / 12);
+        }
+        const YEARS = winbondYears();
+        const fill = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+
+        let currentLang = 'zh';
+        try { if (localStorage.getItem('lang') === 'en') currentLang = 'en'; } catch (e) {}
+        const t = key => UI[currentLang][key];
+
+        // ---------- 晶圓 ----------
+        const svg = $('wafer');
+        const R = 108, SIZE = 14, STEP = 16;
+        const DIES = [];
+        (function buildWafer() {
+            const defs = svgEl('defs', {});
+            const clip = svgEl('clipPath', { id: 'waferClip' });
+            clip.appendChild(svgEl('circle', { r: R }));
+            defs.appendChild(clip);
+            svg.appendChild(defs);
+            svg.appendChild(svgEl('circle', { r: R + 6, fill: '#0f172a', stroke: '#60a5fa', 'stroke-opacity': 0.5, 'stroke-width': 2 }));
+            for (let y = -7; y <= 6; y++) {
+                for (let x = -7; x <= 6; x++) {
+                    const cx = x * STEP + SIZE / 2, cy = y * STEP + SIZE / 2;
+                    if (Math.hypot(Math.abs(cx) + SIZE / 2, Math.abs(cy) + SIZE / 2) > R) continue;
+                    const shade = 0.35 + 0.4 * (1 - Math.hypot(cx, cy) / R);
+                    const rect = svgEl('rect', { x: x * STEP, y: y * STEP, width: SIZE, height: SIZE, rx: 2, class: 'die', fill: '#3b82f6', 'fill-opacity': shade.toFixed(2) });
+                    svg.appendChild(rect);
+                    DIES.push({ rect, cx, cy, active: null });
+                }
+            }
+            const g = svgEl('g', { 'clip-path': 'url(#waferClip)', 'pointer-events': 'none' });
+            g.appendChild(svgEl('rect', { x: -R, y: -4, width: R * 2, height: 8, fill: '#a78bfa', 'fill-opacity': 0.25, class: 'scan' }));
+            svg.appendChild(g);
+            svg.appendChild(svgEl('path', { d: `M -10 ${R + 7} L 0 ${R - 2} L 10 ${R + 7} Z`, fill: '#0b1120' }));
+        })();
+        const fxLayer = svgEl('g', { 'pointer-events': 'none' });
+        svg.appendChild(fxLayer);
+
+        function floater(x, y, text, color) {
+            const n = svgEl('text', { x, y, 'text-anchor': 'middle', 'font-size': 11, fill: color, class: 'floater' });
+            n.textContent = text;
+            fxLayer.appendChild(n);
+            setTimeout(() => n.remove(), 900);
+        }
+
+        // ---------- 遊戲狀態 ----------
+        let state = 'idle';           // idle | countdown | playing | paused | over
+        let S = null;                 // 本局資料
+        let rafId = null, lastTs = 0;
+
+        function newRound() {
+            return { elapsed: 0, bonus: 0, score: 0, combo: 0, maxCombo: 0, hits: 0, misses: 0, wrong: 0,
+                     unlocked: 0, nextSpawn: 600, rareAt: [14000, 32000, 47000], active: [] };
+        }
+
+        const lerp = (a, b, p) => a + (b - a) * p;
+        const remaining = () => Math.max(0, GAME_MS + S.bonus - S.elapsed);
+
+        function spawn(rare) {
+            const free = DIES.filter(d => !d.active);
+            if (!free.length) return;
+            const d = free[Math.floor(Math.random() * free.length)];
+            const p = Math.min(1, S.elapsed / GAME_MS);
+            const life = rare ? 1500 : lerp(2400, 1250, p);
+            const ox = d.cx, oy = d.cy;
+            const ring = svgEl('circle', { cx: ox, cy: oy, r: 12, fill: 'none', stroke: rare ? '#c4b5fd' : '#fbbf24', 'stroke-width': 2, pathLength: 1,
+                                           'stroke-dasharray': 1, 'stroke-dashoffset': 0, class: 'life', 'pointer-events': 'none' });
+            const pulse = svgEl('circle', { cx: ox, cy: oy, r: 8, fill: 'none', stroke: rare ? '#a78bfa' : '#f59e0b', 'stroke-width': 1.5, class: 'pulse', 'pointer-events': 'none' });
+            fxLayer.append(pulse, ring);
+            d.rect.classList.add(rare ? 'rare' : 'defect');
+            d.active = { born: S.elapsed, life, rare, ring, pulse };
+            S.active.push(d);
+        }
+
+        function clearDie(d, cls) {
+            const a = d.active;
+            a.ring.remove(); a.pulse.remove();
+            d.rect.classList.remove('defect', 'rare');
+            d.active = null;
+            S.active = S.active.filter(x => x !== d);
+            if (cls) {
+                d.rect.classList.add(cls);
+                setTimeout(() => d.rect.classList.remove(cls), 350);
+            }
+        }
+
+        function unlockNext() {
+            if (S.unlocked >= CARDS.length) return;
+            const i = S.unlocked++;
+            pushFeed(i);
+            renderFiles();
+        }
+
+        function onHit(d) {
+            const rare = d.active.rare;
+            clearDie(d, 'hit');
+            S.hits++;
+            S.combo++;
+            S.maxCombo = Math.max(S.maxCombo, S.combo);
+            const pts = rare ? 30 : 10 + 2 * Math.min(S.combo - 1, 10);
+            S.score += pts;
+            floater(d.cx, d.cy - 6, rare ? '+3s' : `+${pts}`, rare ? '#c4b5fd' : '#6ee7b7');
+            if (rare) { S.bonus += 3000; unlockNext(); }
+            else if (S.hits % 2 === 1) unlockNext();   // 第 1、3、5… 顆解鎖
+            const c = $('hudCombo');
+            c.classList.remove('combo-pop'); void c.offsetWidth; c.classList.add('combo-pop');
+        }
+
+        function onWrong(x, y) {
+            S.wrong++;
+            S.combo = 0;
+            S.bonus -= 1000;
+            floater(x, y, t('wrongLabel'), '#fca5a5');
+            if (!reduceMotion) { svg.classList.remove('shake'); void svg.getBoundingClientRect(); svg.classList.add('shake'); }
+        }
+
+        function svgPoint(e) {
+            const pt = svg.createSVGPoint();
+            pt.x = e.clientX; pt.y = e.clientY;
+            return pt.matrixTransform(svg.getScreenCTM().inverse());
+        }
+
+        // 點擊判定放寬到一格的距離，手機上比較好點。
+        svg.addEventListener('pointerdown', e => {
+            if (state !== 'playing') return;
+            e.preventDefault();
+            const p = svgPoint(e);
+            let best = null, bestDist = STEP * 1.15;
+            S.active.forEach(d => {
+                const dist = Math.hypot(d.cx - p.x, d.cy - p.y);
+                if (dist < bestDist) { best = d; bestDist = dist; }
+            });
+            if (best) onHit(best);
+            else if (Math.hypot(p.x, p.y) < R) onWrong(p.x, p.y);
+            renderHud();
+        });
+
+        function tick(ts) {
+            const dt = Math.min(64, ts - lastTs);
+            lastTs = ts;
+            if (state === 'playing') {
+                S.elapsed += dt;
+                const p = Math.min(1, S.elapsed / GAME_MS);
+                // 生成缺陷：越後面越快、同時越多顆
+                if (S.elapsed >= S.nextSpawn) {
+                    const maxActive = 1 + Math.floor(p * 3.2);
+                    if (S.active.length < maxActive) spawn(false);
+                    S.nextSpawn = S.elapsed + lerp(950, 480, p) * (0.75 + Math.random() * 0.5);
+                }
+                if (S.rareAt.length && S.elapsed >= S.rareAt[0]) { S.rareAt.shift(); spawn(true); }
+                // 更新壽命圈、處理漏檢
+                S.active.slice().forEach(d => {
+                    const a = d.active;
+                    const left = 1 - (S.elapsed - a.born) / a.life;
+                    if (left <= 0) {
+                        if (!a.rare) { S.misses++; S.combo = 0; floater(d.cx, d.cy - 6, t('missLabel'), '#fca5a5'); }
+                        clearDie(d, a.rare ? null : 'missed');
+                    } else {
+                        a.ring.setAttribute('stroke-dashoffset', (1 - left).toFixed(3));
+                    }
+                });
+                renderHud();
+                if (remaining() <= 0) { endGame(); return; }
+            }
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function renderHud() {
+            const ms = S ? remaining() : GAME_MS;
+            $('hudTime').textContent = (ms / 1000).toFixed(1);
+            $('hudTime').classList.toggle('text-red-400', ms < 10000 && state === 'playing');
+            $('timeBar').style.transform = `scaleX(${Math.min(1, ms / GAME_MS)})`;
+            $('hudScore').textContent = S ? S.score : 0;
+            $('hudCombo').textContent = '×' + (S ? S.combo : 0);
+            $('hudCards').textContent = S ? S.unlocked : 0;
+        }
+
+        function show(id, on) {
+            const n = $(id);
+            n.classList.toggle('hidden', !on);
+            n.classList.toggle('flex', on);
+        }
+
+        function startGame() {
+            if (S) S.active.slice().forEach(d => clearDie(d));
+            S = newRound();
+            $('feed').querySelectorAll('[data-feed]').forEach(n => n.remove());
+            $('feedEmpty').classList.remove('hidden');
+            $('report').classList.add('hidden');
+            $('stamp').classList.remove('on');
+            renderFiles();
+            renderHud();
+            show('startPanel', false);
+            $('game').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+            state = 'countdown';
+            show('countPanel', true);
+            const seq = reduceMotion ? ['GO'] : ['3', '2', '1', 'GO'];
+            seq.forEach((s, i) => setTimeout(() => {
+                const n = $('countNum');
+                n.textContent = s;
+                n.classList.remove('count-pop'); void n.offsetWidth; n.classList.add('count-pop');
+            }, i * 650));
+            setTimeout(() => {
+                show('countPanel', false);
+                state = 'playing';
+                lastTs = performance.now();
+                cancelAnimationFrame(rafId);
+                rafId = requestAnimationFrame(tick);
+            }, seq.length * 650);
+        }
+
+        function endGame() {
+            state = 'over';
+            S.active.slice().forEach(d => clearDie(d));
+            renderHud();
+            let best = 0;
+            try { best = Number(localStorage.getItem('defectHunterBest')) || 0; } catch (e) {}
+            S.isBest = S.score > best;
+            if (S.isBest) { try { localStorage.setItem('defectHunterBest', S.score); } catch (e) {} }
+            renderReport();
+            renderBest();
+            $('startBtn').textContent = t('start.again');
+            show('startPanel', true);
+            $('report').classList.remove('hidden');
+            setTimeout(() => {
+                $('report').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+                setTimeout(() => $('stamp').classList.add('on'), 500);
+            }, 700);
+        }
+
+        // 切到別的分頁就暫停
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && state === 'playing') { state = 'paused'; show('pausePanel', true); }
+        });
+        $('resumeBtn').addEventListener('click', () => {
+            show('pausePanel', false);
+            lastTs = performance.now();
+            state = 'playing';
+        });
+
+        // ---------- 卡片 ----------
+        function cardText(i) {
+            const [title, body] = CARDS[i][currentLang];
+            return [fill(title, { y: YEARS }), fill(body, { y: YEARS })];
+        }
+
+        function pushFeed(i) {
+            $('feedEmpty').classList.add('hidden');
+            const [title, body] = cardText(i);
+            const node = document.createElement('div');
+            node.dataset.feed = i;
+            node.className = 'card-in rounded-2xl bg-white/5 border border-white/10 p-4';
+            node.innerHTML = `<p class="font-mono text-[11px] ${TAG_COLOR[CARDS[i].tag]} mb-1">FILE ${String(i + 1).padStart(2, '0')} · ${CARDS[i].tag}</p>
+                <p class="font-bold mb-1"></p><p class="text-sm text-slate-300 leading-relaxed"></p>`;
+            node.children[1].textContent = title;
+            node.children[2].textContent = body;
+            const feed = $('feed');
+            feed.insertBefore(node, feed.children[1] || null);
+            // 只留最新三張，其餘看下方「Joe 的檔案」
+            feed.querySelectorAll('[data-feed]').forEach((n, k) => { if (k >= 3) n.remove(); });
+        }
+
+        let revealed = false;
+        function renderFiles() {
+            const grid = $('fileGrid');
+            grid.innerHTML = '';
+            const open = S ? S.unlocked : 0;
+            CARDS.forEach((c, i) => {
+                const isOpen = revealed || i < open;
+                const [title, body] = cardText(i);
+                const card = document.createElement('div');
+                card.className = 'relative rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-5 shadow-sm' + (isOpen ? '' : ' locked');
+                card.innerHTML = `<p class="font-mono text-[11px] ${TAG_COLOR[c.tag]} mb-1">FILE ${String(i + 1).padStart(2, '0')} · ${c.tag}</p>
+                    <div class="card-body"><p class="font-bold mb-1"></p><p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed"></p></div>`;
+                const body2 = card.querySelector('.card-body');
+                body2.children[0].textContent = title;
+                body2.children[1].textContent = body;
+                if (!isOpen) {
+                    const lock = document.createElement('span');
+                    lock.className = 'absolute inset-0 flex items-center justify-center text-sm font-semibold text-slate-500 dark:text-slate-400';
+                    lock.innerHTML = '<svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>';
+                    lock.append(t('locked'));
+                    card.appendChild(lock);
+                }
+                grid.appendChild(card);
+            });
+            $('revealAll').classList.toggle('hidden', revealed || open >= CARDS.length);
+        }
+
+        $('revealAll').addEventListener('click', () => { revealed = true; renderFiles(); });
+
+        // ---------- 報告 ----------
+        function rankIndex() {
+            if (S.hits >= 65) return 3;
+            if (S.hits >= 45) return 2;
+            if (S.hits >= 25) return 1;
+            return 0;
+        }
+
+        function renderReport() {
+            if (!S || state !== 'over') return;
+            const now = new Date();
+            $('reportDate').textContent = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            $('rankName').textContent = UI[currentLang].ranks[rankIndex()];
+            const total = S.hits + S.misses;
+            const rate = total ? Math.round(S.hits / total * 100) : 0;
+            const rows = [
+                [t('hud.score') + (S.isBest ? ` · ${t('newBest')}` : ''), S.score, 'text-amber-300'],
+                [t('hit'), S.hits, 'text-emerald-300'],
+                [t('rate'), rate + '%', 'text-sky-300'],
+                [t('maxCombo'), '×' + S.maxCombo, 'text-violet-300'],
+                [t('miss') + ' / ' + t('wrong'), `${S.misses} / ${S.wrong}`, 'text-rose-300'],
+                [t('files'), `${S.unlocked}/${CARDS.length}`, 'text-blue-300']
+            ];
+            const box = $('stats');
+            box.innerHTML = '';
+            rows.forEach(([label, value, color]) => {
+                const n = document.createElement('div');
+                n.className = 'rounded-xl bg-white/5 border border-white/10 p-3';
+                n.innerHTML = `<div class="text-[11px] text-slate-400 mb-1"></div><div class="text-xl md:text-2xl font-bold ${color}"></div>`;
+                n.children[0].textContent = label;
+                n.children[1].textContent = value;
+                box.appendChild(n);
+            });
+            $('knowLine').textContent = fill(t('know'), { p: Math.round(S.unlocked / CARDS.length * 100) });
+        }
+
+        $('againBtn').addEventListener('click', startGame);
+        $('startBtn').addEventListener('click', startGame);
+
+        $('shareBtn').addEventListener('click', async () => {
+            const text = fill(t('shareText'), { s: S.score, c: S.unlocked, t: CARDS.length });
+            const url = location.href.split('#')[0];
+            try {
+                if (navigator.share) { await navigator.share({ title: document.title, text, url }); return; }
+                await navigator.clipboard.writeText(`${text} ${url}`);
+                const b = $('shareBtn');
+                b.textContent = t('report.copied');
+                setTimeout(() => { b.textContent = t('report.share'); }, 1800);
+            } catch (e) {}
+        });
+
+        function renderBest() {
+            let best = 0;
+            try { best = Number(localStorage.getItem('defectHunterBest')) || 0; } catch (e) {}
+            $('bestLine').textContent = fill(t('best'), { n: best });
+            $('bestLine').classList.toggle('hidden', !best);
+        }
+
+        // ---------- 語言與主題 ----------
+        function render() {
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-TW' : 'en';
+            document.title = currentLang === 'zh' ? '缺陷獵人：60 秒認識 Joe | Joe Huang' : 'Defect Hunter: Joe in 60 Seconds | Joe Huang';
+            document.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = t(node.getAttribute('data-i18n')); });
+            if (state === 'over') $('startBtn').textContent = t('start.again');
+            $('langToggle').textContent = currentLang === 'zh' ? 'EN' : '中文';
+            $('feed').querySelectorAll('[data-feed]').forEach(n => {
+                const [title, body] = cardText(Number(n.dataset.feed));
+                n.children[1].textContent = title;
+                n.children[2].textContent = body;
+            });
+            renderFiles();
+            renderReport();
+            renderBest();
+        }
+
+        $('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            try { localStorage.setItem('lang', currentLang); } catch (e) {}
+            render();
+        });
+
+        // Theme: shares the same 'theme' setting as the home page.
+        const sunIcon = $('sunIcon');
+        const moonIcon = $('moonIcon');
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+        let savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        $('themeToggle').addEventListener('click', () => {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+        });
+
+        $('hudTotal').textContent = CARDS.length;
+        $('year').textContent = new Date().getFullYear();
+        render();
+        renderHud();
+    </script>
+</body>
+</html>
