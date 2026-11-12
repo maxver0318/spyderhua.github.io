@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼出 Joe：晶圓拼圖自我介紹 | Joe Huang</title>
+    <meta name="description" content="自我介紹拼圖：讀卡片上的線索，把 Joe 的成長時間軸和做事方式拼回晶圓上。">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .hero-bg { background: radial-gradient(circle at 80% 20%, rgba(59,130,246,0.35), transparent 55%), radial-gradient(circle at 10% 90%, rgba(99,102,241,0.3), transparent 50%), #0b1120; }
+        .grad-text { background: linear-gradient(90deg, #60a5fa, #a78bfa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+        /* 進度晶圓：每放對一片，亮起一區 */
+        .die { transition: fill 0.5s ease, fill-opacity 0.5s ease; }
+
+        /* 目前的拼圖卡 */
+        #piece { touch-action: auto; }
+        #piece.dragging { transition: none; z-index: 40; box-shadow: 0 20px 50px rgba(0,0,0,0.45); cursor: grabbing; }
+        #piece.mouse { cursor: grab; }
+        .piece-in { animation: piece-in 0.4s cubic-bezier(.2,.8,.2,1); }
+        @keyframes piece-in { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+        /* 插槽 */
+        .slot { transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease; }
+        .slot.over { border-color: #60a5fa; background-color: rgba(59,130,246,0.15); transform: scale(1.01); }
+        .slot.wrong { animation: shake 0.35s ease; border-color: #f87171 !important; }
+        .slot.right { animation: pop 0.45s ease; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 75% { transform: translateX(7px); } }
+        @keyframes pop { 50% { transform: scale(1.03); } }
+
+        .stamp { opacity: 0; transform: rotate(-14deg) scale(2.2); transition: opacity 0.25s ease, transform 0.45s cubic-bezier(.2,1.4,.4,1); }
+        .stamp.on { opacity: 1; transform: rotate(-14deg) scale(1); }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
+
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html#projects" class="flex items-center text-sm font-medium hover:text-blue-500 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <span data-i18n="nav.back">回到首頁</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                <button id="langToggle" class="px-3 py-1 rounded-full border border-slate-300 dark:border-slate-600 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EN</button>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
+                    <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="game" class="hero-bg text-white scroll-mt-16">
+        <div class="max-w-5xl mx-auto px-4 pt-8 pb-12 md:pt-12 md:pb-16">
+            <div class="grid md:grid-cols-5 gap-6 md:gap-10 items-start">
+
+                <!-- 左：標題與進度晶圓 -->
+                <div class="md:col-span-2 md:sticky md:top-24">
+                    <p class="font-mono text-xs tracking-widest text-blue-300 mb-2">PUZZLE · <span id="levelTag">INTRO</span></p>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4" style="word-break: keep-all"><span data-i18n="title.a">拼出 </span><span class="grad-text">Joe</span></h1>
+                    <div class="flex md:block items-center gap-4">
+                        <svg id="wafer" viewBox="-120 -120 240 240" class="w-28 h-28 md:w-full md:h-auto md:max-w-[320px] shrink-0" role="img" aria-label="Wafer progress"></svg>
+                        <div class="md:mt-5 font-mono text-sm space-y-1">
+                            <p><span class="text-slate-400" data-i18n="hud.placed">已拼</span> <span id="hudPlaced" class="font-bold">0</span><span class="text-slate-500">/<span id="hudTotal">11</span></span></p>
+                            <p><span class="text-slate-400" data-i18n="hud.wrong">錯放</span> <span id="hudWrong" class="font-bold text-rose-300">0</span></p>
+                            <p><span class="text-slate-400" data-i18n="hud.time">用時</span> <span id="hudTime" class="font-bold">0:00</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右：關卡 -->
+                <div class="md:col-span-3">
+                    <!-- 開場 -->
+                    <div id="introPanel" class="rounded-2xl bg-white/5 border border-white/10 p-6 md:p-8">
+                        <p class="text-lg md:text-xl font-bold mb-3" data-i18n="intro.title">每片拼圖，都是 Joe 的一段故事。</p>
+                        <p class="text-slate-300 leading-relaxed mb-5" data-i18n="intro.body">兩關、11 片拼圖。讀卡片上的線索，把它放進正確的位置；放對一片，晶圓就亮起一區。全部拼完，你就認識 Joe 了。不限時間，慢慢讀。</p>
+                        <ul class="text-sm text-slate-300 space-y-2 mb-6">
+                            <li><span class="font-mono text-blue-300 mr-2">01</span><span data-i18n="intro.l1">Joe 是怎麼走到今天的？</span></li>
+                            <li><span class="font-mono text-violet-300 mr-2">02</span><span data-i18n="intro.l2">遇到這些情況，Joe 會怎麼做？</span></li>
+                        </ul>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <button id="startBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg shadow-blue-500/30" data-i18n="intro.start">開始拼</button>
+                            <button id="skipBtn" class="text-sm text-slate-400 hover:text-white underline underline-offset-4" data-i18n="intro.skip">沒時間？直接看答案</button>
+                        </div>
+                    </div>
+
+                    <!-- 遊戲中 -->
+                    <div id="playPanel" class="hidden">
+                        <h2 id="levelTitle" class="text-xl md:text-2xl font-bold mb-1"></h2>
+                        <p id="levelSub" class="text-sm text-slate-300 mb-4"></p>
+
+                        <div class="sticky top-16 md:static z-30 -mx-4 px-4 pt-2 pb-3 md:m-0 md:p-0 bg-[#0e1529]/95 md:bg-transparent backdrop-blur md:backdrop-blur-0">
+                            <div id="piece" class="relative rounded-2xl bg-slate-900 border-2 border-blue-400/70 p-4 md:p-5 shadow-xl select-none">
+                                <div class="flex items-center justify-between mb-1">
+                                    <p class="font-mono text-[11px] text-blue-300"><span data-i18n="piece.label">拼圖</span> <span id="pieceNo"></span></p>
+                                    <button id="nextPiece" class="text-xs text-slate-400 hover:text-white" data-i18n="piece.next">換一片 ↻</button>
+                                </div>
+                                <p id="pieceTitle" class="text-lg font-bold mb-1"></p>
+                                <p id="pieceDesc" class="text-sm text-slate-300 leading-relaxed"></p>
+                            </div>
+                            <p id="feedback" class="text-sm mt-2 min-h-[1.25rem]" aria-live="polite"></p>
+                        </div>
+
+                        <p class="text-xs text-slate-400 mt-1 mb-3" data-i18n="slot.howto">點選它屬於的位置（電腦也可以直接拖曳）：</p>
+                        <div id="slots" class="space-y-2.5"></div>
+                    </div>
+
+                    <!-- 過關 -->
+                    <div id="clearPanel" class="hidden rounded-2xl bg-emerald-500/10 border border-emerald-400/30 p-6">
+                        <p class="text-lg font-bold mb-2" id="clearTitle"></p>
+                        <p class="text-sm text-slate-300 mb-5" id="clearBody"></p>
+                        <button id="nextLevelBtn" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-bold transition-colors" data-i18n="clear.next">下一關</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 檢測報告 -->
+    <section id="report" class="hidden max-w-5xl mx-auto px-4 pt-14 md:pt-20 scroll-mt-16">
+        <div class="relative rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl overflow-hidden">
+            <div class="absolute inset-0" style="background: radial-gradient(circle at 15% 20%, rgba(16,185,129,0.15), transparent 55%), radial-gradient(circle at 90% 90%, rgba(99,102,241,0.2), transparent 55%)"></div>
+            <div class="relative p-6 md:p-10">
+                <div class="flex items-start justify-between gap-4 mb-6">
+                    <div>
+                        <p class="font-mono text-xs text-slate-400 mb-1">INSPECTION REPORT · <span id="reportDate" class="whitespace-nowrap"></span></p>
+                        <h2 class="text-2xl md:text-3xl font-bold mb-1" data-i18n="report.title">檢測報告</h2>
+                        <p class="text-slate-300"><span data-i18n="report.rank">你的等級：</span><span id="rankName" class="font-bold text-amber-300"></span></p>
+                    </div>
+                    <div id="stamp" class="stamp shrink-0 mt-3 mr-1 px-3 md:px-4 py-1 md:py-1.5 rounded-lg border-4 border-emerald-400 text-emerald-400 font-black text-2xl md:text-4xl tracking-widest pointer-events-none">PASS</div>
+                </div>
+                <div id="stats" class="grid grid-cols-3 gap-3 font-mono"></div>
+                <p class="mt-6 text-sm text-slate-300" data-i18n="report.note">彩蛋：這個網站和這個拼圖，都是 Joe 和他的 AI 助理一起做的。</p>
+                <div class="flex flex-wrap gap-3 mt-6">
+                    <button id="againBtn" class="bg-blue-600 hover:bg-blue-500 px-5 py-2.5 rounded-lg font-semibold transition-colors" data-i18n="report.again">再玩一次</button>
+                    <button id="shareBtn" class="bg-white/10 hover:bg-white/20 border border-white/15 px-5 py-2.5 rounded-lg font-semibold transition-colors" data-i18n="report.share">分享我的成績</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 拼好的 Joe -->
+    <section id="result" class="hidden max-w-5xl mx-auto px-4 py-14 md:py-20 scroll-mt-16">
+        <h2 class="text-2xl md:text-3xl font-bold mb-2 flex items-center">
+            <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+            <span data-i18n="result.title">你拼出來的 Joe</span>
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="result.sub">兩關拼完，就是一份完整的自我介紹。</p>
+        <div id="resultGrid" class="grid md:grid-cols-2 gap-8"></div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-4 pb-16 md:pb-24 pt-6 text-center">
+        <h2 class="text-2xl md:text-4xl font-bold mb-4" style="word-break: keep-all" data-i18n="cta.title">建議：進入下一關，和 Joe 聊聊。</h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="cta.sub">歡迎來信，或在 LinkedIn 上找到我。</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="mailto:spyderhua@gmail.com" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg shadow-blue-500/30">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                spyderhua@gmail.com
+            </a>
+            <a href="https://www.linkedin.com/in/spyderhua" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                <svg class="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                LinkedIn
+            </a>
+            <a href="pitch.html" class="inline-flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                <span data-i18n="cta.pitch">看 60 秒簡介</span>
+            </a>
+        </div>
+    </section>
+
+    <footer class="py-10 border-t border-slate-200 dark:border-slate-800 text-center text-sm text-slate-500">
+        © <span id="year"></span> Joe Huang
+    </footer>
+
+    <script>
+        const UI = {
+            zh: {
+                'nav.back': '回到首頁', 'title.a': '拼出 ',
+                'hud.placed': '已拼', 'hud.wrong': '錯放', 'hud.time': '用時',
+                'intro.title': '每片拼圖，都是 Joe 的一段故事。',
+                'intro.body': '兩關、11 片拼圖。讀卡片上的線索，把它放進正確的位置；放對一片，晶圓就亮起一區。全部拼完，你就認識 Joe 了。不限時間，慢慢讀。',
+                'intro.l1': 'Joe 是怎麼走到今天的？', 'intro.l2': '遇到這些情況，Joe 會怎麼做？',
+                'intro.start': '開始拼', 'intro.skip': '沒時間？直接看答案',
+                'piece.label': '拼圖', 'piece.next': '換一片 ↻',
+                'slot.howto': '點選它屬於的位置（電腦也可以直接拖曳）：',
+                'clear.next': '下一關',
+                'report.title': '檢測報告', 'report.rank': '你的等級：',
+                'report.note': '彩蛋：這個網站和這個拼圖，都是 Joe 和他的 AI 助理一起做的。',
+                'report.again': '再玩一次', 'report.share': '分享我的成績', 'report.copied': '已複製連結！',
+                'result.title': '你拼出來的 Joe', 'result.sub': '兩關拼完，就是一份完整的自我介紹。',
+                'cta.title': '建議：進入下一關，和 Joe 聊聊。', 'cta.sub': '歡迎來信，或在 LinkedIn 上找到我。', 'cta.pitch': '看 60 秒簡介',
+                right: '✓ 放對了！', wrong: '✗ 不是這裡。提示：', skipped: '（看答案模式）',
+                level: '第 {n} 關', clearTitle: '第 {n} 關完成！', yield: '拼圖良率', wrongN: '錯放', time: '用時',
+                share: '我在「拼出 Joe」的拼圖良率是 {y}%。你有多了解 Joe？',
+                ranks: ['實習檢測員', '檢測工程師', '資深檢測工程師', '良率守門員']
+            },
+            en: {
+                'nav.back': 'Back to Home', 'title.a': 'Piece together ',
+                'hud.placed': 'Placed', 'hud.wrong': 'Misplaced', 'hud.time': 'Time',
+                'intro.title': 'Every piece is part of Joe’s story.',
+                'intro.body': 'Two levels, 11 pieces. Read the clues on each card and put it in the right place — every correct piece lights up part of the wafer. Finish, and you know Joe. No timer; take your time reading.',
+                'intro.l1': 'How did Joe get here?', 'intro.l2': 'What would Joe do?',
+                'intro.start': 'Start the puzzle', 'intro.skip': 'No time? Show me the answers',
+                'piece.label': 'Piece', 'piece.next': 'Another piece ↻',
+                'slot.howto': 'Tap where it belongs (or drag it on desktop):',
+                'clear.next': 'Next level',
+                'report.title': 'Inspection report', 'report.rank': 'Your rank: ',
+                'report.note': 'Easter egg: this site and this puzzle were built by Joe together with his AI assistant.',
+                'report.again': 'Play again', 'report.share': 'Share my score', 'report.copied': 'Link copied!',
+                'result.title': 'The Joe you pieced together', 'result.sub': 'Both levels together make a complete introduction.',
+                'cta.title': 'Recommendation: next round — talk with Joe.', 'cta.sub': 'Send me an email or find me on LinkedIn.', 'cta.pitch': 'Joe in 60 seconds',
+                right: '✓ Correct!', wrong: '✗ Not here. Hint: ', skipped: '(answers shown)',
+                level: 'Level {n}', clearTitle: 'Level {n} cleared!', yield: 'Puzzle yield', wrongN: 'Misplaced', time: 'Time',
+                share: 'My puzzle yield in “Piece Together Joe” is {y}%. How well do you know Joe?',
+                ranks: ['Trainee Inspector', 'Inspection Engineer', 'Senior Inspection Engineer', 'Yield Guardian']
+            }
+        };
+
+        // 兩關的插槽與拼圖。內容取自首頁經歷與 60 秒簡介。
+        const LEVELS = [
+            {
+                color: '#60a5fa',
+                zh: { title: 'Joe 是怎麼走到今天的？', sub: '把每片拼圖放進正確的年份。線索：看它在講學校、實習，還是工作；職稱有先後順序。',
+                      clear: 'Joe 的成長時間軸拼好了：資工學士、微軟實習、交大碩士，接著在華邦一路從工程師做到資深工程師。' },
+                en: { title: 'How did Joe get here?', sub: 'Put each piece in the right year. Clues: is it school, an internship or work? Job titles come in order.',
+                      clear: 'Joe’s timeline is complete: CS degree, Microsoft internship, master’s at NCTU, then Engineer to Principal Engineer at Winbond.' },
+                slots: [
+                    { id: 'y2011', zh: ['2011', '🎓 學校'], en: ['2011', '🎓 School'] },
+                    { id: 'y2014', zh: ['2014', '💼 實習'], en: ['2014', '💼 Internship'] },
+                    { id: 'y2015', zh: ['2015', '🎓 學校'], en: ['2015', '🎓 School'] },
+                    { id: 'y2018', zh: ['2018', '🏭 工作'], en: ['2018', '🏭 Work'] },
+                    { id: 'y2022', zh: ['2022', '🏭 工作'], en: ['2022', '🏭 Work'] },
+                    { id: 'y2025', zh: ['2025', '🏭 工作・現在'], en: ['2025', '🏭 Work · now'] }
+                ],
+                pieces: [
+                    { slot: 'y2011', zh: ['元智大學・資工學士', '大學讀資訊工程學系。', '學校有兩站：先學士，再碩士。'],
+                      en: ['Yuan Ze University · B.S. CS', 'Studied computer science and engineering.', 'There are two school stops: bachelor’s first, then master’s.'] },
+                    { slot: 'y2014', zh: ['台灣微軟・研發實習生', '研究並推廣 Azure 上的開源軟體，還寫程式把原本人工的市場分析自動化。', '只有一個年份標著「實習」。'],
+                      en: ['Microsoft Taiwan · RD Intern', 'Promoted open-source software on Azure and wrote programs to automate a manual market analysis.', 'Only one year is marked “Internship”.'] },
+                    { slot: 'y2015', zh: ['交通大學・多媒體工程碩士', '研究所讀多媒體工程，拿到碩士學位。', '碩士在學士之後。'],
+                      en: ['NCTU · M.S. Multimedia Engineering', 'Earned a master’s degree in multimedia engineering.', 'The master’s comes after the bachelor’s.'] },
+                    { slot: 'y2018', zh: ['華邦電子・工程師', '加入華邦，開始做晶圓廠內部的工程資料系統。', '華邦的職稱順序：工程師 → 高級工程師 → 資深工程師。'],
+                      en: ['Winbond · Engineer', 'Joined Winbond and started building the fab’s engineering data systems.', 'Titles at Winbond go Engineer → Senior → Principal.'] },
+                    { slot: 'y2022', zh: ['華邦電子・高級工程師', '第一次晉升。', '華邦的職稱順序：工程師 → 高級工程師 → 資深工程師。'],
+                      en: ['Winbond · Senior Engineer', 'First promotion.', 'Titles at Winbond go Engineer → Senior → Principal.'] },
+                    { slot: 'y2025', zh: ['華邦電子・資深工程師', '第二次晉升，也就是現在的 Principal Engineer。', '「現在」是最後一站。'],
+                      en: ['Winbond · Principal Engineer', 'Second promotion — where Joe is today.', '“Now” is the last stop.'] }
+                ]
+            },
+            {
+                color: '#a78bfa',
+                zh: { title: '遇到這些情況，Joe 會怎麼做？', sub: '每片拼圖是 Joe 的一種做法，放到它對應的情境。',
+                      clear: '全部拼完！先問為什麼、懂晶圓資料、全端一手包辦、重視好不好用，再用 AI 讓團隊更快——這就是 Joe 的做事方式。' },
+                en: { title: 'What would Joe do?', sub: 'Each piece is one of Joe’s habits. Match it to the situation.',
+                      clear: 'All done! Ask why first, speak wafer data, own the full stack, care about usability, and use AI to speed up the team — that’s how Joe works.' },
+                slots: [
+                    { id: 'ask', zh: ['使用者說：「我想要一個這樣的畫面。」'], en: ['A user says: “I want a screen like this.”'] },
+                    { id: 'wafer', zh: ['良率工程師拿著晶圓圖來討論問題。'], en: ['A yield engineer brings a wafer map to discuss.'] },
+                    { id: 'stack', zh: ['一套新系統要從零開始做。'], en: ['A new system has to be built from scratch.'] },
+                    { id: 'ux', zh: ['同事第一次打開這套系統。'], en: ['A colleague opens the system for the first time.'] },
+                    { id: 'ai', zh: ['團隊開發、除錯、寫文件都太花時間。'], en: ['Development, debugging and docs take the team too long.'] }
+                ],
+                pieces: [
+                    { slot: 'ask', zh: ['先問為什麼', '「這個畫面，是要幫你解決什麼問題？」使用者描述的畫面，往往只是解法之一。', '這片在講怎麼接需求。'],
+                      en: ['Ask why first', '“What problem should this screen solve for you?” The screen a user describes is usually just one possible solution.', 'This piece is about taking requests.'] },
+                    { slot: 'wafer', zh: ['說同一種語言', '熟悉 Wafer、Shot、Die、Defect 每一層的製造資料，能直接討論良率與缺陷。', '這片在講晶圓資料。'],
+                      en: ['Speak the same language', 'Knows wafer, shot, die and defect-level data, so yield and defects can be discussed directly.', 'This piece is about wafer data.'] },
+                    { slot: 'stack', zh: ['從介面到資料庫一手包辦', 'Angular、C#、Oracle SQL / PL/SQL 與 ETL，同時顧到資料表、效能、資料保存與 API。', '這片在講技術，什麼都要從頭蓋。'],
+                      en: ['Owns it from UI to database', 'Angular, C#, Oracle SQL / PL/SQL and ETL — designing tables, performance, retention and APIs together.', 'This piece is about building everything from the ground up.'] },
+                    { slot: 'ux', zh: ['不用摸索就會用', '把 UI 和使用者體驗當成自己的專業責任，讓系統直覺好上手。', '這片在講使用者體驗。'],
+                      en: ['Works without a manual', 'Treats UI and usability as part of the job, so systems feel intuitive.', 'This piece is about user experience.'] },
+                    { slot: 'ai', zh: ['把 AI 用進團隊', '持續自學 AI 並導入工作流程，協助團隊建立專屬的 AI Skills。', '這片在講效率和 AI。'],
+                      en: ['Puts AI to work', 'Keeps learning AI and brings it into the workflow, helping the team build its own AI Skills.', 'This piece is about speed and AI.'] }
+                ]
+            }
+        ];
+        const TOTAL = LEVELS.reduce((n, l) => n + l.pieces.length, 0);
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const NS = 'http://www.w3.org/2000/svg';
+        const svgEl = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
+        const $ = id => document.getElementById(id);
+        const fill = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+
+        let currentLang = 'zh';
+        try { if (localStorage.getItem('lang') === 'en') currentLang = 'en'; } catch (e) {}
+        const t = key => UI[currentLang][key];
+
+        // ---------- 進度晶圓：die 依角度分成 TOTAL 區 ----------
+        const svg = $('wafer');
+        const R = 108, SIZE = 14, STEP = 16;
+        const REGIONS = Array.from({ length: TOTAL }, () => []);
+        (function buildWafer() {
+            svg.appendChild(svgEl('circle', { r: R + 6, fill: '#0f172a', stroke: '#60a5fa', 'stroke-opacity': 0.5, 'stroke-width': 2 }));
+            for (let y = -7; y <= 6; y++) {
+                for (let x = -7; x <= 6; x++) {
+                    const cx = x * STEP + SIZE / 2, cy = y * STEP + SIZE / 2;
+                    if (Math.hypot(Math.abs(cx) + SIZE / 2, Math.abs(cy) + SIZE / 2) > R) continue;
+                    const rect = svgEl('rect', { x: x * STEP, y: y * STEP, width: SIZE, height: SIZE, rx: 2, class: 'die', fill: '#334155', 'fill-opacity': 0.7 });
+                    svg.appendChild(rect);
+                    const ang = (Math.atan2(cy, cx) + Math.PI * 2.5) % (Math.PI * 2);   // 從 12 點鐘方向順時針
+                    REGIONS[Math.min(TOTAL - 1, Math.floor(ang / (Math.PI * 2) * TOTAL))].push({ rect, d: Math.hypot(cx, cy) / R });
+                }
+            }
+            svg.appendChild(svgEl('path', { d: `M -10 ${R + 7} L 0 ${R - 2} L 10 ${R + 7} Z`, fill: '#0b1120' }));
+        })();
+
+        function lightRegion(i, color) {
+            REGIONS[i].forEach(({ rect, d }) => {
+                rect.style.transitionDelay = reduceMotion ? '0s' : `${d * 0.35}s`;
+                rect.setAttribute('fill', color);
+                rect.setAttribute('fill-opacity', (0.55 + 0.4 * (1 - d)).toFixed(2));
+            });
+        }
+        function resetWafer() {
+            REGIONS.flat().forEach(({ rect }) => { rect.style.transitionDelay = '0s'; rect.setAttribute('fill', '#334155'); rect.setAttribute('fill-opacity', 0.7); });
+        }
+
+        // ---------- 狀態 ----------
+        let G = null;
+        let timerId = null;
+
+        function newGame() {
+            return { level: 0, placed: {}, deck: [], wrong: 0, firstTry: 0, missedOnce: new Set(), count: 0,
+                     start: 0, end: 0, skipped: false, phase: 'intro' };
+        }
+        G = newGame();
+
+        function shuffle(a) {
+            for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+            return a;
+        }
+
+        function startLevel(n) {
+            G.level = n;
+            G.phase = 'play';
+            G.deck = shuffle(LEVELS[n].pieces.map((_, i) => i));
+            $('clearPanel').classList.add('hidden');
+            $('playPanel').classList.remove('hidden');
+            $('feedback').textContent = '';
+            renderLevel();
+            renderPiece(true);
+        }
+
+        function currentPiece() { return LEVELS[G.level].pieces[G.deck[0]]; }
+
+        function renderLevel() {
+            const L = LEVELS[G.level];
+            $('levelTag').textContent = `LEVEL ${G.level + 1}/${LEVELS.length}`;
+            $('levelTitle').textContent = fill(t('level'), { n: G.level + 1 }) + '：' + L[currentLang].title;
+            if (currentLang === 'en') $('levelTitle').textContent = fill(t('level'), { n: G.level + 1 }) + ': ' + L.en.title;
+            $('levelSub').textContent = L[currentLang].sub;
+            $('piece').style.borderColor = L.color;
+            renderSlots();
+        }
+
+        function renderSlots() {
+            const L = LEVELS[G.level];
+            const box = $('slots');
+            box.innerHTML = '';
+            L.slots.forEach(s => {
+                const filled = L.pieces.find(p => p.slot === s.id && G.placed[`${G.level}:${s.id}`]);
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.dataset.slot = s.id;
+                btn.className = 'slot w-full text-left rounded-xl border-2 px-4 py-3 flex gap-4 items-start ' +
+                    (filled ? 'border-emerald-400/50 bg-emerald-500/10 cursor-default' : 'border-dashed border-white/25 bg-white/5 hover:border-blue-400 hover:bg-white/10');
+                const [a, b] = s[currentLang];
+                const head = document.createElement('div');
+                head.className = b ? 'shrink-0 w-24 md:w-28' : 'w-full';
+                head.innerHTML = b ? `<p class="font-mono font-bold text-lg leading-tight"></p><p class="text-xs text-slate-400"></p>` : `<p class="text-sm font-semibold text-slate-200"></p>`;
+                head.children[0].textContent = a;
+                if (b) head.children[1].textContent = b;
+                btn.appendChild(head);
+                const body = document.createElement('div');
+                body.className = 'min-w-0 ' + (b ? 'flex-1' : 'hidden');
+                if (filled) {
+                    const [pt, pd] = filled[currentLang];
+                    body.className = 'min-w-0 flex-1' + (b ? '' : ' basis-full');
+                    body.innerHTML = '<p class="font-bold text-emerald-300 text-sm"></p><p class="text-xs text-slate-300 leading-relaxed mt-0.5"></p>';
+                    body.children[0].textContent = '✓ ' + pt;
+                    body.children[1].textContent = pd;
+                } else if (b) {
+                    body.innerHTML = '<p class="text-sm text-slate-500">?</p>';
+                }
+                btn.appendChild(body);
+                if (!b) btn.classList.add('flex-col', 'gap-1');
+                if (filled) btn.disabled = true;
+                box.appendChild(btn);
+            });
+        }
+
+        function renderPiece(animate) {
+            if (!G.deck.length) return;
+            const p = currentPiece();
+            const [title, desc] = p[currentLang];
+            const L = LEVELS[G.level];
+            const done = L.pieces.length - G.deck.length;
+            $('pieceNo').textContent = `${done + 1}/${L.pieces.length}`;
+            $('pieceTitle').textContent = title;
+            $('pieceDesc').textContent = desc;
+            $('nextPiece').classList.toggle('invisible', G.deck.length < 2);
+            const card = $('piece');
+            if (animate && !reduceMotion) { card.classList.remove('piece-in'); void card.offsetWidth; card.classList.add('piece-in'); }
+        }
+
+        function tryPlace(slotId) {
+            if (G.phase !== 'play' || !G.deck.length) return;
+            if (!G.start) { G.start = Date.now(); startTimer(); }
+            const p = currentPiece();
+            const key = `${G.level}:${slotId}`;
+            if (G.placed[key]) return;
+            const slotBtn = $('slots').querySelector(`[data-slot="${slotId}"]`);
+            const fb = $('feedback');
+            if (p.slot === slotId) {
+                G.placed[key] = true;
+                const pid = `${G.level}:${G.deck[0]}`;
+                if (!G.missedOnce.has(pid)) G.firstTry++;
+                lightRegion(G.count++, LEVELS[G.level].color);
+                G.deck.shift();
+                fb.textContent = t('right');
+                fb.className = 'text-sm mt-2 min-h-[1.25rem] text-emerald-300';
+                renderSlots();
+                const filledBtn = $('slots').querySelector(`[data-slot="${slotId}"]`);
+                if (!reduceMotion) filledBtn.classList.add('right');
+                renderHud();
+                if (!G.deck.length) levelClear();
+                else renderPiece(true);
+            } else {
+                G.wrong++;
+                G.missedOnce.add(`${G.level}:${G.deck[0]}`);
+                fb.textContent = t('wrong') + p[currentLang][2];
+                fb.className = 'text-sm mt-2 min-h-[1.25rem] text-rose-300';
+                slotBtn.classList.remove('wrong'); void slotBtn.offsetWidth; slotBtn.classList.add('wrong');
+                renderHud();
+            }
+        }
+
+        $('slots').addEventListener('click', e => {
+            const btn = e.target.closest('[data-slot]');
+            if (btn && !btn.disabled) tryPlace(btn.dataset.slot);
+        });
+
+        $('nextPiece').addEventListener('click', () => {
+            if (G.deck.length < 2) return;
+            G.deck.push(G.deck.shift());
+            $('feedback').textContent = '';
+            renderPiece(true);
+        });
+
+        // 電腦版：拖曳拼圖到插槽（觸控用點選，避免擋住捲動）
+        (function enableDrag() {
+            const card = $('piece');
+            let drag = null;
+            card.addEventListener('pointerenter', e => card.classList.toggle('mouse', e.pointerType === 'mouse'));
+            card.addEventListener('pointerdown', e => {
+                if (e.pointerType !== 'mouse' || e.target.closest('button') || G.phase !== 'play') return;
+                drag = { x: e.clientX, y: e.clientY, moved: false, over: null };
+                card.setPointerCapture(e.pointerId);
+            });
+            card.addEventListener('pointermove', e => {
+                if (!drag) return;
+                const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+                if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+                drag.moved = true;
+                card.classList.add('dragging');
+                card.style.transform = `translate(${dx}px, ${dy}px) rotate(${Math.max(-4, Math.min(4, dx / 40))}deg)`;
+                card.style.pointerEvents = 'none';
+                const under = document.elementFromPoint(e.clientX, e.clientY);
+                card.style.pointerEvents = '';
+                const slot = under && under.closest('[data-slot]:not([disabled])');
+                if (drag.over && drag.over !== slot) drag.over.classList.remove('over');
+                if (slot) slot.classList.add('over');
+                drag.over = slot;
+            });
+            const end = () => {
+                if (!drag) return;
+                card.classList.remove('dragging');
+                card.style.transform = '';
+                if (drag.over) { drag.over.classList.remove('over'); tryPlace(drag.over.dataset.slot); }
+                drag = null;
+            };
+            card.addEventListener('pointerup', end);
+            card.addEventListener('pointercancel', end);
+        })();
+
+        function levelClear() {
+            G.phase = 'clear';
+            $('playPanel').classList.add('hidden');
+            if (G.level === LEVELS.length - 1) return finish();
+            $('clearTitle').textContent = fill(t('clearTitle'), { n: G.level + 1 });
+            $('clearBody').textContent = LEVELS[G.level][currentLang].clear;
+            $('clearPanel').classList.remove('hidden');
+            $('game').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        }
+
+        $('nextLevelBtn').addEventListener('click', () => {
+            startLevel(G.level + 1);
+            $('game').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        });
+
+        function finish() {
+            G.phase = 'done';
+            $('levelTag').textContent = 'COMPLETE';
+            G.end = G.start ? Date.now() : 0;
+            stopTimer();
+            renderHud();
+            $('clearTitle').textContent = fill(t('clearTitle'), { n: LEVELS.length });
+            $('clearBody').textContent = LEVELS[LEVELS.length - 1][currentLang].clear;
+            $('nextLevelBtn').classList.add('hidden');
+            $('clearPanel').classList.remove('hidden');
+            $('report').classList.remove('hidden');
+            $('result').classList.remove('hidden');
+            renderReport();
+            renderResult();
+            setTimeout(() => {
+                $('report').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+                setTimeout(() => $('stamp').classList.add('on'), 500);
+            }, G.skipped ? 50 : 900);
+        }
+
+        // ---------- 計時 ----------
+        function elapsed() { return G.start ? ((G.end || Date.now()) - G.start) : 0; }
+        function fmt(ms) { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+        function startTimer() { stopTimer(); timerId = setInterval(renderHud, 500); }
+        function stopTimer() { clearInterval(timerId); }
+
+        function renderHud() {
+            $('hudPlaced').textContent = G.count;
+            $('hudWrong').textContent = G.wrong;
+            $('hudTime').textContent = fmt(elapsed());
+        }
+
+        // ---------- 報告與結果 ----------
+        const yieldPct = () => Math.round(G.firstTry / TOTAL * 100);
+        function rankIndex() {
+            const y = yieldPct();
+            if (y === 100) return 3;
+            if (y >= 80) return 2;
+            if (y >= 55) return 1;
+            return 0;
+        }
+
+        function renderReport() {
+            if (G.phase !== 'done') return;
+            const now = new Date();
+            $('reportDate').textContent = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            $('rankName').textContent = G.skipped ? t('skipped') : UI[currentLang].ranks[rankIndex()];
+            const rows = G.skipped ? [[t('yield'), '—', 'text-sky-300'], [t('wrongN'), '—', 'text-rose-300'], [t('time'), '—', 'text-violet-300']]
+                : [[t('yield'), yieldPct() + '%', 'text-sky-300'], [t('wrongN'), G.wrong, 'text-rose-300'], [t('time'), fmt(elapsed()), 'text-violet-300']];
+            const box = $('stats');
+            box.innerHTML = '';
+            rows.forEach(([label, value, color]) => {
+                const n = document.createElement('div');
+                n.className = 'rounded-xl bg-white/5 border border-white/10 p-3';
+                n.innerHTML = `<div class="text-[11px] text-slate-400 mb-1"></div><div class="text-xl md:text-2xl font-bold ${color}"></div>`;
+                n.children[0].textContent = label;
+                n.children[1].textContent = value;
+                box.appendChild(n);
+            });
+            $('shareBtn').classList.toggle('hidden', G.skipped);
+        }
+
+        function renderResult() {
+            const grid = $('resultGrid');
+            grid.innerHTML = '';
+            LEVELS.forEach((L, li) => {
+                const col = document.createElement('div');
+                col.innerHTML = `<p class="font-mono text-xs mb-1" style="color:${L.color}">LEVEL ${li + 1}</p><h3 class="text-lg font-bold mb-4"></h3><ol class="space-y-3"></ol>`;
+                col.children[1].textContent = L[currentLang].title;
+                L.slots.forEach(s => {
+                    const p = L.pieces.find(x => x.slot === s.id);
+                    const li2 = document.createElement('li');
+                    li2.className = 'rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-4 shadow-sm';
+                    li2.innerHTML = '<p class="text-xs text-slate-500 dark:text-slate-400 mb-1"></p><p class="font-bold mb-0.5"></p><p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed"></p>';
+                    li2.children[0].textContent = s[currentLang].join(' · ');
+                    li2.children[1].textContent = p[currentLang][0];
+                    li2.children[2].textContent = p[currentLang][1];
+                    col.children[2].appendChild(li2);
+                });
+                grid.appendChild(col);
+            });
+        }
+
+        // ---------- 按鈕 ----------
+        function begin() {
+            stopTimer();
+            G = newGame();
+            resetWafer();
+            renderHud();
+            $('introPanel').classList.add('hidden');
+            $('report').classList.add('hidden');
+            $('result').classList.add('hidden');
+            $('stamp').classList.remove('on');
+            $('nextLevelBtn').classList.remove('hidden');
+            startLevel(0);
+        }
+        $('startBtn').addEventListener('click', begin);
+        $('againBtn').addEventListener('click', () => { begin(); $('game').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); });
+
+        $('skipBtn').addEventListener('click', () => {
+            begin();
+            G.skipped = true;
+            LEVELS.forEach((L, li) => L.slots.forEach(s => { G.placed[`${li}:${s.id}`] = true; lightRegion(G.count++, L.color); }));
+            G.level = LEVELS.length - 1;
+            G.deck = [];
+            renderHud();
+            levelClear();
+        });
+
+        $('shareBtn').addEventListener('click', async () => {
+            const text = fill(t('share'), { y: yieldPct() });
+            const url = location.href.split('#')[0];
+            try {
+                if (navigator.share) { await navigator.share({ title: document.title, text, url }); return; }
+                await navigator.clipboard.writeText(`${text} ${url}`);
+                const b = $('shareBtn');
+                b.textContent = t('report.copied');
+                setTimeout(() => { b.textContent = t('report.share'); }, 1800);
+            } catch (e) {}
+        });
+
+        // ---------- 語言與主題 ----------
+        function render() {
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-TW' : 'en';
+            document.title = currentLang === 'zh' ? '拼出 Joe：晶圓拼圖自我介紹 | Joe Huang' : 'Piece Together Joe: a wafer puzzle intro | Joe Huang';
+            document.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = t(node.getAttribute('data-i18n')); });
+            $('langToggle').textContent = currentLang === 'zh' ? 'EN' : '中文';
+            if (G.phase === 'play') { renderLevel(); renderPiece(false); $('feedback').textContent = ''; }
+            if (G.phase === 'clear' || G.phase === 'done') {
+                const n = G.phase === 'done' ? LEVELS.length - 1 : G.level;
+                $('clearTitle').textContent = fill(t('clearTitle'), { n: n + 1 });
+                $('clearBody').textContent = LEVELS[n][currentLang].clear;
+            }
+            if (G.phase === 'done') { renderReport(); renderResult(); }
+        }
+
+        $('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            try { localStorage.setItem('lang', currentLang); } catch (e) {}
+            render();
+        });
+
+        // Theme: shares the same 'theme' setting as the home page.
+        const sunIcon = $('sunIcon');
+        const moonIcon = $('moonIcon');
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+        let savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        $('themeToggle').addEventListener('click', () => {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+        });
+
+        $('hudTotal').textContent = TOTAL;
+        $('year').textContent = new Date().getFullYear();
+        render();
+        renderHud();
+    </script>
+</body>
+</html>
