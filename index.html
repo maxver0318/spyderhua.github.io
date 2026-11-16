@@ -754,9 +754,9 @@
         // AI Team: mini cards built from assistants-data.js (same data as assistants.html)
         const AI_TEAM_UI = {
             zh: { active: '已上線', planned: '規劃中', ready: '提示詞已備妥', activeCount: (n) => `${n} 位已上線`, plannedCount: (n) => `${n} 位規劃中`, readyCount: (n) => `${n} 位待啟用`,
-                  cta: '認識所有小助理', ctaDesc: '看看每位助理的個性與專長' },
+                  cta: '認識所有小助理', ctaDesc: '看看每位助理的個性與專長', website: '個人網站' },
             en: { active: 'Active', planned: 'Planned', ready: 'Prompt ready', activeCount: (n) => `${n} active`, plannedCount: (n) => `${n} planned`, readyCount: (n) => `${n} on standby`,
-                  cta: 'Meet the whole team', ctaDesc: 'Personalities, strengths and persona prompts' }
+                  cta: 'Meet the whole team', ctaDesc: 'Personalities, strengths and persona prompts', website: 'Website' }
         };
         function renderAiTeam(lang) {
             const grid = document.getElementById('aiTeamGrid');
@@ -776,8 +776,8 @@
                 make('span', `px-3 py-1 rounded-full font-semibold ${badgeClass.ready}`, t.readyCount(countOf('ready')))
             );
             grid.replaceChildren(...ASSISTANTS.map(agent => {
-                const card = make('a', 'group flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:-translate-y-0.5 transition-all');
-                card.href = `assistants.html#${agent.id}`;
+                // Whole card links to assistants.html via a stretched link, so an optional website link can sit on top without nesting <a>
+                const card = make('div', 'relative group flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:-translate-y-0.5 transition-all');
                 if (agent.avatar) {
                     const img = make('img', 'w-14 h-14 rounded-xl shrink-0');
                     img.src = agent.avatar; img.width = 56; img.height = 56;
@@ -792,7 +792,11 @@
                 }
                 const body = make('div', 'min-w-0');
                 const nameRow = make('div', 'flex items-baseline flex-wrap gap-x-2');
-                nameRow.appendChild(make('h3', 'text-lg font-bold', agent.name));
+                const title = make('a', 'after:absolute after:inset-0 after:rounded-2xl', agent.name);
+                title.href = `assistants.html#${agent.id}`;
+                const h3 = make('h3', 'text-lg font-bold');
+                h3.appendChild(title);
+                nameRow.appendChild(h3);
                 if (lang === 'zh') nameRow.appendChild(make('span', 'text-sm text-slate-500', agent.nameZh));
                 body.appendChild(nameRow);
                 const role = make('p', 'text-sm font-semibold leading-snug', agent.role[lang]);
@@ -808,6 +812,14 @@
                     meta.appendChild(extra);
                 }
                 body.appendChild(meta);
+                if (agent.website) {
+                    const site = make('a', 'relative z-10 inline-block mt-1.5 text-xs font-semibold hover:underline', `${t.website} ↗`);
+                    site.href = agent.website;
+                    site.target = '_blank';
+                    site.rel = 'noopener noreferrer';
+                    site.style.color = agent.color;
+                    body.appendChild(site);
+                }
                 card.appendChild(body);
                 return card;
             }), (() => {

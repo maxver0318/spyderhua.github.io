@@ -18,8 +18,9 @@
 //   likes       喜歡的事（條列）
 //   catchphrase 口頭禪
 //   boundaries  界線：不做的事，或一定要先問主人的事（條列）
+//   website     個人網站網址（選填），會在卡片上顯示連結
 //   setup       工作設定，會放進提示詞（選填）。每段是 { label, text } 或 { label, items: [] }
-// 除了 id / name / color / platform / status / primary / independent / setup，其餘欄位都要同時提供 zh 與 en。
+// 除了 id / name / color / platform / status / primary / independent / website / setup，其餘欄位都要同時提供 zh 與 en。
 // setup 只寫中文，因為提示詞一律是繁體中文。
 
 const OWNER_NAME = 'Joe';
@@ -70,6 +71,7 @@ const ASSISTANTS = [
         platform: 'Claude Code',
         status: 'active',
         independent: true,
+        website: 'https://maxver0318.github.io/',
         badge: { zh: '獨立運作', en: 'Independent' },
         role: { zh: '電腦管家・工程助理', en: 'Computer steward & engineering assistant' },
         intro: {
