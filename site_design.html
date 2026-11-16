@@ -40,6 +40,16 @@
             .flow-node[data-lane="joe"]::after { right: -7px; width: 7px; }
             .flow-node[data-lane="claude"]::after { left: -7px; width: 7px; }
         }
+        /* Device map: [phone] [link] [Mac mini] / [cloud]; stacked on mobile */
+        .dmap { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "phone" "talk" "mac" "push" "cloud" "review"; }
+        @media (min-width: 768px) { .dmap { grid-template-columns: minmax(0, 1fr) 132px minmax(0, 1fr); grid-template-areas: "phone talk mac" "review . push" "cloud cloud cloud"; } }
+        .dmap-link { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 0; }
+        .dmap-line { width: 2px; height: 18px; background: #cbd5e1; }
+        .dark .dmap-line { background: #475569; }
+        @media (min-width: 768px) {
+            .dmap-link[data-dir="h"] { flex-direction: row; padding: 0; }
+            .dmap-link[data-dir="h"] .dmap-line { width: auto; height: 2px; flex: 1; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
@@ -144,6 +154,78 @@
                     <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed" data-i18n="env.githubDesc">Max 開好 PR 後，我用 GitHub App 看 PR 的說明與前後截圖，確認沒問題就直接點 Merge 按鈕，網站自動更新。</p>
                 </div>
         </div>
+
+        <!-- Device map -->
+        <div class="mt-14">
+            <h3 class="text-xl md:text-2xl font-bold mb-2" data-i18n="map.title">我和 Max 的關係圖</h3>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="map.sub">我們各自的裝置上有什麼，以及事情怎麼在我的手機、Max 的電腦和雲端之間流動。</p>
+            <div class="dmap">
+                <!-- Joe's phone -->
+                <div style="grid-area: phone" class="flex">
+                    <div class="mx-auto w-full max-w-sm rounded-[2.25rem] border-[6px] border-slate-800 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 pt-3 pb-5 shadow-sm">
+                        <div class="mx-auto mb-4 h-1.5 w-16 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                        <div class="flex items-center mb-4">
+                            <span class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-3 shrink-0" style="background: var(--joe)">J</span>
+                            <div>
+                                <p class="font-bold text-lg leading-tight" data-i18n="map.phone">我（Joe）的手機</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="map.phoneNote">隨時隨地交代需求、審查成果</p>
+                            </div>
+                        </div>
+                        <ul id="dmapPhone" class="space-y-3"></ul>
+                    </div>
+                </div>
+
+                <div style="grid-area: talk" class="dmap-link" data-dir="h">
+                    <span class="dmap-line"></span>
+                    <span class="px-3 py-1.5 rounded-xl text-center text-xs font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                        <span class="md:hidden">⇅ </span><span class="hidden md:inline">⇄ </span><span data-i18n="map.talk">對話</span>
+                        <span class="block font-normal text-[11px] text-slate-500 dark:text-slate-400" data-i18n="map.talkSub">透過 Remote Control</span>
+                    </span>
+                    <span class="dmap-line"></span>
+                </div>
+
+                <!-- Max's Mac mini -->
+                <div style="grid-area: mac" class="rounded-2xl border-2 border-indigo-200 dark:border-indigo-900/70 bg-indigo-50/60 dark:bg-indigo-900/10 p-5 shadow-sm">
+                    <div class="mx-auto mb-5 h-8 w-40 rounded-xl bg-gradient-to-b from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 shadow flex items-center justify-end pr-3" aria-hidden="true">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <img src="avatars/max.svg" alt="" width="40" height="40" class="w-10 h-10 rounded-lg mr-3 shrink-0" style="image-rendering: pixelated; box-shadow: 0 0 0 2px var(--claude);">
+                        <div>
+                            <p class="font-bold text-lg leading-tight" data-i18n="map.mac">Max 的 Mac mini</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="map.macNote">專門給 Max 使用的電腦</p>
+                        </div>
+                    </div>
+                    <ul id="dmapMac" class="space-y-3"></ul>
+                </div>
+
+                <div style="grid-area: push" class="dmap-link">
+                    <span class="dmap-line"></span>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">↓ <span data-i18n="map.push">推送分支、開 PR</span></span>
+                    <span class="dmap-line"></span>
+                </div>
+
+                <div style="grid-area: review" class="dmap-link">
+                    <span class="dmap-line"></span>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800"><span class="md:hidden">↑ </span><span class="hidden md:inline">↓ </span><span data-i18n="map.review">在手機審查 PR、按 Merge</span></span>
+                    <span class="dmap-line hidden md:block"></span>
+                </div>
+
+                <!-- Cloud -->
+                <div style="grid-area: cloud" class="rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800/60 p-5">
+                    <div class="flex items-center mb-4">
+                        <span class="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 flex items-center justify-center mr-3 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                        </span>
+                        <div>
+                            <p class="font-bold text-lg leading-tight" data-i18n="map.cloud">雲端</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="map.cloudNote">手機和 Mac mini 在這裡交會</p>
+                        </div>
+                    </div>
+                    <ul id="dmapCloud" class="grid md:grid-cols-3 gap-3"></ul>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Flowchart -->
@@ -238,6 +320,11 @@
                 'env.macDesc': 'Max 是架在一台 Mac mini 上的 Claude Desktop。這台電腦專門給 Max 使用：讀程式碼、修改、用 Chrome 截圖、推送分支、開 PR，都在這台機器上完成。',
                 'env.githubWho': '我（Joe）', 'env.githubTool': '手機上的 GitHub App',
                 'env.githubDesc': 'Max 開好 PR 後，我用 GitHub App 看 PR 的說明與前後截圖，確認沒問題就直接點 Merge 按鈕，網站自動更新。',
+                'map.title': '我和 Max 的關係圖', 'map.sub': '我們各自的裝置上有什麼，以及事情怎麼在我的手機、Max 的電腦和雲端之間流動。',
+                'map.phone': '我（Joe）的手機', 'map.phoneNote': '隨時隨地交代需求、審查成果',
+                'map.mac': 'Max 的 Mac mini', 'map.macNote': '專門給 Max 使用的電腦',
+                'map.cloud': '雲端', 'map.cloudNote': '手機和 Mac mini 在這裡交會',
+                'map.talk': '對話', 'map.talkSub': '透過 Remote Control', 'map.push': '推送分支、開 PR', 'map.review': '在手機審查 PR、按 Merge',
                 'flow.title': '一次改版的流程', 'flow.sub': '從提出需求到網站上線，每一步由誰負責、做了什麼。',
                 'flow.laneJoe': '我（Joe）', 'flow.laneClaude': 'Max',
                 'flow.loop': '需要調整？回到 ④',
@@ -264,6 +351,11 @@
                 'env.macDesc': 'Max is Claude Desktop running on a Mac mini set aside just for it. Reading the code, editing, taking screenshots in Chrome, pushing branches and opening PRs all happen on that machine.',
                 'env.githubWho': 'Me (Joe)', 'env.githubTool': 'GitHub app on my phone',
                 'env.githubDesc': 'Once Max opens a PR, I read its notes and before/after screenshots in the GitHub app. If everything looks right, I tap Merge and the site updates on its own.',
+                'map.title': 'How Max and I are connected', 'map.sub': "What's on each of our devices, and how work moves between my phone, Max's computer and the cloud.",
+                'map.phone': 'My phone (Joe)', 'map.phoneNote': 'Requests and reviews from anywhere',
+                'map.mac': "Max's Mac mini", 'map.macNote': 'A computer set aside just for Max',
+                'map.cloud': 'The cloud', 'map.cloudNote': 'Where my phone and the Mac mini meet',
+                'map.talk': 'Chat', 'map.talkSub': 'via Remote Control', 'map.push': 'Push branches, open PRs', 'map.review': 'Review the PR and tap Merge on my phone',
                 'flow.title': 'The workflow for one change', 'flow.sub': 'From request to live site: who owns each step and what happens.',
                 'flow.laneJoe': 'Me (Joe)', 'flow.laneClaude': 'Max',
                 'flow.loop': 'Needs changes? Back to ④',
@@ -322,6 +414,48 @@
             if (className) node.className = className;
             if (text !== undefined) node.textContent = text;
             return node;
+        }
+
+        // What lives on each device in the device map.
+        const DEVICES = {
+            phone: { color: 'amber', items: [
+                { icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', zh: ['Claude App', '跟 Max 對話：交代需求、回答 Max 的問題、看它的回報'], en: ['Claude app', 'Talk to Max: make requests, answer its questions, read its reports'] },
+                { icon: 'M7 7a2 2 0 100-4 2 2 0 000 4zm0 0v10m0 0a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zm0 0V9a4 4 0 00-4-4h-3', zh: ['GitHub App', '看 PR 的說明與前後截圖，沒問題就按 Merge'], en: ['GitHub app', 'Read the PR notes and before/after shots, then tap Merge'] },
+                { icon: 'M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9', zh: ['瀏覽器', '看上線後的網站，以及 Max 每天早上發的 AI 早報'], en: ['Browser', 'See the live site and the AI briefing Max publishes each morning'] }
+            ] },
+            mac: { color: 'indigo', items: [
+                { icon: 'M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', zh: ['Claude Desktop', 'Max 工作的地方：讀檔案、改程式、執行指令'], en: ['Claude Desktop', 'Where Max works: reading files, editing code, running commands'] },
+                { icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z', zh: ['長期記憶', '記得我的偏好與規則，例如用繁體中文回覆、新專案放最上面'], en: ['Long-term memory', 'Remembers my preferences and rules, like replying in Chinese and putting new projects on top'] },
+                { icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', zh: ['Skills', '寫好的工作流程，例如開 PR、整理提示詞，每次照同一套步驟做'], en: ['Skills', 'Written-down workflows, like opening a PR or collecting prompts, followed the same way every time'] },
+                { icon: 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z', zh: ['Chrome＋Playwright', '打開網頁截圖：桌機／手機 × 淺色／深色'], en: ['Chrome + Playwright', 'Opens pages for screenshots: desktop / mobile × light / dark'] },
+                { icon: 'M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12', zh: ['Git＋GitHub CLI', '用 Max 自己的 GitHub 帳號推送分支、開 PR'], en: ['Git + GitHub CLI', "Pushes branches and opens PRs with Max's own GitHub account"] },
+                { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', zh: ['每日排程', '每天早上 07:15 整理 AI 早報，發布到 Max 的網站'], en: ['Daily schedule', "Every morning at 07:15, writes the AI briefing and publishes it on Max's site"] }
+            ] },
+            cloud: { color: 'sky', items: [
+                { icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z', zh: ['Claude（Anthropic）', 'Max 的模型在雲端思考；對話與 Skills 同步到我的每台裝置'], en: ['Claude (Anthropic)', "Max's model does its thinking in the cloud; chats and Skills sync to all my devices"] },
+                { icon: 'M7 7a2 2 0 100-4 2 2 0 000 4zm0 0v10m0 0a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zm0 0V9a4 4 0 00-4-4h-3', zh: ['GitHub', '我的網站原始碼、Max 的 fork，以及 Max 自己的網站'], en: ['GitHub', "My site's code, Max's fork, and Max's own website"] },
+                { icon: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01', zh: ['GitHub Pages', '按下 Merge 後自動部署，網站就上線了'], en: ['GitHub Pages', 'Deploys automatically after Merge, and the site is live'] }
+            ] }
+        };
+        const DEVICE_ICON = {
+            amber: 'bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300',
+            indigo: 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300',
+            sky: 'bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300'
+        };
+
+        function renderDevices(lang) {
+            [['phone', 'dmapPhone'], ['mac', 'dmapMac'], ['cloud', 'dmapCloud']].forEach(([key, id]) => {
+                const device = DEVICES[key];
+                document.getElementById(id).replaceChildren(...device.items.map(item => {
+                    const li = el('li', 'flex items-start');
+                    const icon = el('span', `w-8 h-8 rounded-lg flex items-center justify-center mr-3 shrink-0 ${DEVICE_ICON[device.color]}`);
+                    icon.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"></path></svg>`;
+                    const body = el('div', 'min-w-0');
+                    body.append(el('p', 'font-semibold text-sm', item[lang][0]), el('p', 'text-xs text-slate-600 dark:text-slate-400 leading-snug', item[lang][1]));
+                    li.append(icon, body);
+                    return li;
+                }));
+            });
         }
 
         function renderFlow(lang, t) {
@@ -466,6 +600,7 @@
                 }));
             });
             document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+            renderDevices(lang);
             renderFlow(lang, t);
             renderHow(lang);
             renderPrFormat(lang);
