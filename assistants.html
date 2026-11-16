@@ -147,7 +147,7 @@
                 active: '已上線', planned: '規劃中', ready: '提示詞已備妥',
                 teamIndependent: '獨立運作，只聽 Joe', teamStaff: '由幕僚長協調',
                 total: (n) => `共 ${n} 位助理`, activeCount: (n) => `${n} 位已上線`, readyCount: (n) => `${n} 位待啟用`,
-                personality: '個性', likes: '喜歡的事', boundaries: '界線',
+                personality: '個性', likes: '喜歡的事', boundaries: '界線', website: '我的個人網站',
             },
             en: {
                 'nav.back': 'Back to home',
@@ -176,7 +176,7 @@
                 active: 'Active', planned: 'Planned', ready: 'Prompt ready',
                 teamIndependent: 'Independent; takes orders only from Joe', teamStaff: 'Coordinated by the chief of staff',
                 total: (n) => `${n} assistants`, activeCount: (n) => `${n} active`, readyCount: (n) => `${n} on standby`,
-                personality: 'Personality', likes: 'Likes', boundaries: 'Boundaries',
+                personality: 'Personality', likes: 'Likes', boundaries: 'Boundaries', website: 'My website',
             }
         };
 
@@ -318,6 +318,13 @@
             card.appendChild(badges);
 
             card.appendChild(el('p', 'text-slate-600 dark:text-slate-400 mb-4', agent.intro[lang]));
+            if (agent.website) {
+                const site = el('a', 'agent-accent self-start inline-flex items-center gap-1.5 text-sm font-semibold hover:underline mb-4', `${t.website} ↗`);
+                site.href = agent.website;
+                site.target = '_blank';
+                site.rel = 'noopener noreferrer';
+                card.appendChild(site);
+            }
             card.appendChild(el('blockquote', 'agent-quote pl-3 italic text-slate-700 dark:text-slate-200 mb-5', lang === 'zh' ? `「${agent.catchphrase.zh}」` : `"${agent.catchphrase.en}"`));
 
             const blocks = el('div', 'space-y-4 mb-6');
