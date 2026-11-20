@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jenkins Pipeline vs GitHub Actions | Joe Huang</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --jenkins: #d33833; --gha: #2563eb; }
+        pre.code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+        pre.code .c { color: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors">
+
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html#projects" class="flex items-center text-sm font-medium hover:text-blue-500 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <span data-i18n="nav.back">回到首頁</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                <button id="langToggle" class="px-3 py-1 rounded-full border border-slate-300 dark:border-slate-600 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EN</button>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
+                    <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="max-w-4xl mx-auto px-4 pt-16 pb-12 text-center">
+        <p class="text-sm font-bold tracking-widest uppercase text-blue-500 mb-3" data-i18n="hero.kicker">CI/CD 工具研究</p>
+        <h1 class="text-3xl md:text-5xl font-bold mb-5 tracking-tight leading-tight">
+            <span style="color: var(--jenkins)">Jenkins Pipeline</span>
+            <span class="text-slate-400 font-light mx-1">vs</span>
+            <span style="color: var(--gha)">GitHub Actions</span>
+        </h1>
+        <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto" data-i18n="hero.sub">兩個最常見的 CI/CD 工具，都能在程式推上去之後自動測試、打包、部署。差別在於：Jenkins 是自己架、自己管的伺服器；GitHub Actions 是 GitHub 內建的服務。這一頁整理它們的特色、能做的事、優缺點，最後用同一個專案各寫一份設定檔對照。</p>
+        <div class="mt-8 flex flex-wrap justify-center gap-2 text-sm font-semibold">
+            <a href="#overview" class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-blue-500" data-i18n="toc.overview">基本定位</a>
+            <a href="#compare" class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-blue-500" data-i18n="toc.compare">逐項比較</a>
+            <a href="#prosCons" class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-blue-500" data-i18n="toc.pros">優缺點</a>
+            <a href="#examples" class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-blue-500" data-i18n="toc.examples">設定範例</a>
+            <a href="#choose" class="px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-blue-500" data-i18n="toc.choose">怎麼選</a>
+        </div>
+    </header>
+
+    <!-- Overview: features -->
+    <section id="overview" class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="ov.title">基本定位與特色</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="ov.sub">一句話：Jenkins 是「什麼都能接的自架自動化伺服器」，GitHub Actions 是「長在 GitHub 裡、由事件觸發的工作流程」。</p>
+            <div id="toolList" class="grid md:grid-cols-2 gap-5"></div>
+        </div>
+    </section>
+
+    <!-- Capabilities -->
+    <section id="capabilities">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="cap.title">能做哪些事</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="cap.sub">兩者能做的事大致相同，差在「怎麼做」。每一項下面分別寫出兩邊的做法。</p>
+            <div id="capList" class="grid md:grid-cols-2 gap-5"></div>
+        </div>
+    </section>
+
+    <!-- Comparison table -->
+    <section id="compare" class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="cmp.title">逐項比較</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="cmp.sub">費用與限制為 2026 年 11 月整理的參考，實際以官方文件與價目頁為準。</p>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <table class="w-full min-w-[640px] text-sm text-left">
+                    <thead class="bg-slate-100 dark:bg-slate-700/60">
+                        <tr>
+                            <th class="px-4 py-3 font-bold w-28" data-i18n="cmp.aspect">面向</th>
+                            <th class="px-4 py-3 font-bold" style="color: var(--jenkins)">Jenkins Pipeline</th>
+                            <th class="px-4 py-3 font-bold" style="color: var(--gha)">GitHub Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cmpRows" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pros & cons -->
+    <section id="prosCons">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="pc.title">優點與缺點</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="pc.sub">很多優點和缺點是同一件事的兩面：Jenkins 的「完全掌控」也代表「全部自己維護」。</p>
+            <div id="pcList" class="grid md:grid-cols-2 gap-5"></div>
+        </div>
+    </section>
+
+    <!-- Examples -->
+    <section id="examples" class="bg-white dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="ex.title">同一個需求，兩種寫法</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4" data-i18n="ex.sub">假設有一個 Python 專案（根目錄有 requirements.txt 和 pytest 測試），想做到：</p>
+            <ul id="exGoals" class="mb-8 space-y-2 text-sm text-slate-700 dark:text-slate-300"></ul>
+
+            <div class="flex gap-2 mb-6" role="tablist">
+                <button type="button" data-tab="jenkins" class="ex-tab px-4 py-2 rounded-xl font-semibold text-sm border-2 transition-colors">Jenkins</button>
+                <button type="button" data-tab="gha" class="ex-tab px-4 py-2 rounded-xl font-semibold text-sm border-2 transition-colors">GitHub Actions</button>
+            </div>
+            <div id="exPanel"></div>
+
+            <h3 class="text-xl font-bold mt-12 mb-3" data-i18n="map.title">概念對照表</h3>
+            <p class="text-slate-600 dark:text-slate-400 mb-6 text-sm" data-i18n="map.sub">會其中一個，看這張表就能把設定翻成另一個。</p>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <table class="w-full min-w-[560px] text-sm text-left">
+                    <thead class="bg-slate-100 dark:bg-slate-700/60">
+                        <tr>
+                            <th class="px-4 py-3 font-bold" data-i18n="map.concept">概念</th>
+                            <th class="px-4 py-3 font-bold" style="color: var(--jenkins)">Jenkinsfile</th>
+                            <th class="px-4 py-3 font-bold" style="color: var(--gha)">GitHub Actions YAML</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mapRows" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to choose -->
+    <section id="choose">
+        <div class="max-w-4xl mx-auto px-4 py-14">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 flex items-center">
+                <span class="w-8 h-1 bg-blue-500 inline-block mr-4"></span>
+                <span data-i18n="ch.title">怎麼選</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-8" data-i18n="ch.sub">沒有誰一定比較好，看程式碼放在哪裡、要部署到哪裡，以及有沒有人力維護伺服器。</p>
+            <div id="chooseList" class="grid md:grid-cols-3 gap-5"></div>
+        </div>
+    </section>
+
+    <footer class="py-10 text-center text-sm text-slate-500" data-i18n="footer">2026 年 11 月整理。範例使用 Jenkins LTS 2.580 與 actions/checkout、setup-python、upload-artifact v7。</footer>
+
+    <script>
+        const UI = {
+            zh: {
+                'nav.back': '回到首頁',
+                'hero.kicker': 'CI/CD 工具研究',
+                'hero.sub': '兩個最常見的 CI/CD 工具，都能在程式推上去之後自動測試、打包、部署。差別在於：Jenkins 是自己架、自己管的伺服器；GitHub Actions 是 GitHub 內建的服務。這一頁整理它們的特色、能做的事、優缺點，最後用同一個專案各寫一份設定檔對照。',
+                'toc.overview': '基本定位', 'toc.compare': '逐項比較', 'toc.pros': '優缺點', 'toc.examples': '設定範例', 'toc.choose': '怎麼選',
+                'ov.title': '基本定位與特色',
+                'ov.sub': '一句話：Jenkins 是「什麼都能接的自架自動化伺服器」，GitHub Actions 是「長在 GitHub 裡、由事件觸發的工作流程」。',
+                'cap.title': '能做哪些事',
+                'cap.sub': '兩者能做的事大致相同，差在「怎麼做」。每一項下面分別寫出兩邊的做法。',
+                'cmp.title': '逐項比較',
+                'cmp.sub': '費用與限制為 2026 年 11 月整理的參考，實際以官方文件與價目頁為準。',
+                'cmp.aspect': '面向',
+                'pc.title': '優點與缺點',
+                'pc.sub': '很多優點和缺點是同一件事的兩面：Jenkins 的「完全掌控」也代表「全部自己維護」。',
+                'pc.pros': '優點', 'pc.cons': '缺點',
+                'ex.title': '同一個需求，兩種寫法',
+                'ex.sub': '假設有一個 Python 專案（根目錄有 requirements.txt 和 pytest 測試），想做到：',
+                'ex.file': '設定檔', 'ex.setup': '設定步驟', 'ex.result': '在哪裡看結果',
+                'map.title': '概念對照表',
+                'map.sub': '會其中一個，看這張表就能把設定翻成另一個。',
+                'map.concept': '概念',
+                'ch.title': '怎麼選',
+                'ch.sub': '沒有誰一定比較好，看程式碼放在哪裡、要部署到哪裡，以及有沒有人力維護伺服器。',
+                'footer': '2026 年 11 月整理。範例使用 Jenkins LTS 2.580 與 actions/checkout、setup-python、upload-artifact v7。'
+            },
+            en: {
+                'nav.back': 'Back to home',
+                'hero.kicker': 'CI/CD tools study',
+                'hero.sub': 'The two most common CI/CD tools. Both can test, package and deploy your code automatically after every push. The difference: Jenkins is a server you host and run yourself; GitHub Actions is a service built into GitHub. This page covers what makes each one distinctive, what they can do, their pros and cons, and the same project configured in both.',
+                'toc.overview': 'Overview', 'toc.compare': 'Comparison', 'toc.pros': 'Pros & cons', 'toc.examples': 'Examples', 'toc.choose': 'Which one',
+                'ov.title': 'What they are',
+                'ov.sub': 'In one line: Jenkins is a self-hosted automation server that can connect to anything; GitHub Actions is an event-driven workflow engine that lives inside GitHub.',
+                'cap.title': 'What they can do',
+                'cap.sub': 'They can do roughly the same things; the difference is how. Each item shows both approaches.',
+                'cmp.title': 'Side by side',
+                'cmp.sub': 'Pricing and limits are a November 2026 reference; check the official docs and pricing pages.',
+                'cmp.aspect': 'Aspect',
+                'pc.title': 'Pros and cons',
+                'pc.sub': 'Many pros and cons are two sides of one coin: Jenkins gives you full control, which also means you maintain everything.',
+                'pc.pros': 'Pros', 'pc.cons': 'Cons',
+                'ex.title': 'One job, written two ways',
+                'ex.sub': 'Say you have a Python project (requirements.txt and pytest tests at the root) and you want to:',
+                'ex.file': 'Config file', 'ex.setup': 'Setup steps', 'ex.result': 'Where to see results',
+                'map.title': 'Concept map',
+                'map.sub': 'Know one of them? Use this table to translate a config into the other.',
+                'map.concept': 'Concept',
+                'ch.title': 'Which one to pick',
+                'ch.sub': 'Neither is always better. It depends on where your code lives, where you deploy, and whether anyone can look after a server.',
+                'footer': 'Compiled November 2026. Examples use Jenkins LTS 2.580 and actions/checkout, setup-python and upload-artifact v7.'
+            }
+        };
+
+        const TOOLS = [
+            {
+                name: 'Jenkins Pipeline', color: 'var(--jenkins)',
+                zh: ['開源（MIT），2011 年起的老牌自動化伺服器', [
+                    '自架：裝在自己的機器、VM 或 Kubernetes 上，資料不離開公司內網。',
+                    'Pipeline as Code：流程寫在 repo 裡的 Jenkinsfile，用 Groovy 語法，分宣告式（Declarative）與腳本式（Scripted）兩種。',
+                    '控制器＋代理（Controller / Agent）架構：一台主控派工，多台 Linux、Windows、macOS 或容器機器執行。',
+                    '外掛生態系：約 2,000 個外掛，幾乎任何版本控制、建置工具、雲端或通知服務都接得上。',
+                    '不綁定程式碼平台：GitHub、GitLab、Bitbucket、自架 Git 甚至 SVN 都能用。',
+                    'Shared Library：把共用的步驟寫成函式庫，讓公司上百個專案共用同一套流程。'
+                ]],
+                en: ['Open source (MIT), the veteran automation server since 2011', [
+                    'Self-hosted: runs on your own machines, VMs or Kubernetes, so data stays inside your network.',
+                    'Pipeline as Code: the pipeline lives in a Jenkinsfile in the repo, written in Groovy, in Declarative or Scripted style.',
+                    'Controller / agent architecture: one controller hands out work to Linux, Windows, macOS or container agents.',
+                    'Plugin ecosystem: around 2,000 plugins connecting to almost any VCS, build tool, cloud or notification service.',
+                    'Not tied to a code host: works with GitHub, GitLab, Bitbucket, self-hosted Git, even SVN.',
+                    'Shared Libraries: package common steps as a library so hundreds of projects share one pipeline.'
+                ]]
+            },
+            {
+                name: 'GitHub Actions', color: 'var(--gha)',
+                zh: ['GitHub 內建，2019 年正式推出的 CI/CD 與自動化服務', [
+                    '免架設：在 repo 放一個 .github/workflows/*.yml 就會開始跑，機器由 GitHub 提供。',
+                    '事件驅動：不只 push、PR，開 issue、發 release、留言、排程、手動按鈕都能觸發。',
+                    'Marketplace：上萬個現成的 Action，用 uses: 一行就能裝好語言環境、部署到雲端或發通知。',
+                    'GitHub 代管的 Runner：Linux、Windows、macOS（含 ARM 與 GPU 大型機器），每個 Job 都是乾淨的新機器。',
+                    '矩陣（matrix）：一份設定同時在多個作業系統 × 語言版本上測試。',
+                    '和 GitHub 深度整合：結果直接顯示在 PR、可設成合併前必須通過；支援 OIDC，部署到 AWS、Azure、GCP 不必存長期金鑰。'
+                ]],
+                en: ['Built into GitHub, the CI/CD and automation service launched in 2019', [
+                    'Nothing to install: add a .github/workflows/*.yml file to the repo and it starts running on GitHub\'s machines.',
+                    'Event-driven: triggered not only by pushes and PRs but by issues, releases, comments, schedules or a manual button.',
+                    'Marketplace: tens of thousands of ready-made actions; one uses: line sets up a language, deploys to a cloud or sends a message.',
+                    'GitHub-hosted runners: Linux, Windows and macOS (including ARM and GPU larger runners); every job gets a fresh machine.',
+                    'Matrix builds: one config tests across several OS × language versions at once.',
+                    'Deep GitHub integration: results show on the PR and can be required before merging; OIDC lets you deploy to AWS, Azure or GCP without long-lived keys.'
+                ]]
+            }
+        ];
+
+        const CAPS = [
+            { zh: ['持續整合（CI）', '每次推程式就自動編譯、跑測試、做程式碼檢查。', 'Jenkinsfile 的 stage 依序執行；搭配 webhook 或定期掃描觸發。', '在 on: push / pull_request 觸發，結果直接顯示在 PR 上。'], en: ['Continuous integration', 'Build, test and lint on every push.', 'Stages in the Jenkinsfile run in order, triggered by a webhook or periodic scan.', 'Triggered on: push / pull_request, with results shown right on the PR.'] },
+            { zh: ['持續部署（CD）', '測試通過後自動部署到測試機或正式環境，可加人工核准。', 'input 步驟暫停等人按核准；用 Credentials 管理部署帳密。', '用 environment 設定核准者與等待時間；OIDC 免存雲端金鑰。'], en: ['Continuous deployment', 'Deploy to staging or production after tests pass, optionally with a manual approval.', 'An input step pauses for approval; deploy credentials live in the Credentials store.', 'environment rules set approvers and wait timers; OIDC avoids storing cloud keys.'] },
+            { zh: ['排程工作', '每天半夜跑完整測試、備份、產報表、清理資料。', 'triggers { cron(\'H 2 * * *\') }，H 會把時間分散開來避免同時塞車。', 'on: schedule 用 cron，時間是 UTC；最短每 5 分鐘一次，尖峰時段可能延遲。'], en: ['Scheduled jobs', 'Nightly full test runs, backups, reports, data cleanup.', 'triggers { cron(\'H 2 * * *\') }; H spreads start times to avoid load spikes.', 'on: schedule with cron in UTC; at most every 5 minutes, and runs can be delayed at peak times.'] },
+            { zh: ['多平台、多版本測試', '同時在多個作業系統、語言版本上跑測試。', 'parallel 或 matrix 區塊，搭配不同 label 的 agent。', 'strategy.matrix 一行列出組合，自動展開成多個 Job 平行跑。'], en: ['Multi-platform testing', 'Run tests across several OSes and language versions at once.', 'parallel or matrix blocks, with agents chosen by label.', 'strategy.matrix lists the combinations and expands them into parallel jobs.'] },
+            { zh: ['建置容器映像', '打包 Docker 映像並推到 Registry。', 'Docker Pipeline 外掛；或在 Kubernetes 上用 Kaniko 等工具。', 'docker/build-push-action，可直接推到 GitHub Container Registry（ghcr.io）。'], en: ['Container images', 'Build Docker images and push them to a registry.', 'The Docker Pipeline plugin, or tools like Kaniko on Kubernetes.', 'docker/build-push-action, pushing straight to GitHub Container Registry (ghcr.io).'] },
+            { zh: ['專案管理自動化', '自動貼標籤、回覆 issue、產生版本說明、關閉過期 PR。', '做得到，但要透過 API 與外掛自己串。', '原生強項：issues、release、comment 等事件直接觸發，用 GITHUB_TOKEN 操作 repo。'], en: ['Repo automation', 'Auto-label, reply to issues, write release notes, close stale PRs.', 'Possible, but you wire it up yourself with APIs and plugins.', 'A native strength: issue, release and comment events trigger workflows that act on the repo with GITHUB_TOKEN.'] }
+        ];
+
+        const COMPARE = [
+            { zh: ['部署方式', '自己架設與維運（實體機、VM、容器、Kubernetes）', 'GitHub 代管；也可以接自架的 Runner'], en: ['Hosting', 'Self-hosted and self-operated (bare metal, VM, container, Kubernetes)', 'Managed by GitHub; self-hosted runners are optional'] },
+            { zh: ['設定檔', 'Jenkinsfile（Groovy DSL），放在 repo 根目錄', '.github/workflows/*.yml（YAML），一個 repo 可以有多份'], en: ['Config', 'Jenkinsfile (Groovy DSL) at the repo root', '.github/workflows/*.yml (YAML); a repo can have many'] },
+            { zh: ['觸發方式', 'SCM webhook、定期輪詢、cron、上游 Job 完成、手動、API', '幾十種 GitHub 事件、cron、手動（workflow_dispatch）、API（repository_dispatch）'], en: ['Triggers', 'SCM webhooks, polling, cron, upstream jobs, manual, API', 'Dozens of GitHub events, cron, manual (workflow_dispatch), API (repository_dispatch)'] },
+            { zh: ['執行環境', 'Agent 由自己準備，環境會殘留上一次的檔案，要自己清', '代管 Runner 每次都是乾淨的新機器；也可以指定容器'], en: ['Execution', 'You provide agents; workspaces keep leftovers unless you clean them', 'Hosted runners are fresh VMs every job; containers are optional'] },
+            { zh: ['擴充', '外掛（裝在伺服器上，影響所有專案）', 'Action（寫在每份 workflow 裡，用版本號或 commit SHA 固定）'], en: ['Extensions', 'Plugins installed on the server, affecting every project', 'Actions referenced per workflow, pinned by version or commit SHA'] },
+            { zh: ['機密管理', 'Credentials 外掛，可接 HashiCorp Vault 等', 'Secrets（organization／repo／environment 三層）、OIDC'], en: ['Secrets', 'Credentials plugin, can integrate HashiCorp Vault and others', 'Secrets at org / repo / environment level, plus OIDC'] },
+            { zh: ['費用', '軟體免費；成本是機器、維運人力與時間', '公開 repo 用標準 Runner 免費；私有 repo 依方案有每月免費分鐘數，超過依分鐘計費'], en: ['Cost', 'Free software; you pay for machines, ops time and people', 'Free on standard runners for public repos; private repos get monthly free minutes per plan, then per-minute billing'] },
+            { zh: ['限制', '幾乎沒有，取決於自己的硬體', '代管 Runner 單一 Job 最長 6 小時，有並行數上限'], en: ['Limits', 'Practically none beyond your hardware', 'Hosted runner jobs max 6 hours, with concurrency limits'] },
+            { zh: ['介面', '功能完整但較老派；Pipeline 的 stage 圖可看各階段耗時', '整合在 GitHub 網頁與 App，記錄、產物、狀態都在 PR 旁邊'], en: ['UI', 'Feature-rich but dated; the stage view shows timing per stage', 'Part of the GitHub web and app; logs, artifacts and status sit next to the PR'] },
+            { zh: ['學習曲線', '較陡：要懂伺服器、外掛、Groovy', '較平：YAML 加上現成 Action 就能上手'], en: ['Learning curve', 'Steeper: servers, plugins and Groovy', 'Gentler: YAML plus ready-made actions'] }
+        ];
+
+        const PROS_CONS = [
+            {
+                name: 'Jenkins Pipeline', color: 'var(--jenkins)',
+                zh: [[
+                    '完全掌控：資料與程式碼不出內網，適合有資安規範或無法連外的環境（例如工廠、金融）。',
+                    '不綁定平台，任何 Git 服務、任何語言、任何部署目標都能接。',
+                    '外掛與社群成熟，遇到問題大多找得到解法。',
+                    '沒有執行時間與分鐘數限制，可以用自己的高規格或特殊硬體。',
+                    'Groovy 可寫複雜邏輯，Shared Library 讓大型組織統一流程。'
+                ], [
+                    '要自己維運：升級、備份、資安修補、擴充機器都要有人負責。',
+                    '外掛彼此相依，升級時容易出現相容性問題；外掛本身也常有資安漏洞要追。',
+                    'Groovy 與 Jenkins 特有語法學習成本較高，錯誤訊息不太友善。',
+                    '介面較舊，設定散落在網頁 UI 與 Jenkinsfile 兩處時不好追蹤。',
+                    'Agent 環境會殘留，沒管理好容易出現「在我這台可以跑」的問題。'
+                ]],
+                en: [[
+                    'Full control: code and data stay on your network, fitting strict security rules or air-gapped sites (factories, finance).',
+                    'Platform-agnostic: any Git host, any language, any deploy target.',
+                    'Mature plugins and community; most problems already have an answer.',
+                    'No time or minute limits, and you can use your own powerful or special hardware.',
+                    'Groovy handles complex logic, and Shared Libraries standardize pipelines across a large org.'
+                ], [
+                    'You run it: upgrades, backups, security patches and scaling all need an owner.',
+                    'Plugins depend on each other and break on upgrades; plugin vulnerabilities need tracking too.',
+                    'Groovy and Jenkins-specific syntax take time to learn, and error messages are unfriendly.',
+                    'Dated UI, and settings split between the web UI and the Jenkinsfile are hard to follow.',
+                    'Agents keep state between builds; without care you get "works on this agent" bugs.'
+                ]]
+            },
+            {
+                name: 'GitHub Actions', color: 'var(--gha)',
+                zh: [[
+                    '零維運：不用管伺服器，幾分鐘就能讓第一個 workflow 跑起來。',
+                    '和 GitHub 無縫整合：PR 檢查、分支保護、Release、Issue 都在同一個地方。',
+                    'Marketplace 的現成 Action 多，常見任務不用自己寫腳本。',
+                    '每次都是乾淨環境，結果穩定、可重現；matrix 輕鬆做多版本測試。',
+                    '公開專案免費，小型私有專案的免費分鐘數通常就夠用。'
+                ], [
+                    '綁定 GitHub，程式碼放在其他平台就用不了，日後搬家成本高。',
+                    '在本機不好測試，常常要一直 push 才能除錯（可用 act 工具部分模擬）。',
+                    '私有專案用量大、或常用 macOS／大型 Runner 時，費用會快速增加。',
+                    '第三方 Action 有供應鏈風險，建議用 commit SHA 固定版本並限制權限。',
+                    '要連公司內網資源時，得另外架自架 Runner，又回到要維運機器的問題。'
+                ]],
+                en: [[
+                    'Zero ops: no servers to manage; your first workflow runs in minutes.',
+                    'Seamless with GitHub: PR checks, branch protection, releases and issues in one place.',
+                    'A huge Marketplace means common tasks need no custom scripts.',
+                    'A clean environment every run gives stable, reproducible results; matrix makes multi-version tests easy.',
+                    'Free for public repos, and the free minutes usually cover small private projects.'
+                ], [
+                    'Tied to GitHub; code hosted elsewhere can\'t use it, and moving later is costly.',
+                    'Hard to test locally; debugging often means pushing again and again (act can partly simulate it).',
+                    'Heavy private usage, or frequent macOS / larger runners, gets expensive fast.',
+                    'Third-party actions are a supply-chain risk; pin them to a commit SHA and limit permissions.',
+                    'Reaching internal network resources needs self-hosted runners, which brings server upkeep back.'
+                ]]
+            }
+        ];
+
+        const EX_GOALS = {
+            zh: ['推到任何分支或開 PR 時：安裝套件、跑測試，並保存測試報告。', '只有 main 分支：測試通過後打包成 dist/ 並保存成產物（artifact）。', '每天台灣時間凌晨 2 點自動跑一次，也可以手動執行。', '整個流程超過 20 分鐘就中止。'],
+            en: ['On every push or PR: install dependencies, run tests, and keep the test report.', 'On main only: after tests pass, build dist/ and keep it as an artifact.', 'Run automatically every day at 2 a.m. Taiwan time, and allow manual runs.', 'Abort if the whole run takes longer than 20 minutes.']
+        };
+
+        const JENKINSFILE = `// {{jf}}
+pipeline {
+    // {{agent}}
+    agent { docker { image 'python:3.12-slim' } }
+
+    triggers { cron('H 2 * * *') }   // {{cron}}
+    options  { timeout(time: 20, unit: 'MINUTES') }
+
+    stages {
+        stage('Install') {
+            steps {
+                // {{venv}}
+                sh 'python -m venv .venv && .venv/bin/pip install -r requirements.txt'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh '.venv/bin/pytest --junitxml=reports/junit.xml'
+            }
+            post {
+                always { junit 'reports/junit.xml' }   // {{junit}}
+            }
+        }
+        stage('Package') {
+            when { branch 'main' }   // {{main}}
+            steps {
+                sh '.venv/bin/pip install build && .venv/bin/python -m build'
+                archiveArtifacts artifacts: 'dist/*', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        failure { echo "{{fail}}\${env.BUILD_URL}" }
+    }
+}`;
+
+        const WORKFLOW = `# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 18 * * *'   # {{utc}}
+  workflow_dispatch:         # {{manual}}
+
+permissions:
+  contents: read             # {{perm}}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: pytest --junitxml=reports/junit.xml
+      - uses: actions/upload-artifact@v7
+        if: always()           # {{junit}}
+        with:
+          name: test-report
+          path: reports/junit.xml
+
+  package:
+    needs: test                # {{needs}}
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: pip install build && python -m build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/`;
+
+        const CODE_TEXT = {
+            zh: {
+                jf: 'Jenkinsfile（放在 repo 根目錄）',
+                agent: '在 python:3.12-slim 容器裡執行（需要 Docker Pipeline 外掛，agent 上要有 Docker）',
+                cron: '每天凌晨 2 點左右（Jenkins 伺服器時區）',
+                venv: '容器以 Jenkins 使用者身分執行，用 venv 避免寫入系統目錄的權限問題',
+                junit: '失敗也保存測試報告',
+                main: '只有 main 分支才打包',
+                fail: '建置失敗：',
+                utc: 'UTC 18:00 = 台灣時間 02:00',
+                manual: 'Actions 頁面出現「Run workflow」按鈕',
+                perm: '只給讀取權限，降低風險',
+                needs: '測試通過才執行'
+            },
+            en: {
+                jf: 'Jenkinsfile (at the repo root)',
+                agent: 'Run inside a python:3.12-slim container (needs the Docker Pipeline plugin and Docker on the agent)',
+                cron: 'Around 2 a.m. daily (Jenkins server time zone)',
+                venv: 'The container runs as the Jenkins user; a venv avoids permission errors writing system dirs',
+                junit: 'Keep the test report even on failure',
+                main: 'Package on main only',
+                fail: 'Build failed: ',
+                utc: 'UTC 18:00 = 02:00 Taiwan time',
+                manual: 'Adds a "Run workflow" button on the Actions page',
+                perm: 'Read-only token to reduce risk',
+                needs: 'Only after tests pass'
+            }
+        };
+
+        const fillCode = (code, lang) => code.replace(/\{\{(\w+)\}\}/g, (_, k) => CODE_TEXT[lang][k]);
+
+        const EXAMPLES = {
+            jenkins: {
+                color: 'var(--jenkins)', file: 'Jenkinsfile', code: JENKINSFILE,
+                zh: {
+                    setup: [
+                        ['安裝 Jenkins', '最快的方式是用 Docker：docker run -d -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts-jdk21'],
+                        ['解鎖並安裝外掛', '打開 http://localhost:8080，用 docker exec <容器> cat /var/jenkins_home/secrets/initialAdminPassword 取得初始密碼，選「安裝建議的外掛」，再到「管理 Jenkins → 外掛」加裝 Docker Pipeline。'],
+                        ['準備 Agent', '範例用 Docker 容器執行，所以 Agent 要能跑 Docker。Jenkins 本身跑在容器裡時，建議另外接一台有 Docker 的 Agent；或把 agent 改成 agent any，並在機器上裝好 Python 3.12。'],
+                        ['放入 Jenkinsfile', '把上面的檔案存成 repo 根目錄的 Jenkinsfile，commit 並 push。'],
+                        ['建立 Multibranch Pipeline', '「新增作業 → Multibranch Pipeline」，在 Branch Sources 加入 GitHub 或 Git repo（私有 repo 要先在 Credentials 新增 token）。儲存後 Jenkins 會掃描每個分支，找到 Jenkinsfile 就建立對應的 Job。when { branch \'main\' } 只在這種 Job 類型有效。'],
+                        ['設定自動觸發', '在 GitHub repo 的 Settings → Webhooks 加入 http://<你的 Jenkins>/github-webhook/；Jenkins 在內網收不到 webhook 時，改成在 Multibranch 設定「定期掃描」。']
+                    ],
+                    result: '點進分支的 Job：Stage View 看各階段耗時與成功失敗，Console Output 看完整記錄，Test Result 看測試報告，Build Artifacts 下載 dist/ 的檔案。'
+                },
+                en: {
+                    setup: [
+                        ['Install Jenkins', 'The quickest way is Docker: docker run -d -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts-jdk21'],
+                        ['Unlock and add plugins', 'Open http://localhost:8080, get the initial password with docker exec <container> cat /var/jenkins_home/secrets/initialAdminPassword, choose "Install suggested plugins", then add Docker Pipeline under Manage Jenkins → Plugins.'],
+                        ['Prepare an agent', 'The example runs inside a Docker container, so the agent must run Docker. If Jenkins itself runs in a container, attach a separate agent with Docker, or change the agent to agent any and install Python 3.12 on the machine.'],
+                        ['Add the Jenkinsfile', 'Save the file above as Jenkinsfile at the repo root, commit and push.'],
+                        ['Create a Multibranch Pipeline', 'New Item → Multibranch Pipeline, then add the GitHub or Git repo under Branch Sources (private repos need a token in Credentials first). Jenkins scans every branch and creates a job wherever it finds a Jenkinsfile. when { branch \'main\' } only works in this job type.'],
+                        ['Trigger automatically', 'In the GitHub repo, add http://<your-jenkins>/github-webhook/ under Settings → Webhooks. If Jenkins is on an internal network that can\'t receive webhooks, enable periodic scanning in the Multibranch settings instead.']
+                    ],
+                    result: 'Open the branch job: Stage View shows timing and status per stage, Console Output has the full log, Test Result shows the report, and Build Artifacts has the dist/ files.'
+                }
+            },
+            gha: {
+                color: 'var(--gha)', file: '.github/workflows/ci.yml', code: WORKFLOW,
+                zh: {
+                    setup: [
+                        ['建立檔案', '在 repo 建立 .github/workflows/ci.yml，貼上上面的內容。也可以在 GitHub 網頁的 Actions 分頁選範本再修改。'],
+                        ['Commit 並 push', '推上去後就會自動執行，不需要安裝任何東西。'],
+                        ['設定機密（需要時）', '要部署或呼叫外部 API 時，到 Settings → Secrets and variables → Actions 新增，在 YAML 裡用 ${{ secrets.名稱 }} 取用。'],
+                        ['手動執行', '到 Actions → CI → Run workflow，選分支後按下執行。'],
+                        ['設成合併前必須通過', 'Settings → Branches（或 Rules）為 main 加規則，勾選必須通過 test 這個檢查，PR 測試沒過就不能合併。']
+                    ],
+                    result: 'PR 下方會顯示每個 Job 的狀態；點 Actions 分頁可看每一步的記錄，執行摘要頁最下方可下載 test-report 與 dist 產物。'
+                },
+                en: {
+                    setup: [
+                        ['Create the file', 'Create .github/workflows/ci.yml in the repo and paste the content above. You can also start from a template in the Actions tab on GitHub.'],
+                        ['Commit and push', 'It runs as soon as it\'s pushed; nothing to install.'],
+                        ['Add secrets (if needed)', 'For deploys or external APIs, add them under Settings → Secrets and variables → Actions and read them with ${{ secrets.NAME }}.'],
+                        ['Run manually', 'Go to Actions → CI → Run workflow, pick a branch and run.'],
+                        ['Require it before merging', 'Add a rule for main under Settings → Branches (or Rules) requiring the test check, so PRs can\'t merge with failing tests.']
+                    ],
+                    result: 'Each job\'s status appears on the PR; the Actions tab shows logs for every step, and the run summary page lists the test-report and dist artifacts for download.'
+                }
+            }
+        };
+
+        const CONCEPT_MAP = [
+            { zh: '整個流程', en: 'Whole pipeline', j: 'pipeline { }', g: { zh: 'workflow（一個 .yml 檔）', en: 'workflow (one .yml file)' } },
+            { zh: '在哪裡執行', en: 'Where it runs', j: 'agent { label / docker }', g: 'runs-on: / container:' },
+            { zh: '階段', en: 'Phase', j: { zh: 'stage(\'名稱\')', en: 'stage(\'name\')' }, g: 'jobs.<id>' },
+            { zh: '單一步驟', en: 'Single step', j: { zh: 'sh \'指令\'', en: 'sh \'command\'' }, g: 'run: / uses:' },
+            { zh: '條件執行', en: 'Conditional', j: 'when { branch \'main\' }', g: 'if: github.ref == ...' },
+            { zh: '相依順序', en: 'Ordering', j: { zh: 'stage 依序排列', en: 'stages run in order' }, g: 'needs: test' },
+            { zh: '排程', en: 'Schedule', j: 'triggers { cron(...) }', g: 'on: schedule: - cron:' },
+            { zh: '逾時', en: 'Timeout', j: 'options { timeout(...) }', g: 'timeout-minutes:' },
+            { zh: '成功或失敗後', en: 'After success/failure', j: 'post { always / failure }', g: 'if: always() / failure()' },
+            { zh: '保存產物', en: 'Keep artifacts', j: 'archiveArtifacts', g: 'actions/upload-artifact' },
+            { zh: '機密', en: 'Secrets', j: 'credentials(\'id\')', g: '${{ secrets.NAME }}' },
+            { zh: '平行執行', en: 'Parallel', j: 'parallel { } / matrix { }', g: { zh: 'strategy: matrix:（jobs 預設就平行）', en: 'strategy: matrix: (jobs run in parallel by default)' } },
+            { zh: '共用流程', en: 'Reuse', j: 'Shared Library', g: 'Reusable workflow / Composite action' }
+        ];
+
+        const CHOOSE = [
+            { color: 'var(--jenkins)', zh: ['選 Jenkins', ['程式碼在 GitLab、自架 Git 或 SVN，不在 GitHub。', '有資安規範、必須留在內網，或建置要用到廠內設備、資料庫。', '建置量大、時間長，自己的機器比雲端分鐘數便宜。', '已經有一大套 Jenkins 流程，有人可以維護。']], en: ['Pick Jenkins', ['Your code lives on GitLab, self-hosted Git or SVN, not GitHub.', 'Security rules keep everything on-prem, or builds need internal hardware or databases.', 'Heavy, long builds where your own machines beat paying for minutes.', 'You already run a large Jenkins setup and someone can maintain it.']] },
+            { color: 'var(--gha)', zh: ['選 GitHub Actions', ['程式碼已經在 GitHub。', '小團隊、個人或開源專案，沒有人力顧伺服器。', '想快速開始，用現成 Action 組出流程。', '部署目標在公有雲，想用 OIDC 免存金鑰。']], en: ['Pick GitHub Actions', ['Your code is already on GitHub.', 'A small team, solo or open-source project with no one to babysit servers.', 'You want to start fast by composing ready-made actions.', 'You deploy to a public cloud and want OIDC instead of stored keys.']] },
+            { color: '#8b5cf6', zh: ['兩者混用', ['程式碼在 GitHub，用 Actions 做 PR 檢查與 repo 自動化。', '需要內網資源的建置與部署交給 Jenkins，或在內網架 GitHub 自架 Runner。', '逐步搬遷：新專案先用 Actions，舊的 Jenkins 流程慢慢翻過去（上方對照表可以幫忙）。']], en: ['Use both', ['Code on GitHub: use Actions for PR checks and repo automation.', 'Hand on-prem builds and deploys to Jenkins, or run self-hosted GitHub runners inside the network.', 'Migrate gradually: new projects start on Actions while old Jenkins pipelines move over (the concept map above helps).']] }
+        ];
+
+        function el(tag, className, text) {
+            const node = document.createElement(tag);
+            if (className) node.className = className;
+            if (text !== undefined) node.textContent = text;
+            return node;
+        }
+
+        function bulletList(items, markColor, mark) {
+            const ul = el('ul', 'space-y-2');
+            items.forEach(text => {
+                const li = el('li', 'flex gap-2 text-sm text-slate-600 dark:text-slate-400 leading-relaxed');
+                const dot = el('span', 'shrink-0 font-bold', mark || '•');
+                dot.style.color = markColor;
+                li.append(dot, el('span', '', text));
+                ul.appendChild(li);
+            });
+            return ul;
+        }
+
+        function cardHead(name, color) {
+            const head = el('div', 'flex items-center gap-3 mb-2');
+            const dot = el('span', 'w-3 h-3 rounded-full shrink-0');
+            dot.style.background = color;
+            head.append(dot, el('h3', 'font-bold text-lg', name));
+            return head;
+        }
+
+        function renderTools(lang) {
+            document.getElementById('toolList').replaceChildren(...TOOLS.map(tool => {
+                const card = el('div', 'p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border-t-4 border-x border-b border-slate-100 dark:border-slate-700');
+                card.style.borderTopColor = tool.color;
+                card.append(cardHead(tool.name, tool.color), el('p', 'text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4', tool[lang][0]), bulletList(tool[lang][1], tool.color));
+                return card;
+            }));
+        }
+
+        function renderCaps(lang) {
+            document.getElementById('capList').replaceChildren(...CAPS.map(cap => {
+                const [title, desc, j, g] = cap[lang];
+                const card = el('div', 'p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm');
+                card.append(el('h3', 'font-bold text-lg mb-1', title), el('p', 'text-sm text-slate-600 dark:text-slate-400 mb-4', desc));
+                [['Jenkins', 'var(--jenkins)', j], ['GitHub Actions', 'var(--gha)', g]].forEach(([name, color, text]) => {
+                    const row = el('div', 'text-sm pl-3 border-l-4 mb-2 last:mb-0 leading-relaxed');
+                    row.style.borderColor = color;
+                    const label = el('span', 'font-semibold mr-1', name + (lang === 'zh' ? '：' : ': '));
+                    label.style.color = color;
+                    row.append(label, el('span', 'text-slate-600 dark:text-slate-400', text));
+                    card.appendChild(row);
+                });
+                return card;
+            }));
+        }
+
+        function renderCompare(lang) {
+            document.getElementById('cmpRows').replaceChildren(...COMPARE.map(row => {
+                const tr = el('tr', 'align-top');
+                row[lang].forEach((cell, i) => tr.appendChild(el('td', 'px-4 py-3' + (i === 0 ? ' font-semibold whitespace-nowrap' : ' text-slate-600 dark:text-slate-300'), cell)));
+                return tr;
+            }));
+        }
+
+        function renderProsCons(lang, t) {
+            document.getElementById('pcList').replaceChildren(...PROS_CONS.map(tool => {
+                const card = el('div', 'p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm');
+                card.appendChild(cardHead(tool.name, tool.color));
+                const [pros, cons] = tool[lang];
+                card.append(el('h4', 'mt-3 mb-2 text-sm font-bold text-emerald-600 dark:text-emerald-400', t['pc.pros']), bulletList(pros, '#10b981', '＋'));
+                card.append(el('h4', 'mt-5 mb-2 text-sm font-bold text-rose-600 dark:text-rose-400', t['pc.cons']), bulletList(cons, '#f43f5e', '－'));
+                return card;
+            }));
+        }
+
+        let currentTab = 'jenkins';
+
+        // Split each line at the first // or # comment that is outside quotes, and grey the comment out.
+        function commentStart(line) {
+            let quote = null;
+            for (let i = 0; i < line.length; i++) {
+                const c = line[i];
+                if (quote) { if (c === quote) quote = null; continue; }
+                if (c === "'" || c === '"') quote = c;
+                else if (c === '/' && line[i + 1] === '/') return i;
+                else if (c === '#' && (i === 0 || /\s/.test(line[i - 1]))) return i;
+            }
+            return -1;
+        }
+
+        function highlight(code) {
+            const pre = el('pre', 'code text-xs md:text-sm leading-relaxed p-4 md:p-5 overflow-x-auto bg-slate-900 text-slate-100');
+            code.split('\n').forEach((line, i) => {
+                if (i) pre.appendChild(document.createTextNode('\n'));
+                const at = commentStart(line);
+                if (at < 0) { pre.appendChild(document.createTextNode(line)); return; }
+                pre.append(document.createTextNode(line.slice(0, at)), el('span', 'c', line.slice(at)));
+            });
+            return pre;
+        }
+
+        function renderExample(lang, t) {
+            document.querySelectorAll('.ex-tab').forEach(btn => {
+                const active = btn.dataset.tab === currentTab;
+                const color = EXAMPLES[btn.dataset.tab].color;
+                btn.setAttribute('aria-selected', active);
+                btn.style.borderColor = color;
+                btn.style.background = active ? color : 'transparent';
+                btn.style.color = active ? '#fff' : color;
+            });
+            const ex = EXAMPLES[currentTab];
+            const data = ex[lang];
+            const panel = el('div', 'space-y-8');
+
+            const fileBox = el('div', 'rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700');
+            const bar = el('div', 'flex items-center justify-between gap-2 px-4 py-2 bg-slate-800 text-slate-300 text-xs');
+            bar.append(el('span', 'font-mono truncate', ex.file), el('span', 'shrink-0', t['ex.file']));
+            fileBox.append(bar, highlight(fillCode(ex.code, lang)));
+
+            const setup = el('div');
+            setup.appendChild(el('h3', 'text-xl font-bold mb-4', t['ex.setup']));
+            const ol = el('ol', 'space-y-3');
+            data.setup.forEach(([title, desc], i) => {
+                const li = el('li', 'flex gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700');
+                const num = el('span', 'shrink-0 w-7 h-7 rounded-full text-white text-sm font-bold flex items-center justify-center', String(i + 1));
+                num.style.background = ex.color;
+                const body = el('div', 'min-w-0');
+                body.append(el('p', 'font-semibold mb-1', title), el('p', 'text-sm text-slate-600 dark:text-slate-400 leading-relaxed break-words', desc));
+                li.append(num, body);
+                ol.appendChild(li);
+            });
+            setup.appendChild(ol);
+
+            const result = el('div', 'p-4 rounded-2xl text-sm leading-relaxed bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100');
+            result.append(el('span', 'font-semibold', t['ex.result'] + (lang === 'zh' ? '：' : ': ')), document.createTextNode(data.result));
+
+            panel.append(fileBox, setup, result);
+            document.getElementById('exPanel').replaceChildren(panel);
+        }
+
+        function renderGoals(lang) {
+            document.getElementById('exGoals').replaceChildren(...EX_GOALS[lang].map((text, i) => {
+                const li = el('li', 'flex gap-2');
+                li.append(el('span', 'shrink-0 font-bold text-blue-500', `${i + 1}.`), el('span', '', text));
+                return li;
+            }));
+        }
+
+        const pick = (v, lang) => typeof v === 'string' ? v : v[lang];
+
+        function renderMap(lang) {
+            document.getElementById('mapRows').replaceChildren(...CONCEPT_MAP.map(row => {
+                const tr = el('tr', 'align-top');
+                tr.append(el('td', 'px-4 py-3 font-semibold whitespace-nowrap', row[lang]),
+                    el('td', 'px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300', pick(row.j, lang)),
+                    el('td', 'px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300', pick(row.g, lang)));
+                return tr;
+            }));
+        }
+
+        function renderChoose(lang) {
+            document.getElementById('chooseList').replaceChildren(...CHOOSE.map(item => {
+                const card = el('div', 'p-5 rounded-2xl bg-white dark:bg-slate-800 border-2 shadow-sm');
+                card.style.borderColor = item.color;
+                const title = el('h3', 'font-bold text-lg mb-3', item[lang][0]);
+                title.style.color = item.color;
+                card.append(title, bulletList(item[lang][1], item.color, '✓'));
+                return card;
+            }));
+        }
+
+        let currentLang = 'zh';
+        try { if (localStorage.getItem('lang') === 'en') currentLang = 'en'; } catch (e) {}
+
+        function render(lang) {
+            const t = UI[lang];
+            document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+            document.querySelectorAll('[data-i18n]').forEach(node => {
+                node.textContent = t[node.getAttribute('data-i18n')];
+            });
+            document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+            renderTools(lang);
+            renderCaps(lang);
+            renderCompare(lang);
+            renderProsCons(lang, t);
+            renderGoals(lang);
+            renderExample(lang, t);
+            renderMap(lang);
+            renderChoose(lang);
+        }
+
+        document.querySelectorAll('.ex-tab').forEach(btn => btn.addEventListener('click', () => {
+            currentTab = btn.dataset.tab;
+            renderExample(currentLang, UI[currentLang]);
+        }));
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            try { localStorage.setItem('lang', currentLang); } catch (e) {}
+            render(currentLang);
+        });
+
+        // Theme: shares the same 'theme' setting as the home page.
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+        let savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+        });
+
+        render(currentLang);
+    </script>
+</body>
+</html>
